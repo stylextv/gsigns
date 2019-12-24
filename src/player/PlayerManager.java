@@ -47,6 +47,11 @@ public class PlayerManager {
 		playerTasks.put(p, new Task(image));
 		p.sendMessage(Vars.PREFIX+"Your sign was created §asuccessfully§7. Please click with the left mouse button on one of the two §estone blocks§7 to place it.");
 	}
+	public static void cancelPlacingPhase(Player p) {
+		Task t=playerTasks.remove(p);
+		if(t!=null) p.sendMessage(Vars.PREFIX+"The placement process has been §ccanceled§7.");
+		else p.sendMessage(Vars.PREFIX+"You are currently not in a placement §cprocess§7.");
+	}
 	
 	public static void onPlayerInteract(PlayerInteractEvent e) {
 		if(e.getAction()==Action.LEFT_CLICK_BLOCK) {

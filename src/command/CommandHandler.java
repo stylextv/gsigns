@@ -26,6 +26,8 @@ public class CommandHandler {
 						sendHelp(p);
 					} else if(sub.equalsIgnoreCase("info")) {
 						sendInfo(p);
+					} else if(sub.equalsIgnoreCase("cancel")) {
+						PlayerManager.cancelPlacingPhase(p);
 					} else sendHelpSuggestion(p);
 				} else {
 					if(args.length>1&&args[0].equalsIgnoreCase("create")) {
@@ -69,6 +71,9 @@ public class CommandHandler {
 		p.sendMessage("");
 		p.sendMessage("    §7/gs §ecreate §7<code>§7: Lets you create and place a");
 		p.sendMessage("    §7 new sign");
+		p.sendMessage("    §8 (Requires the permission: gsigns.create)");
+		p.sendMessage("");
+		p.sendMessage("    §7/gs §ecancel§7: Cancels the current placement process");
 		p.sendMessage("    §8 (Requires the permission: gsigns.create)");
 		p.sendMessage("");
 		p.sendMessage("    §7/gs §ehelp§7: Shows this command list");
