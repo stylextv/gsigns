@@ -3,12 +3,17 @@ package de.stylextv.gs.image;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.util.HashMap;
 
 import de.stylextv.gs.player.Order;
 import de.stylextv.gs.player.PlayerManager;
 
 public class ImageGenerator {
+	
+	private static HashMap<String, Font> cachedFonts=new HashMap<String, Font>();
 	
 	public static BufferedImage generate(Order order) {
 		BufferedImage image=new BufferedImage(256, 128, BufferedImage.TYPE_INT_RGB);
@@ -21,7 +26,10 @@ public class ImageGenerator {
 			Graphics2D graphics=(Graphics2D) textImage.getGraphics();
 			RenderUtil.setRenderingHints(graphics);
 			
-			graphics.setFont(new Font("Raleway Bold", order.getFontStyle(), order.getFontSize()));
+			Font font=getFont(order.getFont());
+			String name="";
+			if(font!=null) name=font.getName();
+			graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
 			int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
 			graphics.setColor(new Color(0,0,0,128+16));
 			graphics.drawString(order.getText(), 512/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, 256/2+fontHeight/2 -1+9);
@@ -34,6 +42,45 @@ public class ImageGenerator {
 		if(order.shouldDither()) ditherImage(image, PlayerManager.matrix, PlayerManager.n);
 		
 		return image;
+	}
+	private static Font getFont(String name) {
+		if(name==null) return null;
+		Font got=cachedFonts.get(name);
+		if(got!=null) return got;
+		else {
+			String family;
+			try {
+				family=name.split("-")[0].toLowerCase();
+			} catch (Exception ex) {return null;}
+			try {
+			    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			    String url="https://github.com/google/fonts/raw/master/ofl/"+family+"/"+name+".ttf";
+			    URL u = new URL(url);
+			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
+			    ge.registerFont(font);
+			    cachedFonts.put(name, font);
+			    return font;
+			} catch (Exception ex) {}
+			try {
+			    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			    String url="https://github.com/google/fonts/raw/master/apache/"+family+"/"+name+".ttf";
+			    URL u = new URL(url);
+			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
+			    ge.registerFont(font);
+			    cachedFonts.put(name, font);
+			    return font;
+			} catch (Exception ex) {}
+			try {
+			    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			    String url="https://github.com/google/fonts/raw/master/ufl/"+family+"/"+name+".ttf";
+			    URL u = new URL(url);
+			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
+			    ge.registerFont(font);
+			    cachedFonts.put(name, font);
+			    return font;
+			} catch (Exception ex) {}
+			return null;
+		}
 	}
 	
 	public static void ditherImage(BufferedImage image, double[] matrix, int n) {
