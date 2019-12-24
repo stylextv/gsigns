@@ -1,8 +1,5 @@
 package de.stylextv.gs.main;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,13 +41,6 @@ public class Main extends JavaPlugin {
 		
 		PluginManager pm=Bukkit.getPluginManager();
 		pm.registerEvents(new EventPlayerInteract(), plugin);
-		
-		try {
-		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Main.class.getClassLoader().getResourceAsStream("assets/fonts/Raleway-Bold.ttf")));
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 	
 	@Override

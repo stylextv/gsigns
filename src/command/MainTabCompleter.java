@@ -20,6 +20,7 @@ public class MainTabCompleter implements TabCompleter {
 				if(args.length==1) {
 					ArrayList<String> tabs=new ArrayList<String>();
 					tabs.add("create");
+					tabs.add("cancel");
 					tabs.add("help");
 					tabs.add("info");
 					return tabs;

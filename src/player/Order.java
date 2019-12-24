@@ -10,6 +10,7 @@ public class Order {
 	private BufferedImage background;
 	private boolean dither=true;
 	private int fontSize=72,fontStyle=0;
+	private String font="Raleway-Bold";
 	
 	private String error;
 	public String getError() {
@@ -58,6 +59,12 @@ public class Order {
 	}
 	public void setFontStyle(int fontStyle) {
 		this.fontStyle = fontStyle;
+	}
+	public String getFont() {
+		return font;
+	}
+	public void setFont(String font) {
+		this.font = font;
 	}
 	
 }
