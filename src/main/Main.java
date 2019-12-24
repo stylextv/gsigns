@@ -9,6 +9,7 @@ import de.stylextv.gs.command.CommandGSigns;
 import de.stylextv.gs.command.CommandGamemodeSigns;
 import de.stylextv.gs.command.MainTabCompleter;
 import de.stylextv.gs.event.EventPlayerInteract;
+import de.stylextv.gs.event.EventPlayerJoinQuit;
 import de.stylextv.gs.player.PlayerManager;
 import de.stylextv.gs.world.WorldUtil;
 
@@ -41,6 +42,7 @@ public class Main extends JavaPlugin {
 		
 		PluginManager pm=Bukkit.getPluginManager();
 		pm.registerEvents(new EventPlayerInteract(), plugin);
+		pm.registerEvents(new EventPlayerJoinQuit(), plugin);
 	}
 	
 	@Override

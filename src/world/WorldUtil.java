@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
@@ -88,6 +89,23 @@ public class WorldUtil {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public static void removeAllDrewEntries(Player p) {
+		for(ItemFrame frame:frames) {
+			removeDrewEntry(frame, p);
+		}
+		for(ItemFrame frame:savedFrames.keySet()) {
+			removeDrewEntry(frame, p);
+		}
+	}
+	private static void removeDrewEntry(ItemFrame frame, Player p) {
+		try {
+			MapMeta meta=(MapMeta) frame.getItem().getItemMeta();
+			MapView view=meta.getMapView();
+			
+			((ImageMapRenderer)view.getRenderers().get(0)).removePlayer(p);
+		} catch(Exception ex) {}
 	}
 	
 	public static void spawnItemFrame(World world, Location loc, BufferedImage image, BlockFace direction) {

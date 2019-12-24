@@ -86,7 +86,7 @@ public class CommandHandler {
 	private static void sendInfo(Player p) {
 		p.sendMessage("§5>§m------------------§6  Information  §5§m------------------§5<");
 		p.sendMessage("");
-		p.sendMessage("    §7This server uses the free plugin §bGSigns§7.");
+		p.sendMessage("    §7This server uses the free plugin §bG-Signs§7.");
 		p.sendMessage("");
 		p.sendMessage("    §7Author: §e"+Vars.AUTHOR);
 		p.sendMessage("");
