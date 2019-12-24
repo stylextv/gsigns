@@ -12,6 +12,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Vars;
@@ -51,6 +52,10 @@ public class PlayerManager {
 		Task t=playerTasks.remove(p);
 		if(t!=null) p.sendMessage(Vars.PREFIX+"The placement process has been §ccanceled§7.");
 		else p.sendMessage(Vars.PREFIX+"You are currently not in a placement §cprocess§7.");
+	}
+	
+	public static void onPlayerQuit(PlayerQuitEvent e) {
+		WorldUtil.removeAllDrewEntries(e.getPlayer());
 	}
 	
 	public static void onPlayerInteract(PlayerInteractEvent e) {
