@@ -125,4 +125,8 @@ public class WorldUtil {
 		frames.add(frame);
 	}
 	
+	public static int getTotalAmountOfFrames() {
+		return imageFolder.listFiles().length;
+	}
+	
 }
