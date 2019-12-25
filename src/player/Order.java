@@ -3,6 +3,8 @@ package de.stylextv.gs.player;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import de.stylextv.gs.math.MathUtil;
+
 public class Order {
 	
 	private String text;
@@ -11,6 +13,9 @@ public class Order {
 	private boolean dither=true;
 	private int fontSize=72,fontStyle=0;
 	private String font="Raleway-Bold";
+	private Color abstractColor;
+	private double abstractSize=150;
+	private int abstractSeed=MathUtil.getRandom().nextInt(1000)+1;
 	
 	private String error;
 	public String getError() {
@@ -65,6 +70,25 @@ public class Order {
 	}
 	public void setFont(String font) {
 		this.font = font;
+	}
+	
+	public int getAbstractSeed() {
+		return abstractSeed;
+	}
+	public void setAbstractSeed(int abstractSeed) {
+		this.abstractSeed = abstractSeed;
+	}
+	public double getAbstractSize() {
+		return abstractSize;
+	}
+	public void setAbstractSize(double abstractSize) {
+		this.abstractSize = abstractSize;
+	}
+	public Color getAbstractColor() {
+		return abstractColor;
+	}
+	public void setAbstractColor(Color abstractColor) {
+		this.abstractColor = abstractColor;
 	}
 	
 }

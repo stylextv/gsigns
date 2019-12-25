@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import de.stylextv.gs.math.MathUtil;
+
 public class CodeParser {
 	
 	public static Order parseCode(String code) {
@@ -63,6 +65,18 @@ public class CodeParser {
 							break;
 						case "fnt":
 							order.setFont(value);
+							break;
+						case "sim-seed":
+							order.setAbstractSeed(Integer.valueOf(value));
+							break;
+						case "sim-hue":
+							float f;
+							if(value.equals("rdm")) f=MathUtil.getRandom().nextFloat();
+							else f=Float.valueOf(value);
+							order.setAbstractColor(Color.getHSBColor(f, 0.98f, 0.80f));
+							break;
+						case "sim-siz":
+							order.setAbstractSize(Double.valueOf(value));
 							break;
 						default:
 							break;
