@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.stylextv.gs.bstats.Metrics;
 import de.stylextv.gs.command.CommandGS;
 import de.stylextv.gs.command.CommandGSigns;
 import de.stylextv.gs.command.CommandGamemodeSigns;
@@ -26,6 +27,8 @@ public class Main extends JavaPlugin {
 		
 		WorldUtil.onEnable();
 		PlayerManager.init();
+		
+		enableBStats();
 	}
 	private void register() {
 		plugin=this;
@@ -43,6 +46,9 @@ public class Main extends JavaPlugin {
 		PluginManager pm=Bukkit.getPluginManager();
 		pm.registerEvents(new EventPlayerInteract(), plugin);
 		pm.registerEvents(new EventPlayerJoinQuit(), plugin);
+	}
+	private void enableBStats() {
+		Metrics metrics = new Metrics(this);
 	}
 	
 	@Override

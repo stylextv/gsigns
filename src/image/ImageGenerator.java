@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.HashMap;
 
+import de.stylextv.gs.math.SimplexNoise;
 import de.stylextv.gs.player.Order;
 import de.stylextv.gs.player.PlayerManager;
 
@@ -20,6 +21,23 @@ public class ImageGenerator {
 		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
 		RenderUtil.setRenderingHints(imageGraphics);
 		
+		if(order.getAbstractColor()!=null) {
+			double size=order.getAbstractSize();
+			int seed=order.getAbstractSeed();
+			Color c=order.getAbstractColor();
+			for(int x=0; x<256; x++) {
+				for(int y=0; y<128; y++) {
+					double d=(SimplexNoise.noise(x/size+seed, y/size+seed)+1)/2;
+					
+					d=d*0.7+0.3;
+					
+					int r=(int)Math.round(c.getRed()*d);
+					int g=(int)Math.round(c.getGreen()*d);
+					int b=(int)Math.round(c.getBlue()*d);
+					image.setRGB(x, y, new Color(r,g,b).getRGB());
+				}
+			}
+		}
 		if(order.getBackground()!=null) imageGraphics.drawImage(order.getBackground(), 0,0,256,128, null);
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			BufferedImage textImage=new BufferedImage(512, 256, BufferedImage.TYPE_INT_ARGB);
