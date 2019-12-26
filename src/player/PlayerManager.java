@@ -185,7 +185,7 @@ public class PlayerManager {
 							}
 						}
 					}
-					if(!placed) p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign");
+					if(!placed) p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign.");
 					e.setCancelled(true);
 				}
 			}
