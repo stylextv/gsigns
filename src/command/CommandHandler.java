@@ -57,7 +57,7 @@ public class CommandHandler {
 					} else sendHelpSuggestion(p);
 				}
 			} else sendInfo(p);
-		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§7 only.");
+		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
 		return false;
 	}
 	private static void sendHelpSuggestion(Player p) {
