@@ -16,8 +16,8 @@ public class ImageGenerator {
 	
 	private static HashMap<String, Font> cachedFonts=new HashMap<String, Font>();
 	
-	public static BufferedImage generate(Order order) {
-		BufferedImage image=new BufferedImage(256, 128, BufferedImage.TYPE_INT_RGB);
+	public static BufferedImage generate(Order order, int imgWidth, int imgHeight) {
+		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
 		RenderUtil.setRenderingHints(imageGraphics);
 		
@@ -25,8 +25,8 @@ public class ImageGenerator {
 			double size=order.getAbstractSize();
 			int seed=order.getAbstractSeed();
 			Color c=order.getAbstractColor();
-			for(int x=0; x<256; x++) {
-				for(int y=0; y<128; y++) {
+			for(int x=0; x<image.getWidth(); x++) {
+				for(int y=0; y<image.getHeight(); y++) {
 					double d=(SimplexNoise.noise(x/size+seed, y/size+seed)+1)/2;
 					
 					d=d*0.7+0.3;
@@ -38,9 +38,9 @@ public class ImageGenerator {
 				}
 			}
 		}
-		if(order.getBackground()!=null) imageGraphics.drawImage(order.getBackground(), 0,0,256,128, null);
+		if(order.getBackground()!=null) imageGraphics.drawImage(order.getBackground(), 0,0,image.getWidth(),image.getHeight(), null);
 		if(order.getText()!=null&&order.getTextColor()!=null) {
-			BufferedImage textImage=new BufferedImage(512, 256, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D graphics=(Graphics2D) textImage.getGraphics();
 			RenderUtil.setRenderingHints(graphics);
 			
@@ -50,11 +50,11 @@ public class ImageGenerator {
 			graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
 			int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
 			graphics.setColor(new Color(0,0,0,128+16));
-			graphics.drawString(order.getText(), 512/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, 256/2+fontHeight/2 -1+9);
+			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1+9);
 			graphics.setColor(order.getTextColor());
-			graphics.drawString(order.getText(), 512/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, 256/2+fontHeight/2 -1);
+			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1);
 			
-			imageGraphics.drawImage(textImage, 0,0,256,128, null);
+			imageGraphics.drawImage(textImage, 0,0,image.getWidth(),image.getHeight(), null);
 		}
 		
 		if(order.shouldDither()) ditherImage(image, PlayerManager.matrix, PlayerManager.n);
@@ -102,8 +102,8 @@ public class ImageGenerator {
 	}
 	
 	public static void ditherImage(BufferedImage image, double[] matrix, int n) {
-		for(int y=0; y<128; y++) {
-			for(int x=0; x<256; x++) {
+		for(int y=0; y<image.getHeight(); y++) {
+			for(int x=0; x<image.getWidth(); x++) {
 				Color c=new Color(image.getRGB(x, y));
 				double mValue=matrix[(y%n)+(x%n)*n];
 				double d=mValue*(255.0/n);
