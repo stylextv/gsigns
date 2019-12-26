@@ -10,6 +10,7 @@ public class Order {
 	private String text;
 	private Color textColor=new Color(255,255,255);
 	private BufferedImage background;
+	private int backgroundBlur;
 	private boolean dither=true;
 	private int fontSize=72,fontStyle=0;
 	private String font="Raleway-Bold";
@@ -44,6 +45,12 @@ public class Order {
 	}
 	public void setBackground(BufferedImage background) {
 		this.background = background;
+	}
+	public int getBackgroundBlur() {
+		return backgroundBlur;
+	}
+	public void setBackgroundBlur(int backgroundBlur) {
+		this.backgroundBlur = backgroundBlur;
 	}
 	
 	public boolean shouldDither() {
