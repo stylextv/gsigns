@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -24,7 +23,7 @@ public class PlayerManager {
 	public static int n=8;
 	private static Point[] directions=new Point[]{new Point(1, 0),new Point(0, 1),new Point(-1, 0),new Point(0, -1)};
 	
-	private static ConcurrentHashMap<Player, Task> playerTasks=new ConcurrentHashMap<Player, Task>();
+	private static ConcurrentHashMap<Player, Order> playerTasks=new ConcurrentHashMap<Player, Order>();
 	
 	public static void init() {
 		matrix = new double[] {
@@ -43,14 +42,12 @@ public class PlayerManager {
 	}
 	
 	public static void startPlacingPhase(Player p, Order order) {
-		BufferedImage image=ImageGenerator.generate(order);
-		
-		playerTasks.put(p, new Task(image));
-		p.sendMessage(Vars.PREFIX+"Your sign was created §asuccessfully§7. Please click with the left mouse button on one of the two §estone blocks§7 to place it.");
+		playerTasks.put(p, order);
+		p.sendMessage(Vars.PREFIX+"Your sign was created §asuccessfully§7. Please click with the left mouse button on one of the §estone blocks§7 to place it.");
 	}
 	public static void cancelPlacingPhase(Player p) {
-		Task t=playerTasks.remove(p);
-		if(t!=null) p.sendMessage(Vars.PREFIX+"The placement process has been §ccanceled§7.");
+		Order o=playerTasks.remove(p);
+		if(o!=null) p.sendMessage(Vars.PREFIX+"The placement process has been §ccanceled§7.");
 		else p.sendMessage(Vars.PREFIX+"You are currently not in a placement §cprocess§7.");
 	}
 	
@@ -63,58 +60,132 @@ public class PlayerManager {
 			Block b=e.getClickedBlock();
 			if(b.getType().equals(Material.STONE)) {
 				Player p=e.getPlayer();
-				Task task=playerTasks.get(p);
-				if(task!=null) {
-					Location loc=b.getLocation();
-					for(Point dir:directions) {
-						loc.add(dir.x, 0, dir.y);
-						if(loc.getBlock().getType().equals(Material.STONE)) break;
-						loc.add(-dir.x, 0, -dir.y);
+				Order order=playerTasks.get(p);
+				if(order!=null) {
+					Location top=b.getLocation();
+					Location bottom=b.getLocation().clone();
+					int maxI=0;
+					while(top.getBlock().getRelative(BlockFace.UP).getType().equals(Material.STONE)) {
+						top.add(0,1,0);
+						maxI++;
+						if(maxI>10) break;
 					}
-					Location base=b.getLocation();
-					if(!loc.equals(base)) {
-						BufferedImage image=task.getImage();
-						
-						Point dirToLookIn=new Point(-(base.getBlockZ()-loc.getBlockZ()),(base.getBlockX()-loc.getBlockX()));
-						World world=loc.getWorld();
-						if(loc.clone().add(dirToLookIn.x, 0, dirToLookIn.y).getBlock().getType().isSolid()&&base.clone().add(dirToLookIn.x, 0, dirToLookIn.y).getBlock().getType().isSolid()) {
-							b.setType(Material.AIR);
-							loc.getBlock().setType(Material.AIR);
-							BlockFace dir;
-							if(dirToLookIn.x!=0) {
-								int i=-dirToLookIn.x;
-								if(i>0) dir=BlockFace.EAST;
-								else dir=BlockFace.WEST;
-							} else {
-								int i=-dirToLookIn.y;
-								if(i>0) dir=BlockFace.SOUTH;
-								else dir=BlockFace.NORTH;
-							}
-							WorldUtil.spawnItemFrame(world, base, image.getSubimage(0, 0, 128, 128), dir);
-							WorldUtil.spawnItemFrame(world, loc, image.getSubimage(128, 0, 128, 128), dir);
-							p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
-							playerTasks.remove(p);
-						} else if(loc.clone().add(-dirToLookIn.x, 0, -dirToLookIn.y).getBlock().getType().isSolid()&&base.clone().add(-dirToLookIn.x, 0, -dirToLookIn.y).getBlock().getType().isSolid()) {
-							b.setType(Material.AIR);
-							loc.getBlock().setType(Material.AIR);
-							BlockFace dir;
-							if(dirToLookIn.x!=0) {
-								int i=dirToLookIn.x;
-								if(i>0) dir=BlockFace.EAST;
-								else dir=BlockFace.WEST;
-							} else {
-								int i=dirToLookIn.y;
-								if(i>0) dir=BlockFace.SOUTH;
-								else dir=BlockFace.NORTH;
-							}
-							WorldUtil.spawnItemFrame(world, loc, image.getSubimage(0, 0, 128, 128), dir);
-							WorldUtil.spawnItemFrame(world, base, image.getSubimage(128, 0, 128, 128), dir);
-							p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
-							playerTasks.remove(p);
-						} else {
-							p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign");
+					maxI=0;
+					while(bottom.getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.STONE)) {
+						bottom.add(0,-1,0);
+						maxI++;
+						if(maxI>10) break;
+					}
+					if(top.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.STONE)) {
+						maxI=0;
+						while(top.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.STONE)) {
+							top.add(0,0,-1);
+							maxI++;
+							if(maxI>10) break;
 						}
-					} else p.sendMessage(Vars.PREFIX+"Could not find another §cstone§7 block nearby.");
+						maxI=0;
+						while(bottom.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.STONE)) {
+							bottom.add(0,0,1);
+							maxI++;
+							if(maxI>10) break;
+						}
+					} else if(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
+						maxI=0;
+						while(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)) {
+							top.add(1,0,0);
+							maxI++;
+							if(maxI>10) break;
+						}
+						maxI=0;
+						while(bottom.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
+							bottom.add(-1,0,0);
+							maxI++;
+							if(maxI>10) break;
+						}
+					}
+					boolean placed=false;
+					for(Point dir:directions) {
+						boolean valid=true;
+						if(dir.x!=0) {
+							valid=top.getBlockX()==bottom.getBlockX()||(top.getBlockZ()==bottom.getBlockZ()&&top.getBlockX()==bottom.getBlockX());
+						}
+						
+						if(valid) {
+							boolean save=true;
+							for(int x=bottom.getBlockX(); x<=top.getBlockX(); x++) {
+								for(int y=bottom.getBlockY(); y<=top.getBlockY(); y++) {
+									if(!save) break;
+									for(int z=top.getBlockZ(); z<=top.getBlockZ(); z++) {
+										Block block=top.getWorld().getBlockAt(x+dir.x, y, z+dir.y);
+										if(!(block.getType().isSolid()&&!block.getType().equals(Material.STONE)&&top.getWorld().getBlockAt(x, y, z).getType().equals(Material.STONE))) {
+											save=false;
+											break;
+										}
+									}
+								}
+							}
+							if(save) {
+								int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
+								if(dir.x!=0) {
+									int minZ;
+									int maxZ;
+									BlockFace face;
+									minZ=Math.min(top.getBlockZ(),bottom.getBlockZ());
+									maxZ=Math.max(top.getBlockZ(),bottom.getBlockZ());
+									if(dir.x==-1) {
+										face=BlockFace.EAST;
+									} else {
+										face=BlockFace.WEST;
+									}
+									int imgWidth=maxZ-minZ+1;
+									BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+									
+									for(int z=minZ; z<=maxZ; z++) {
+										for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+											Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
+											loc.getBlock().setType(Material.AIR);
+											int imgY=top.getBlockY()-y;
+											int imgX;
+											if(dir.x==-1) imgX=maxZ-z;
+											else imgX=z-minZ;
+											WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+										}
+									}
+								} else {
+									int minX;
+									int maxX;
+									BlockFace face;
+									maxX=Math.max(top.getBlockX(),bottom.getBlockX());
+									minX=Math.min(top.getBlockX(),bottom.getBlockX());
+									if(dir.y==-1) {
+										face=BlockFace.SOUTH;
+									} else {
+										face=BlockFace.NORTH;
+									}
+									int imgWidth=maxX-minX+1;
+									BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+									
+									for(int x=minX; x<=maxX; x++) {
+										for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+											Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
+											loc.getBlock().setType(Material.AIR);
+											int imgY=top.getBlockY()-y;
+											int imgX;
+											if(dir.y==-1) imgX=x-minX;
+											else imgX=maxX-x;
+											WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+										}
+									}
+								}
+								
+								placed=true;
+								p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+								playerTasks.remove(p);
+								break;
+							}
+						}
+					}
+					if(!placed) p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign");
 					e.setCancelled(true);
 				}
 			}

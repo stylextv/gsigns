@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -45,24 +46,38 @@ public class WorldUtil {
 						int x=Integer.valueOf(split[2]);
 						int y=Integer.valueOf(split[3]);
 						int z=Integer.valueOf(split[4]);
-						BlockFace dir=BlockFace.valueOf(split[5]);
-						BufferedImage image=ImageIO.read(f);
-						
 						World world=Bukkit.getWorld(w);
-						ItemFrame frame=(ItemFrame) world.spawnEntity(new Location(world, x, y, z), EntityType.ITEM_FRAME);
-						frame.setFacingDirection(dir);
+						Location loc=new Location(world, x, y, z);
 						
-						MapView view=Bukkit.getMap(id);
-						view.getRenderers().clear();
-						for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-						view.addRenderer(new ImageMapRenderer(image));
-						ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-						MapMeta meta=(MapMeta) item.getItemMeta();
-						meta.setMapView(view);
-						item.setItemMeta(meta);
-						
-						frame.setItem(item);
-						savedFrames.put(frame,f);
+						ItemFrame blocked=null;
+						for(Entity e:loc.getChunk().getEntities()) {
+							if(e instanceof ItemFrame) {
+								Location eLoc=e.getLocation();
+								if(eLoc.getBlockX()==x&&eLoc.getBlockY()==y&&eLoc.getBlockZ()==z) {
+									blocked=(ItemFrame) e;
+									break;
+								}
+							}
+						}
+						if(blocked==null) {
+							BlockFace dir=BlockFace.valueOf(split[5]);
+							BufferedImage image=ImageIO.read(f);
+							
+							ItemFrame frame=(ItemFrame) world.spawnEntity(loc, EntityType.ITEM_FRAME);
+							frame.setFacingDirection(dir);
+							
+							MapView view=Bukkit.getMap(id);
+							view.getRenderers().clear();
+							for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
+							view.addRenderer(new ImageMapRenderer(image));
+							ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
+							MapMeta meta=(MapMeta) item.getItemMeta();
+							meta.setMapView(view);
+							item.setItemMeta(meta);
+							
+							frame.setItem(item);
+							savedFrames.put(frame,f);
+						} else savedFrames.put(blocked,f);
 					} catch(Exception ex) {}
 				}
 			}
