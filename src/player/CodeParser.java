@@ -1,12 +1,14 @@
 package de.stylextv.gs.player;
 
 import java.awt.Color;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 import de.stylextv.gs.math.MathUtil;
+import de.stylextv.gs.world.WorldUtil;
 
 public class CodeParser {
 	
@@ -53,6 +55,9 @@ public class CodeParser {
 							break;
 						case "bg-url":
 							order.setBackground(ImageIO.read(new URL(value)));
+							break;
+						case "bg-img":
+							order.setBackground(ImageIO.read(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
 							break;
 						case "bg-blur":
 							order.setBackgroundBlur(Integer.valueOf(value));
