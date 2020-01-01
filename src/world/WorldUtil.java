@@ -28,11 +28,17 @@ import de.stylextv.gs.render.ImageMapRenderer;
 public class WorldUtil {
 	
 	private static File imageFolder=new File("plugins/GamemodeSigns/images");
+	private static File customImagesFolder=new File("plugins/GamemodeSigns/customImages");
+	public static File getCustomImagesFolder() {
+		return customImagesFolder;
+	}
 	
 	private static ArrayList<ItemFrame> frames=new ArrayList<ItemFrame>();
 	private static HashMap<ItemFrame, File> savedFrames=new HashMap<ItemFrame, File>();
 	
 	public static void onEnable() {
+		customImagesFolder.mkdirs();
+		
 		new BukkitRunnable() {
 			@SuppressWarnings("deprecation")
 			@Override
