@@ -12,8 +12,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import de.stylextv.gs.decode.GifDecoder;
 import de.stylextv.gs.image.ImageGenerator;
+import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
 import de.stylextv.gs.world.WorldUtil;
 
@@ -138,17 +141,50 @@ public class PlayerManager {
 										face=BlockFace.WEST;
 									}
 									int imgWidth=maxZ-minZ+1;
-									BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
 									
-									for(int z=minZ; z<=maxZ; z++) {
-										for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
-											Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
-											loc.getBlock().setType(Material.AIR);
-											int imgY=top.getBlockY()-y;
-											int imgX;
-											if(dir.x==-1) imgX=maxZ-z;
-											else imgX=z-minZ;
-											WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+									if(order.getBackgroundGif()!=null) {
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												GifDecoder decoder=order.getBackgroundGif();
+												int amount=decoder.getFrameCount();
+												BufferedImage frames[]=new BufferedImage[amount];
+												for(int i=0; i<amount; i++) {
+													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
+												}
+												
+												long startTime=System.currentTimeMillis();
+												int delay=decoder.getDelay(0);
+												for(int z=minZ; z<=maxZ; z++) {
+													for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+														Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
+														int imgY=top.getBlockY()-y;
+														int imgX;
+														if(dir.x==-1) imgX=maxZ-z;
+														else imgX=z-minZ;
+														BufferedImage[] individualFrames=new BufferedImage[amount];
+														for(int i=0; i<amount; i++) {
+															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
+														}
+														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+													}
+												}
+												System.gc();
+											}
+										}.runTaskAsynchronously(Main.getPlugin());
+									} else {
+										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										
+										for(int z=minZ; z<=maxZ; z++) {
+											for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+												Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
+												loc.getBlock().setType(Material.AIR);
+												int imgY=top.getBlockY()-y;
+												int imgX;
+												if(dir.x==-1) imgX=maxZ-z;
+												else imgX=z-minZ;
+												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+											}
 										}
 									}
 								} else {
@@ -163,23 +199,57 @@ public class PlayerManager {
 										face=BlockFace.NORTH;
 									}
 									int imgWidth=maxX-minX+1;
-									BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
 									
-									for(int x=minX; x<=maxX; x++) {
-										for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
-											Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
-											loc.getBlock().setType(Material.AIR);
-											int imgY=top.getBlockY()-y;
-											int imgX;
-											if(dir.y==-1) imgX=x-minX;
-											else imgX=maxX-x;
-											WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+									if(order.getBackgroundGif()!=null) {
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												GifDecoder decoder=order.getBackgroundGif();
+												int amount=decoder.getFrameCount();
+												BufferedImage frames[]=new BufferedImage[amount];
+												for(int i=0; i<amount; i++) {
+													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
+												}
+												
+												long startTime=System.currentTimeMillis();
+												int delay=decoder.getDelay(0);
+												for(int x=minX; x<=maxX; x++) {
+													for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+														Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
+														int imgY=top.getBlockY()-y;
+														int imgX;
+														if(dir.y==-1) imgX=x-minX;
+														else imgX=maxX-x;
+														BufferedImage[] individualFrames=new BufferedImage[amount];
+														for(int i=0; i<amount; i++) {
+															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
+														}
+														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+													}
+												}
+												System.gc();
+											}
+										}.runTaskAsynchronously(Main.getPlugin());
+									} else {
+										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										
+										for(int x=minX; x<=maxX; x++) {
+											for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
+												Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
+												loc.getBlock().setType(Material.AIR);
+												int imgY=top.getBlockY()-y;
+												int imgX;
+												if(dir.y==-1) imgX=x-minX;
+												else imgX=maxX-x;
+												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+											}
 										}
 									}
 								}
 								
 								placed=true;
-								p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+								if(order.getBackgroundGif()!=null) p.sendMessage(Vars.PREFIX+"Please §ewait§7 until the sign has been placed. This may take a bit.");
+								else p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
 								playerTasks.remove(p);
 								break;
 							}

@@ -69,6 +69,58 @@ public class ImageGenerator {
 		
 		return image;
 	}
+	public static BufferedImage generate(Order order, int imgWidth, int imgHeight, int gifFrame) {
+		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
+		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
+		RenderUtil.setRenderingHints(imageGraphics);
+		
+		if(order.getAbstractColor()!=null) {
+			double size=order.getAbstractSize();
+			int seed=order.getAbstractSeed();
+			Color c=order.getAbstractColor();
+			for(int x=0; x<image.getWidth(); x++) {
+				for(int y=0; y<image.getHeight(); y++) {
+					double d=(SimplexNoise.noise(x/size+seed, y/size+seed)+1)/2;
+					
+					d=d*0.7+0.3;
+					
+					int r=(int)Math.round(c.getRed()*d);
+					int g=(int)Math.round(c.getGreen()*d);
+					int b=(int)Math.round(c.getBlue()*d);
+					image.setRGB(x, y, new Color(r,g,b).getRGB());
+				}
+			}
+		}
+		if(order.getBackgroundGif()!=null) {
+			BufferedImage frame=order.getBackgroundGif().getFrame(gifFrame);
+			if(order.getBackgroundBlur()!=0) {
+				BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(frame, null);
+				blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
+				imageGraphics.drawImage(blurred, 0,0,image.getWidth(),image.getHeight(), null);
+			} else imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
+		}
+		if(order.getText()!=null&&order.getTextColor()!=null) {
+			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D graphics=(Graphics2D) textImage.getGraphics();
+			RenderUtil.setRenderingHints(graphics);
+			
+			Font font=getFont(order.getFont());
+			String name="";
+			if(font!=null) name=font.getName();
+			graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
+			int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
+			graphics.setColor(new Color(0,0,0,128+16));
+			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1+9);
+			graphics.setColor(order.getTextColor());
+			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1);
+			
+			imageGraphics.drawImage(textImage, 0,0,image.getWidth(),image.getHeight(), null);
+		}
+		
+		if(order.shouldDither()) ditherImage(image, PlayerManager.matrix, PlayerManager.n);
+		
+		return image;
+	}
 	private static Font getFont(String name) {
 		if(name==null) return null;
 		Font got=cachedFonts.get(name);
