@@ -55,13 +55,7 @@ public class CodeParser {
 							order.setTextColor(Color.decode(value));
 							break;
 						case "bg-url":
-							if(value.endsWith(".gif")) {
-								GifDecoder decoder=new GifDecoder();
-								URL url=new URL(value);
-								int status=decoder.read(url.openStream());
-								if(status!=GifDecoder.STATUS_OK) throw new Exception();
-								order.setBackgroundGif(decoder);
-							} else order.setBackground(ImageIO.read(new URL(value)));
+							order.setBackground(ImageIO.read(new URL(value)));
 							break;
 						case "bg-img":
 							if(value.endsWith(".gif")) {
