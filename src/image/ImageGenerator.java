@@ -62,7 +62,18 @@ public class ImageGenerator {
 					}
 				}
 			}
-			imageGraphics.drawImage(backgroundImage, 0,0,image.getWidth(),image.getHeight(), null);
+			double bgRatio=(double)backgroundImage.getWidth()/backgroundImage.getHeight();
+			double imgRatio=(double)image.getWidth()/image.getHeight();
+			if(bgRatio>imgRatio) {
+				int width=(int) (((double)backgroundImage.getWidth()/backgroundImage.getHeight())*image.getHeight());
+				imageGraphics.drawImage(backgroundImage, image.getWidth()/2-width/2,0,width,image.getHeight(), null);
+			} else if(bgRatio<imgRatio) {
+				int height=(int) (((double)backgroundImage.getHeight()/backgroundImage.getWidth())*image.getWidth());
+				imageGraphics.drawImage(backgroundImage, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
+			} else {
+				int size=image.getWidth();
+				imageGraphics.drawImage(backgroundImage, image.getWidth()/2-size/2,image.getHeight()/2-size/2,size,size, null);
+			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
@@ -130,7 +141,18 @@ public class ImageGenerator {
 					}
 				}
 			}
-			imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
+			double bgRatio=(double)frame.getWidth()/frame.getHeight();
+			double imgRatio=(double)image.getWidth()/image.getHeight();
+			if(bgRatio>imgRatio) {
+				int width=(int) (((double)frame.getWidth()/frame.getHeight())*image.getHeight());
+				imageGraphics.drawImage(frame, image.getWidth()/2-width/2,0,width,image.getHeight(), null);
+			} else if(bgRatio<imgRatio) {
+				int height=(int) (((double)frame.getHeight()/frame.getWidth())*image.getWidth());
+				imageGraphics.drawImage(frame, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
+			} else {
+				int size=image.getWidth();
+				imageGraphics.drawImage(frame, image.getWidth()/2-size/2,image.getHeight()/2-size/2,size,size, null);
+			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
