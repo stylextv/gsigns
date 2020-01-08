@@ -13,6 +13,7 @@ public class Order {
 	private BufferedImage background;
 	private GifDecoder backgroundGif;
 	private int backgroundBlur;
+	private float backgroundBrightness=1;
 	private boolean dither=true;
 	private int fontSize=72,fontStyle=0;
 	private String font="Raleway-Bold";
@@ -59,6 +60,12 @@ public class Order {
 	}
 	public void setBackgroundBlur(int backgroundBlur) {
 		this.backgroundBlur = backgroundBlur;
+	}
+	public float getBackgroundBrightness() {
+		return backgroundBrightness;
+	}
+	public void setBackgroundBrightness(float backgroundBrightness) {
+		this.backgroundBrightness = backgroundBrightness;
 	}
 	
 	public boolean shouldDither() {
