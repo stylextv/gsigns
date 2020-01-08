@@ -40,12 +40,29 @@ public class ImageGenerator {
 				}
 			}
 		}
-		if(order.getBackground()!=null) {
+		if(order.getBackground()!=null&&order.getBackgroundBrightness()>0) {
+			BufferedImage backgroundImage;
 			if(order.getBackgroundBlur()!=0) {
 				BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(order.getBackground(), null);
 				blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
-				imageGraphics.drawImage(blurred, 0,0,image.getWidth(),image.getHeight(), null);
-			} else imageGraphics.drawImage(order.getBackground(), 0,0,image.getWidth(),image.getHeight(), null);
+				backgroundImage=blurred;
+			} else backgroundImage=order.getBackground();
+			if(order.getBackgroundBrightness()!=1) {
+				float f=order.getBackgroundBrightness();
+				for(int x=0; x<backgroundImage.getWidth(); x++) {
+					for(int y=0; y<backgroundImage.getHeight(); y++) {
+						Color c=new Color(backgroundImage.getRGB(x, y));
+						int r=(int) (c.getRed()*f);
+						int g=(int) (c.getGreen()*f);
+						int b=(int) (c.getBlue()*f);
+						if(r>255)r=255;
+						if(g>255)g=255;
+						if(b>255)b=255;
+						backgroundImage.setRGB(x, y, new Color(r,g,b).getRGB());
+					}
+				}
+			}
+			imageGraphics.drawImage(backgroundImage, 0,0,image.getWidth(),image.getHeight(), null);
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
@@ -91,13 +108,29 @@ public class ImageGenerator {
 				}
 			}
 		}
-		if(order.getBackgroundGif()!=null) {
+		if(order.getBackgroundGif()!=null&&order.getBackgroundBrightness()>0) {
 			BufferedImage frame=order.getBackgroundGif().getFrame(gifFrame);
 			if(order.getBackgroundBlur()!=0) {
 				BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(frame, null);
 				blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
-				imageGraphics.drawImage(blurred, 0,0,image.getWidth(),image.getHeight(), null);
-			} else imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
+				frame=blurred;
+			}
+			if(order.getBackgroundBrightness()!=1) {
+				float f=order.getBackgroundBrightness();
+				for(int x=0; x<frame.getWidth(); x++) {
+					for(int y=0; y<frame.getHeight(); y++) {
+						Color c=new Color(frame.getRGB(x, y));
+						int r=(int) (c.getRed()*f);
+						int g=(int) (c.getGreen()*f);
+						int b=(int) (c.getBlue()*f);
+						if(r>255)r=255;
+						if(g>255)g=255;
+						if(b>255)b=255;
+						frame.setRGB(x, y, new Color(r,g,b).getRGB());
+					}
+				}
+			}
+			imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);

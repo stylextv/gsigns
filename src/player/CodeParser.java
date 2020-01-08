@@ -68,6 +68,9 @@ public class CodeParser {
 						case "bg-blur":
 							order.setBackgroundBlur(Integer.valueOf(value));
 							break;
+						case "bg-bright":
+							order.setBackgroundBrightness(Float.valueOf(value));
+							break;
 						case "dith":
 							order.setDither(Boolean.valueOf(value));
 							break;
