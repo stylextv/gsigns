@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -16,11 +15,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -37,16 +33,21 @@ public class WorldUtil {
 		return customImagesFolder;
 	}
 	
-	private static ArrayList<ItemFrame> frames=new ArrayList<ItemFrame>();
+	private static EnumUtil enumUtil;
+	
+	private static CopyOnWriteArrayList<ItemFrame> frames=new CopyOnWriteArrayList<ItemFrame>();
 	private static CopyOnWriteArrayList<ItemFrame> gifFrames=new CopyOnWriteArrayList<ItemFrame>();
 	private static HashMap<ItemFrame, File> savedFrames=new HashMap<ItemFrame, File>();
 	private static HashMap<ItemFrame, File> savedGifFrames=new HashMap<ItemFrame, File>();
 	
 	public static void onEnable() {
+		String version=Bukkit.getServer().getVersion();
+		if(version.contains("1.8")) enumUtil=new EnumUtil18();
+		else enumUtil=new EnumUtil114();
+		
 		customImagesFolder.mkdirs();
 		
 		new BukkitRunnable() {
-			@SuppressWarnings("deprecation")
 			@Override
 			public void run() {
 				long currentTime=System.currentTimeMillis();
@@ -91,19 +92,7 @@ public class WorldUtil {
 								}
 								GifMapRenderer renderer=new GifMapRenderer(framesData, delay, currentTime);
 								
-								ItemFrame frame=(ItemFrame) world.spawnEntity(loc, EntityType.ITEM_FRAME);
-								frame.setFacingDirection(dir);
-								
-								MapView view=Bukkit.getMap(id);
-								view.getRenderers().clear();
-								for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-								view.addRenderer(renderer);
-								ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-								MapMeta meta=(MapMeta) item.getItemMeta();
-								meta.setMapView(view);
-								item.setItemMeta(meta);
-								
-								frame.setItem(item);
+								ItemFrame frame=enumUtil.spawnItemFrame(id, world, loc, dir, renderer);
 								savedGifFrames.put(frame,f);
 								gifFrames.add(frame);
 							} else savedFrames.put(blocked,f);
@@ -132,19 +121,7 @@ public class WorldUtil {
 								BlockFace dir=BlockFace.valueOf(split[5]);
 								BufferedImage image=ImageIO.read(f);
 								
-								ItemFrame frame=(ItemFrame) world.spawnEntity(loc, EntityType.ITEM_FRAME);
-								frame.setFacingDirection(dir);
-								
-								MapView view=Bukkit.getMap(id);
-								view.getRenderers().clear();
-								for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-								view.addRenderer(new ImageMapRenderer(image));
-								ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-								MapMeta meta=(MapMeta) item.getItemMeta();
-								meta.setMapView(view);
-								item.setItemMeta(meta);
-								
-								frame.setItem(item);
+								ItemFrame frame=enumUtil.spawnItemFrame(id, world, loc, dir, new ImageMapRenderer(image));
 								savedFrames.put(frame,f);
 							} else savedFrames.put(blocked,f);
 						}
@@ -157,19 +134,56 @@ public class WorldUtil {
 			public void run() {
 				long currentTime=System.currentTimeMillis();
 				for(ItemFrame frame:gifFrames) {
-					MapMeta meta=(MapMeta) frame.getItem().getItemMeta();
-					if(!frame.isDead()&&meta!=null) {
-						MapView view=meta.getMapView();
-						GifMapRenderer renderer=(GifMapRenderer) view.getRenderers().get(0);
-						if(renderer.update(currentTime)) {
-							for(Player all:Bukkit.getOnlinePlayers()) {
-								if(all.getLocation().distanceSquared(frame.getLocation())<20*20) all.sendMap(view);
+				    MapView view=enumUtil.getMapView(frame.getItem());
+					if(!frame.isDead()&&view!=null) {
+					    MapRenderer r=view.getRenderers().get(0);
+						if(r instanceof GifMapRenderer) {
+							GifMapRenderer renderer=(GifMapRenderer) r;
+							if(renderer.update(currentTime)) {
+								for(Player all:Bukkit.getOnlinePlayers()) {
+									if(all.getLocation().distanceSquared(frame.getLocation())<20*20) {
+										all.sendMap(view);
+									}
+								}
 							}
 						}
 					} else gifFrames.remove(frame);
 				}
 			}
 		}.runTaskTimerAsynchronously(Main.getPlugin(), 0, 0);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for(ItemFrame frame:savedFrames.keySet()) {
+				    MapView view=enumUtil.getMapView(frame.getItem());
+					if(!frame.isDead()&&view!=null) {
+					    MapRenderer r=view.getRenderers().get(0);
+					    if(r instanceof ImageMapRenderer) {
+							ImageMapRenderer renderer=(ImageMapRenderer) r;
+							for(Player all:Bukkit.getOnlinePlayers()) {
+								if(renderer.shouldDrawTo(all,frame)) {
+									all.sendMap(view);
+								}
+							}
+					    }
+					}
+				}
+				for(ItemFrame frame:frames) {
+				    MapView view=enumUtil.getMapView(frame.getItem());
+					if(!frame.isDead()&&view!=null) {
+					    MapRenderer r=view.getRenderers().get(0);
+					    if(r instanceof ImageMapRenderer) {
+							ImageMapRenderer renderer=(ImageMapRenderer) r;
+							for(Player all:Bukkit.getOnlinePlayers()) {
+								if(renderer.shouldDrawTo(all,frame)) {
+									all.sendMap(view);
+								}
+							}
+					    }
+					} else frames.remove(frame);
+				}
+			}
+		}.runTaskTimerAsynchronously(Main.getPlugin(), 0, 10);
 	}
 	public static void onDisable() {
 		imageFolder.mkdirs();
@@ -188,20 +202,18 @@ public class WorldUtil {
 			for(ItemFrame frame:frames) {
 				if(!frame.isDead()) {
 					frame.remove();
-					MapMeta meta=(MapMeta) frame.getItem().getItemMeta();
-					MapView view=meta.getMapView();
+				    MapView view=enumUtil.getMapView(frame.getItem());
 					Location loc=frame.getLocation();
-					File file=new File("plugins/GamemodeSigns/images/"+view.getId()+","+loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+".png");
+					File file=new File("plugins/GamemodeSigns/images/"+enumUtil.getMapId(view)+","+loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+".png");
 					ImageIO.write(((ImageMapRenderer)view.getRenderers().get(0)).getImage(), "PNG", file);
 				}
 			}
 			for(ItemFrame frame:gifFrames) {
 				frame.remove();
-				MapMeta meta=(MapMeta) frame.getItem().getItemMeta();
-				MapView view=meta.getMapView();
+			    MapView view=enumUtil.getMapView(frame.getItem());
 				Location loc=frame.getLocation();
 				GifMapRenderer renderer=(GifMapRenderer)view.getRenderers().get(0);
-			    try (FileOutputStream fos = new FileOutputStream("plugins/GamemodeSigns/images/"+view.getId()+","+loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+","+renderer.getDelay()+".ggif")) {
+			    try (FileOutputStream fos = new FileOutputStream("plugins/GamemodeSigns/images/"+enumUtil.getMapId(view)+","+loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+","+renderer.getDelay()+".ggif")) {
 			    	for(byte[] bytes:renderer.getFramesData()) fos.write(bytes);
 			    }
 			}
@@ -220,27 +232,14 @@ public class WorldUtil {
 	}
 	private static void removeDrewEntry(ItemFrame frame, Player p) {
 		try {
-			MapMeta meta=(MapMeta) frame.getItem().getItemMeta();
-			MapView view=meta.getMapView();
+		    MapView view=enumUtil.getMapView(frame.getItem());
 			
 			((ImageMapRenderer)view.getRenderers().get(0)).removePlayer(p);
 		} catch(Exception ex) {}
 	}
 	
 	public static void spawnItemFrame(World world, Location loc, BufferedImage image, BlockFace direction) {
-		ItemFrame frame=(ItemFrame) world.spawnEntity(loc, EntityType.ITEM_FRAME);
-		frame.setFacingDirection(direction);
-		
-		MapView view = Bukkit.createMap(world);
-		view.getRenderers().clear();
-		for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-		view.addRenderer(new ImageMapRenderer(image));
-		ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-		MapMeta meta=(MapMeta) item.getItemMeta();
-		meta.setMapView(view);
-		item.setItemMeta(meta);
-		
-		frame.setItem(item);
+		ItemFrame frame=enumUtil.spawnItemFrame(world, loc, direction, new ImageMapRenderer(image));
 		frames.add(frame);
 	}
 	public static void spawnItemFrame(World world, Location loc, BufferedImage[] frames, int delay, long startTime, BlockFace direction) {
@@ -250,19 +249,7 @@ public class WorldUtil {
 			public void run() {
 				loc.getBlock().setType(Material.AIR);
 				
-				ItemFrame frame=(ItemFrame) world.spawnEntity(loc, EntityType.ITEM_FRAME);
-				frame.setFacingDirection(direction);
-				
-				MapView view = Bukkit.createMap(world);
-				view.getRenderers().clear();
-				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-				view.addRenderer(renderer);
-				ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
-				MapMeta meta=(MapMeta) item.getItemMeta();
-				meta.setMapView(view);
-				item.setItemMeta(meta);
-				
-				frame.setItem(item);
+				ItemFrame frame=enumUtil.spawnItemFrame(world, loc, direction, renderer);
 				gifFrames.add(frame);
 			}
 		}.runTask(Main.getPlugin());
