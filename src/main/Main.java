@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.bstats.Metrics;
 import de.stylextv.gs.command.CommandGS;
@@ -85,9 +86,14 @@ public class Main extends JavaPlugin {
 		File f=new File(plugin.getDataFolder().getPath()+"/au-result");
 		if(f.exists()) {
 			f.delete();
-			Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"A new update has been §ainstalled§r. Version: "+Vars.VERSION);
-			Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The changelog can be found here:");
-			Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"https://www.spigotmc.org/resources/g-signs-a-unique-map-signs-plugin-for-lobbies.73693/updates");
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"A new update has been §ainstalled§r. Version: "+Vars.VERSION);
+					Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The changelog can be found here:");
+					Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"https://www.spigotmc.org/resources/g-signs-a-unique-map-signs-plugin-for-lobbies.73693/updates");
+				}
+			}.runTaskLaterAsynchronously(plugin, 5);
 		}
 	}
 	
