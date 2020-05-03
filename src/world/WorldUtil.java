@@ -141,7 +141,7 @@ public class WorldUtil {
 							GifMapRenderer renderer=(GifMapRenderer) r;
 							if(renderer.update(currentTime)) {
 								for(Player all:Bukkit.getOnlinePlayers()) {
-									if(all.getLocation().distanceSquared(frame.getLocation())<20*20) {
+									if(all.getWorld()==frame.getWorld()&&all.getLocation().distanceSquared(frame.getLocation())<20*20) {
 										all.sendMap(view);
 									}
 								}
