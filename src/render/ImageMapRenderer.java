@@ -20,7 +20,7 @@ public class ImageMapRenderer extends MapRenderer {
 	}
 	
 	public boolean shouldDrawTo(Player p, ItemFrame frame) {
-		if(p.getLocation().distanceSquared(frame.getLocation())<30*30) {
+		if(p.getWorld()==frame.getWorld()&&p.getLocation().distanceSquared(frame.getLocation())<30*30) {
 			if(playersDrewTo.contains(p)) {
 				return false;
 			}
