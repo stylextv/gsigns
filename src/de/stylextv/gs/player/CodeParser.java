@@ -61,7 +61,11 @@ public class CodeParser {
 							if(value.endsWith(".gif")) {
 								GifDecoder decoder=new GifDecoder();
 								int status=decoder.read(WorldUtil.getCustomImagesFolder().getPath()+"/"+value);
-								if(status!=GifDecoder.STATUS_OK) throw new Exception();
+								if(status!=GifDecoder.STATUS_OK) {
+									String msg="STATUS_OPEN_ERROR";
+									if(status==GifDecoder.STATUS_FORMAT_ERROR) msg="STATUS_FORMAT_ERROR";
+									throw new IllegalArgumentException(msg);
+								}
 								order.setBackgroundGif(decoder);
 							} else order.setBackground(ImageIO.read(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
 							break;
@@ -99,7 +103,7 @@ public class CodeParser {
 							break;
 						}
 					} catch(Exception ex) {
-						order.setError(var);
+						order.setError(var+" | "+ex.getMessage());
 						return order;
 					}
 				}
