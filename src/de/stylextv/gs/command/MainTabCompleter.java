@@ -16,18 +16,25 @@ public class MainTabCompleter implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if(sender instanceof Player && (cmd.getName().equalsIgnoreCase("gs")||cmd.getName().equalsIgnoreCase("gsigns")||cmd.getName().equalsIgnoreCase("gamemodesigns"))) {
 			Player p = (Player) sender;
-			if(PermissionUtil.hasCreatePermission(p)) {
+			if(PermissionUtil.hasCreatePermission(p)||PermissionUtil.hasListPermission(p)) {
 				if(args.length==1) {
 					ArrayList<String> tabs=new ArrayList<String>();
 					tabs.add("create");
 					tabs.add("cancel");
+					tabs.add("listfiles");
 					tabs.add("help");
 					tabs.add("info");
 					return tabs;
-				} else if(args.length==2&&args[0].equalsIgnoreCase("create")) {
-					ArrayList<String> tabs=new ArrayList<String>();
-					tabs.add("<code>");
-					return tabs;
+				} else if(args.length==2) {
+					if(args[0].equalsIgnoreCase("create")) {
+						ArrayList<String> tabs=new ArrayList<String>();
+						tabs.add("<code>");
+						return tabs;
+					} else if(args[0].equalsIgnoreCase("listfiles")) {
+						ArrayList<String> tabs=new ArrayList<String>();
+						tabs.add("[page]");
+						return tabs;
+					}
 				}
 			}
 		}
