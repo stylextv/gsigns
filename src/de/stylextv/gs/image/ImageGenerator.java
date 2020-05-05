@@ -269,5 +269,14 @@ public class ImageGenerator {
         }
         return new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
     }
+	public static BufferedImage rotateImage(BufferedImage image, int angle) {
+		if(angle==0) return image;
+		BufferedImage rotated=new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		Graphics2D graphics=(Graphics2D) rotated.getGraphics();
+		
+		graphics.rotate(Math.toRadians(angle), image.getWidth()/2,image.getHeight()/2);
+		graphics.drawImage(image, 0,0, null);
+		return rotated;
+	}
 	
 }

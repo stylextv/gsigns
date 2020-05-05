@@ -1,6 +1,5 @@
 package de.stylextv.gs.player;
 
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,13 +17,14 @@ import de.stylextv.gs.decode.GifDecoder;
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
+import de.stylextv.gs.world.Direction;
 import de.stylextv.gs.world.WorldUtil;
 
 public class PlayerManager {
 	
 	public static double[] matrix;
 	public static int n=8;
-	private static Point[] directions=new Point[]{new Point(1, 0),new Point(0, 1),new Point(-1, 0),new Point(0, -1)};
+	private static Direction[] directions=new Direction[]{new Direction(1, 0, 0),new Direction(0, 0, 1),new Direction(-1, 0, 0),new Direction(0, 0, -1),new Direction(0, -1, 0),new Direction(0, 1, 0)};
 	
 	private static ConcurrentHashMap<Player, Order> playerTasks=new ConcurrentHashMap<Player, Order>();
 	
@@ -92,7 +92,8 @@ public class PlayerManager {
 							maxI++;
 							if(maxI>10) break;
 						}
-					} else if(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
+					}
+					if(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
 						maxI=0;
 						while(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)) {
 							top.add(1,0,0);
@@ -107,11 +108,13 @@ public class PlayerManager {
 						}
 					}
 					boolean placed=false;
-					for(Point dir:directions) {
+					for(Direction dir:directions) {
 						boolean valid=true;
-						if(dir.x!=0) {
-							valid=top.getBlockX()==bottom.getBlockX()||(top.getBlockZ()==bottom.getBlockZ()&&top.getBlockX()==bottom.getBlockX());
-						}
+						if(dir.getX()!=0) {
+							valid=top.getBlockX()==bottom.getBlockX();
+						} else if(dir.getZ()!=0) {
+							valid=top.getBlockZ()==bottom.getBlockZ();
+						} else valid=top.getBlockY()==bottom.getBlockY();
 						
 						if(valid) {
 							boolean save=true;
@@ -119,7 +122,7 @@ public class PlayerManager {
 								for(int y=bottom.getBlockY(); y<=top.getBlockY(); y++) {
 									if(!save) break;
 									for(int z=top.getBlockZ(); z<=top.getBlockZ(); z++) {
-										Block block=top.getWorld().getBlockAt(x+dir.x, y, z+dir.y);
+										Block block=top.getWorld().getBlockAt(x+dir.getX(), y+dir.getY(), z+dir.getZ());
 										if(!(block.getType().isSolid()&&!block.getType().equals(Material.STONE)&&top.getWorld().getBlockAt(x, y, z).getType().equals(Material.STONE))) {
 											save=false;
 											break;
@@ -128,18 +131,18 @@ public class PlayerManager {
 								}
 							}
 							if(save) {
-								int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
-								if(dir.x!=0) {
+								if(dir.getX()!=0) {
 									int minZ;
 									int maxZ;
 									BlockFace face;
 									minZ=Math.min(top.getBlockZ(),bottom.getBlockZ());
 									maxZ=Math.max(top.getBlockZ(),bottom.getBlockZ());
-									if(dir.x==-1) {
+									if(dir.getX()==-1) {
 										face=BlockFace.EAST;
 									} else {
 										face=BlockFace.WEST;
 									}
+									int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 									int imgWidth=maxZ-minZ+1;
 									
 									if(order.getBackgroundGif()!=null) {
@@ -160,7 +163,7 @@ public class PlayerManager {
 														Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
 														int imgY=top.getBlockY()-y;
 														int imgX;
-														if(dir.x==-1) imgX=maxZ-z;
+														if(dir.getX()==-1) imgX=maxZ-z;
 														else imgX=z-minZ;
 														BufferedImage[] individualFrames=new BufferedImage[amount];
 														for(int i=0; i<amount; i++) {
@@ -181,23 +184,24 @@ public class PlayerManager {
 												loc.getBlock().setType(Material.AIR);
 												int imgY=top.getBlockY()-y;
 												int imgX;
-												if(dir.x==-1) imgX=maxZ-z;
+												if(dir.getX()==-1) imgX=maxZ-z;
 												else imgX=z-minZ;
 												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
 											}
 										}
 									}
-								} else {
+								} else if(dir.getZ()!=0) {
 									int minX;
 									int maxX;
 									BlockFace face;
 									maxX=Math.max(top.getBlockX(),bottom.getBlockX());
 									minX=Math.min(top.getBlockX(),bottom.getBlockX());
-									if(dir.y==-1) {
+									if(dir.getZ()==-1) {
 										face=BlockFace.SOUTH;
 									} else {
 										face=BlockFace.NORTH;
 									}
+									int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 									int imgWidth=maxX-minX+1;
 									
 									if(order.getBackgroundGif()!=null) {
@@ -218,7 +222,7 @@ public class PlayerManager {
 														Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
 														int imgY=top.getBlockY()-y;
 														int imgX;
-														if(dir.y==-1) imgX=x-minX;
+														if(dir.getZ()==-1) imgX=x-minX;
 														else imgX=maxX-x;
 														BufferedImage[] individualFrames=new BufferedImage[amount];
 														for(int i=0; i<amount; i++) {
@@ -239,9 +243,115 @@ public class PlayerManager {
 												loc.getBlock().setType(Material.AIR);
 												int imgY=top.getBlockY()-y;
 												int imgX;
-												if(dir.y==-1) imgX=x-minX;
+												if(dir.getZ()==-1) imgX=x-minX;
 												else imgX=maxX-x;
 												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+											}
+										}
+									}
+								} else {
+									int minX;
+									int maxX;
+									int minZ;
+									int maxZ;
+									BlockFace face;
+									maxX=Math.max(top.getBlockX(),bottom.getBlockX());
+									minX=Math.min(top.getBlockX(),bottom.getBlockX());
+									maxZ=Math.max(top.getBlockZ(),bottom.getBlockZ());
+									minZ=Math.min(top.getBlockZ(),bottom.getBlockZ());
+									if(dir.getY()==-1) {
+										face=BlockFace.UP;
+									} else {
+										face=BlockFace.DOWN;
+									}
+									int h=maxZ-minZ+1;
+									int w=maxX-minX+1;
+									float playerYaw=p.getLocation().getYaw()+45;
+									while(playerYaw<-180) playerYaw+=360;
+									while(playerYaw>180) playerYaw-=360;
+									playerYaw+=180;
+									int rot=(int)playerYaw/90;
+									if(face==BlockFace.DOWN&&rot%2==1) {
+										rot+=2;
+									}
+									if(rot%2==1) {
+										int temp=h;
+										h=w;
+										w=temp;
+									}
+									final int imgWidth=w;
+									final int imgHeight=h;
+									final int imgRotation=rot%4;
+									
+									if(order.getBackgroundGif()!=null) {
+										new BukkitRunnable() {
+											@Override
+											public void run() {
+												GifDecoder decoder=order.getBackgroundGif();
+												int amount=decoder.getFrameCount();
+												BufferedImage frames[]=new BufferedImage[amount];
+												for(int i=0; i<amount; i++) {
+													BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight,i);
+													frames[i]=image;
+												}
+												
+												long startTime=System.currentTimeMillis();
+												int delay=decoder.getDelay(0);
+												for(int x=minX; x<=maxX; x++) {
+													for(int z=minZ; z<=maxZ; z++) {
+														Location loc=new Location(top.getWorld(), x, top.getBlockY(), z);
+														int imgY;
+														if(dir.getY()==-1) imgY=z-minZ;
+														else imgY=maxZ-z;
+														int imgX=x-minX;
+														if(imgRotation%2==1) {
+															int temp=imgY;
+															imgY=imgX;
+															imgX=temp;
+														}
+														if(imgRotation==2) {
+															imgX=(imgWidth-1)-imgX;
+															imgY=(imgHeight-1)-imgY;
+														} else if(imgRotation==1) {
+															imgY=(imgHeight-1)-imgY;
+														} else if(imgRotation==3) {
+															imgX=(imgWidth-1)-imgX;
+														}
+														BufferedImage[] individualFrames=new BufferedImage[amount];
+														for(int i=0; i<amount; i++) {
+															individualFrames[i]=ImageGenerator.rotateImage(frames[i].getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90);
+														}
+														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+													}
+												}
+												System.gc();
+											}
+										}.runTaskAsynchronously(Main.getPlugin());
+									} else {
+										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										
+										for(int x=minX; x<=maxX; x++) {
+											for(int z=minZ; z<=maxZ; z++) {
+												Location loc=new Location(top.getWorld(), x, top.getBlockY(), z);
+												loc.getBlock().setType(Material.AIR);
+												int imgY;
+												if(dir.getY()==-1) imgY=z-minZ;
+												else imgY=maxZ-z;
+												int imgX=x-minX;
+												if(imgRotation%2==1) {
+													int temp=imgY;
+													imgY=imgX;
+													imgX=temp;
+												}
+												if(imgRotation==2) {
+													imgX=(imgWidth-1)-imgX;
+													imgY=(imgHeight-1)-imgY;
+												} else if(imgRotation==1) {
+													imgY=(imgHeight-1)-imgY;
+												} else if(imgRotation==3) {
+													imgX=(imgWidth-1)-imgX;
+												}
+												WorldUtil.spawnItemFrame(top.getWorld(), loc, ImageGenerator.rotateImage(image.getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90), face);
 											}
 										}
 									}
