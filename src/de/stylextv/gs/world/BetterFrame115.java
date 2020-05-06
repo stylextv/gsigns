@@ -118,26 +118,32 @@ public class BetterFrame115 implements BetterFrame {
 				
 				PacketPlayOutEntityMetadata packet=packets[currentItemIndex];
 				for(Player all:Bukkit.getOnlinePlayers()) {
-					if(all.getWorld()==itemFrame.getWorld()&&all.getLocation().distanceSquared(itemFrame.getLocation())<BetterFrame.VIEW_DISTANCE_SQ) {
-						sendContent(all);
-				        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
-				        connection.sendPacket(packet);
-					}
+					if(all.getWorld()==itemFrame.getWorld()) {
+						double dis=all.getLocation().distanceSquared(itemFrame.getLocation());
+						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
+							sendContent(all);
+					        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
+					        connection.sendPacket(packet);
+						} else if(dis>BetterFrame.VIEW_DISTANCE_SQ*2) removePlayer(all);
+					} else removePlayer(all);
 				}
 				
 			} else if(a==1) {
 				
 				PacketPlayOutEntityMetadata packet=packets[0];
 				for(Player all:Bukkit.getOnlinePlayers()) {
-					if(all.getWorld()==itemFrame.getWorld()&&all.getLocation().distanceSquared(itemFrame.getLocation())<BetterFrame.VIEW_DISTANCE_SQ) {
-						if(!playersInRadius.contains(all)) {
-							playersInRadius.add(all);
-							
-							sendContent(all);
-					        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
-					        connection.sendPacket(packet);
-						}
-					} else playersInRadius.remove(all);
+					if(all.getWorld()==itemFrame.getWorld()) {
+						double dis=all.getLocation().distanceSquared(itemFrame.getLocation());
+						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
+							if(!playersInRadius.contains(all)) {
+								playersInRadius.add(all);
+								
+								sendContent(all);
+						        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
+						        connection.sendPacket(packet);
+							}
+						} else if(dis>BetterFrame.VIEW_DISTANCE_SQ*2) removePlayer(all);
+					} else removePlayer(all);
 				}
 				
 			}
