@@ -71,9 +71,7 @@ public class ImageGenerator {
 				int height=(int) (((double)backgroundImage.getHeight()/backgroundImage.getWidth())*image.getWidth());
 				imageGraphics.drawImage(backgroundImage, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
 			} else {
-				int sizeW=backgroundImage.getWidth();
-				int sizeH=backgroundImage.getHeight();
-				imageGraphics.drawImage(backgroundImage, image.getWidth()/2-sizeW/2,image.getHeight()/2-sizeH/2,sizeW,sizeH, null);
+				imageGraphics.drawImage(backgroundImage, 0,0,image.getWidth(),image.getHeight(), null);
 			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
@@ -151,9 +149,7 @@ public class ImageGenerator {
 				int height=(int) (((double)frame.getHeight()/frame.getWidth())*image.getWidth());
 				imageGraphics.drawImage(frame, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
 			} else {
-				int sizeW=frame.getWidth();
-				int sizeH=frame.getHeight();
-				imageGraphics.drawImage(frame, image.getWidth()/2-sizeW/2,image.getHeight()/2-sizeH/2,sizeW,sizeH, null);
+				imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
 			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {

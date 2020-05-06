@@ -55,7 +55,9 @@ public class PlayerManager {
 	}
 	
 	public static void onPlayerQuit(PlayerQuitEvent e) {
-		WorldUtil.removeAllDrewEntries(e.getPlayer());
+		Player p=e.getPlayer();
+		WorldUtil.removeAllDrewEntries(p);
+		ConnectionManager.removePlayer(p);
 	}
 	
 	public static void onPlayerInteract(PlayerInteractEvent e) {
@@ -169,7 +171,7 @@ public class PlayerManager {
 														for(int i=0; i<amount; i++) {
 															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
 														}
-														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
 												}
 												System.gc();
@@ -186,7 +188,7 @@ public class PlayerManager {
 												int imgX;
 												if(dir.getX()==-1) imgX=maxZ-z;
 												else imgX=z-minZ;
-												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+												WorldUtil.spawnItemFrame(loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
 											}
 										}
 									}
@@ -228,7 +230,7 @@ public class PlayerManager {
 														for(int i=0; i<amount; i++) {
 															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
 														}
-														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
 												}
 												System.gc();
@@ -245,7 +247,7 @@ public class PlayerManager {
 												int imgX;
 												if(dir.getZ()==-1) imgX=x-minX;
 												else imgX=maxX-x;
-												WorldUtil.spawnItemFrame(top.getWorld(), loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+												WorldUtil.spawnItemFrame(loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
 											}
 										}
 									}
@@ -321,7 +323,7 @@ public class PlayerManager {
 														for(int i=0; i<amount; i++) {
 															individualFrames[i]=ImageGenerator.rotateImage(frames[i].getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90);
 														}
-														WorldUtil.spawnItemFrame(top.getWorld(), loc, individualFrames,delay,startTime, face);
+														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
 												}
 												System.gc();
@@ -351,7 +353,7 @@ public class PlayerManager {
 												} else if(imgRotation==3) {
 													imgX=(imgWidth-1)-imgX;
 												}
-												WorldUtil.spawnItemFrame(top.getWorld(), loc, ImageGenerator.rotateImage(image.getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90), face);
+												WorldUtil.spawnItemFrame(loc, ImageGenerator.rotateImage(image.getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90), face);
 											}
 										}
 									}
