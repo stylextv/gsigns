@@ -8,6 +8,7 @@ import org.bukkit.map.MapView;
 public interface BetterFrame {
 	
 	public static int VIEW_DISTANCE_SQ=31*31;
+	public static int CONTENT_RELOAD_DISTANCE_SQ=VIEW_DISTANCE_SQ*2;
 	
 	public boolean update(long currentTime);
 	
