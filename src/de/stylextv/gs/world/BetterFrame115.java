@@ -100,7 +100,7 @@ public class BetterFrame115 implements BetterFrame {
 	public BetterFrame115(ItemFrame itemFrame) {
 		this.itemFrame=itemFrame;
 	}
-	
+
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
 		if(packets!=null) {
@@ -124,7 +124,7 @@ public class BetterFrame115 implements BetterFrame {
 							sendContent(all);
 					        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
 					        connection.sendPacket(packet);
-						} else if(dis>BetterFrame.VIEW_DISTANCE_SQ*2) removePlayer(all);
+						} else if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
 					} else removePlayer(all);
 				}
 				
@@ -141,8 +141,8 @@ public class BetterFrame115 implements BetterFrame {
 								sendContent(all);
 						        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
 						        connection.sendPacket(packet);
-							}
-						} else if(dis>BetterFrame.VIEW_DISTANCE_SQ*2) removePlayer(all);
+							} else playersInRadius.remove(all);
+						} else if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
 					} else removePlayer(all);
 				}
 				
