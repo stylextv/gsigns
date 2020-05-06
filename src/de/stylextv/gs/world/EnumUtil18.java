@@ -63,8 +63,8 @@ public class EnumUtil18 extends EnumUtil {
 		MapView view = Bukkit.createMap(world);
 		short id=0;
 		try {
-			id=(short) view.getClass().getMethods()[0].invoke(view);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {}
+			id=(short) view.getClass().getMethod("getId").invoke(view);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 		view.getRenderers().clear();
 		for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 		view.addRenderer(renderer);
@@ -87,9 +87,9 @@ public class EnumUtil18 extends EnumUtil {
 	@Override
 	public int getMapId(MapView view) {
 		try {
-			short id=(short) view.getClass().getMethods()[0].invoke(view);
+			short id=(short) view.getClass().getMethod("getId").invoke(view);
 			return id;
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 		return 0;
 	}
 	
