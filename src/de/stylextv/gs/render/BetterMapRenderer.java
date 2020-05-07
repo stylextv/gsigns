@@ -4,24 +4,26 @@ import java.awt.image.BufferedImage;
 
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+
+import de.stylextv.gs.map.MapColorPalette;
 
 public class BetterMapRenderer extends MapRenderer {
 	
 	private byte[] data;
 	
-	@SuppressWarnings("deprecation")
 	public BetterMapRenderer(BufferedImage image) {
 		int l=128*128;
+		int[] pixels = new int[image.getWidth() * image.getHeight()];
+		image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
 		this.data=new byte[l];
-		for(int j=0; j<l; j++) {
-			int rgb=image.getRGB(j%128, j/128);
+		for(int i=0; i<l; i++) {
+			int rgb=pixels[i];
 			int r = (rgb >> 16) & 0xFF;
 			int g = (rgb >> 8) & 0xFF;
 			int b = rgb & 0xFF;
-			this.data[j]=MapPalette.matchColor(r,g,b);
+			this.data[i]=MapColorPalette.getColor(r, g, b);
 		}
 	}
 	public BetterMapRenderer(byte[] data) {

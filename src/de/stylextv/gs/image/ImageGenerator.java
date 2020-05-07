@@ -8,15 +8,37 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.stylextv.gs.math.SimplexNoise;
 import de.stylextv.gs.player.Order;
-import de.stylextv.gs.player.PlayerManager;
 
 public class ImageGenerator {
 	
 	private static HashMap<String, Font> cachedFonts=new HashMap<String, Font>();
+	
+	private static Color TEXT_SHADOWCOLOR=new Color(0,0,0,128+16);
+	
+	private static final double[] MATRIX;
+	private static final int N=8;
+	
+	static {
+		MATRIX = new double[] {
+				0,48,12,60,3,51,15,63,
+				32,16,44,28,35,19,47,31,
+				8,56,4,52,11,59,7,55,
+				40,24,36,20,43,27,39,23,
+				2,50,14,62,1,49,13,61,
+				34,18,46,30,33,17,45,29,
+				10,58,6,54,9,57,5,53,
+				42,26,38,22,41,25,37,21
+		};
+		double d=N*N;
+		for(int j=0; j<MATRIX.length; j++) {
+			MATRIX[j]=(MATRIX[j]+1)/d - 0.5;
+		}
+	}
 	
 	public static BufferedImage generate(Order order, int imgWidth, int imgHeight) {
 		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
@@ -75,24 +97,10 @@ public class ImageGenerator {
 			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
-			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D graphics=(Graphics2D) textImage.getGraphics();
-			RenderUtil.setRenderingHints(graphics);
-			
-			Font font=getFont(order.getFont());
-			String name="";
-			if(font!=null) name=font.getName();
-			graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
-			int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
-			graphics.setColor(new Color(0,0,0,128+16));
-			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1+9);
-			graphics.setColor(order.getTextColor());
-			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1);
-			
-			imageGraphics.drawImage(textImage, 0,0,image.getWidth(),image.getHeight(), null);
+			drawText(image, imageGraphics, order);
 		}
 		
-		if(order.shouldDither()) ditherImage(image, PlayerManager.matrix, PlayerManager.n);
+		if(order.shouldDither()) ditherImage(image, MATRIX, N);
 		
 		return image;
 	}
@@ -153,26 +161,53 @@ public class ImageGenerator {
 			}
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
-			BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D graphics=(Graphics2D) textImage.getGraphics();
-			RenderUtil.setRenderingHints(graphics);
-			
-			Font font=getFont(order.getFont());
-			String name="";
-			if(font!=null) name=font.getName();
-			graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
-			int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
-			graphics.setColor(new Color(0,0,0,128+16));
-			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1+9);
-			graphics.setColor(order.getTextColor());
-			graphics.drawString(order.getText(), textImage.getWidth()/2-graphics.getFontMetrics().stringWidth(order.getText())/2 -1, textImage.getHeight()/2+fontHeight/2 -1);
-			
-			imageGraphics.drawImage(textImage, 0,0,image.getWidth(),image.getHeight(), null);
+			drawText(image, imageGraphics, order);
 		}
 		
-		if(order.shouldDither()) ditherImage(image, PlayerManager.matrix, PlayerManager.n);
+		if(order.shouldDither()) ditherImage(image, MATRIX, N);
 		
 		return image;
+	}
+	private static void drawText(BufferedImage image, Graphics2D imageGraphics, Order order) {
+		BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics=(Graphics2D) textImage.getGraphics();
+		RenderUtil.setRenderingHints(graphics);
+		
+		Font font=getFont(order.getFont());
+		String name="";
+		if(font!=null) name=font.getName();
+		graphics.setFont(new Font(name, order.getFontStyle(), order.getFontSize()));
+		
+		ArrayList<String> lines=new ArrayList<String>();
+		String currentLine=null;
+		for(String s:order.getText().split(" ")) {
+			if(currentLine==null) {
+				currentLine=s;
+			} else if(graphics.getFontMetrics().stringWidth(currentLine+" "+s)<textImage.getWidth()) {
+				currentLine=currentLine+" "+s;
+			} else {
+				lines.add(currentLine);
+				currentLine=s;
+			}
+		}
+		if(currentLine!=null) lines.add(currentLine);
+		
+		int fontHeight=graphics.getFontMetrics().getAscent()-graphics.getFontMetrics().getDescent();
+		int spacing=fontHeight/2;
+		int yOffset=-((fontHeight+spacing)*(lines.size()-1))/2;
+		int i=0;
+		for(String line:lines) {
+			int stringWidth=graphics.getFontMetrics().stringWidth(line);
+			int x=textImage.getWidth()/2-stringWidth/2 -1;
+			int y=textImage.getHeight()/2+fontHeight/2+i*(fontHeight+spacing)+yOffset -1;
+			graphics.setColor(TEXT_SHADOWCOLOR);
+			graphics.drawString(line, x, y+9);
+			graphics.setColor(order.getTextColor());
+			graphics.drawString(line, x, y);
+			i++;
+		}
+		
+		imageGraphics.drawImage(textImage, 0,0,image.getWidth(),image.getHeight(), null);
 	}
 	private static Font getFont(String name) {
 		if(name==null) return null;
