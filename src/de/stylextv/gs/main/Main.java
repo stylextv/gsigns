@@ -21,7 +21,6 @@ import de.stylextv.gs.command.CommandGamemodeSigns;
 import de.stylextv.gs.command.MainTabCompleter;
 import de.stylextv.gs.event.EventPlayerInteract;
 import de.stylextv.gs.event.EventPlayerJoinQuit;
-import de.stylextv.gs.player.PlayerManager;
 import de.stylextv.gs.world.WorldUtil;
 
 public class Main extends JavaPlugin {
@@ -36,7 +35,6 @@ public class Main extends JavaPlugin {
 		register();
 		
 		WorldUtil.onEnable();
-		PlayerManager.init();
 		
 		enableBStats();
 		checkAutoUpdaterResult();
@@ -69,18 +67,33 @@ public class Main extends JavaPlugin {
 	}
 	private void startAutoUpdater() {
 		try {
-			double d=Double.valueOf(Vars.VERSION);
-			int i=(int)(d*10)+1;
-			String fileUrl=i/10+"."+i%10;
-			URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
-			ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-			FileOutputStream fos = new FileOutputStream(plugin.getFile());
-			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			fos.close();
+			int currentVersion=(int) (Double.valueOf(Vars.VERSION)*10);
+			int future=1;
+			ReadableByteChannel newestRbc=null;
+			while(future<20) {
+				int i=currentVersion+future;
+				try {
+					String fileUrl=i/10+"."+i%10;
+					URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
+					ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+					if(newestRbc!=null) newestRbc.close();
+					newestRbc=rbc;
+				} catch(Exception ex) {
+					break;
+				}
+			    
+			    future++;
+			}
 			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(plugin.getDataFolder().getPath()+"/au-result"));
-		    writer.close();
-		} catch(Exception ex) {}
+			if(newestRbc!=null) {
+				FileOutputStream fos = new FileOutputStream(plugin.getFile());
+				fos.getChannel().transferFrom(newestRbc, 0, Long.MAX_VALUE);
+				fos.close();
+				
+				BufferedWriter writer = new BufferedWriter(new FileWriter(plugin.getDataFolder().getPath()+"/au-result"));
+			    writer.close();
+			}
+		} catch(Exception ex) {ex.printStackTrace();}
 	}
 	private void checkAutoUpdaterResult() {
 		File f=new File(plugin.getDataFolder().getPath()+"/au-result");
