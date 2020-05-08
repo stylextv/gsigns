@@ -28,7 +28,7 @@ import net.minecraft.server.v1_14_R1.EntityItemFrame;
 import net.minecraft.server.v1_14_R1.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_14_R1.PlayerConnection;
 
-public class BetterFrame114 implements BetterFrame {
+public class BetterFrame114 extends BetterFrame {
 	
 	private ItemFrame itemFrame;
 	private PacketPlayOutEntityMetadata[] packets;
@@ -97,8 +97,31 @@ public class BetterFrame114 implements BetterFrame {
 		}
 		itemFrame.setItem(null);
 	}
-	public BetterFrame114(ItemFrame itemFrame) {
+	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+	public BetterFrame114(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
+		this.views=new MapView[mapRenderers.length];
+		this.startTime=startTime;
+		this.delay=delay;
+		
 		this.itemFrame=itemFrame;
+		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
+		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
+		for(int i=0; i<views.length; i++) {
+			MapView view=Bukkit.getMap(mapIds[i]);
+			views[i]=view;
+			view.getRenderers().clear();
+			for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
+			view.addRenderer(mapRenderers[i]);
+			
+			ItemStack item = new ItemStack(Material.FILLED_MAP, 1);
+			MapMeta meta=(MapMeta) item.getItemMeta();
+			meta.setMapView(view);
+			item.setItemMeta(meta);
+			dataWatcher.set(new DataWatcherObject(7, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));
+			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
+		}
+		itemFrame.setItem(null);
 	}
 	
 	public boolean update(long currentTime) {
@@ -157,7 +180,7 @@ public class BetterFrame114 implements BetterFrame {
 	}
 	public void sendContent(Player p) {
 		if(!playersSentTo.contains(p)) {
-			if(views.length==1||ConnectionManager.canSend(p)) {
+			if(views.length==1||ConnectionManager.canSend(p,views.length)) {
 				playersSentTo.add(p);
 				new BukkitRunnable() {
 					@Override
@@ -171,9 +194,6 @@ public class BetterFrame114 implements BetterFrame {
 		}
 	}
 	
-	public void remove() {
-		itemFrame.remove();
-	}
 	public boolean isDead() {
 		return itemFrame.isDead();
 	}
