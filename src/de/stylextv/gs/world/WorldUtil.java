@@ -1,12 +1,16 @@
 package de.stylextv.gs.world;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +24,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
+import de.stylextv.gs.main.Vars;
 import de.stylextv.gs.player.ConnectionManager;
 import de.stylextv.gs.render.BetterMapRenderer;
 
@@ -69,10 +74,13 @@ public class WorldUtil {
 								savedFrames.put(frame,f);
 							}
 						}
-					} catch(Exception ex) {ex.printStackTrace();}
+					} catch(Exception ex) {
+						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: "+f.getName());
+						f.delete();
+					}
 				}
 			}
-		}.runTaskLater(Main.getPlugin(), 20*2);
+		}.runTaskLater(Main.getPlugin(), 2);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -100,13 +108,13 @@ public class WorldUtil {
 		for(BetterFrame frame:savedFrames.keySet()) {
 			if(frame.isDead()) {
 				savedFrames.get(frame).delete();
-			} else frame.remove();
+			}
 		}
 		for(BetterFrame frame:savedGifFrames.keySet()) {
 			gifFrames.remove(frame);
 			if(frame.isDead()) {
 				savedGifFrames.get(frame).delete();
-			} else frame.remove();
+			}
 		}
 		try {
 			for(BetterFrame frame:frames) {
@@ -122,7 +130,7 @@ public class WorldUtil {
 		}
 	}
 	
-	private static BetterFrame loadFrame(String path, File f, long currentTime) throws IOException {
+	private static BetterFrame loadFrame(String path, File f, long currentTime) throws IOException, DataFormatException {
 		path=path.replace(".gsign", "");
 		String[] split=path.split(",");
 		String w=split[0];
@@ -132,40 +140,54 @@ public class WorldUtil {
 		World world=Bukkit.getWorld(w);
 		Location loc=new Location(world, x, y, z);
 		
-		ItemFrame blocked=null;
+		ItemFrame itemFrame=null;
 		for(Entity e:loc.getChunk().getEntities()) {
 			if(e instanceof ItemFrame) {
 				Location eLoc=e.getLocation();
 				if(eLoc.getBlockX()==x&&eLoc.getBlockY()==y&&eLoc.getBlockZ()==z) {
-					blocked=(ItemFrame) e;
+					itemFrame=(ItemFrame) e;
 					break;
 				}
 			}
 		}
-		if(blocked==null) {
-			BlockFace dir=BlockFace.valueOf(split[4]);
-			int delay=Integer.valueOf(split[5]);
-			byte[] allBytes = Files.readAllBytes(f.toPath());
-			int allBytesLength=allBytes.length;
-			int l=128*128+4;
-			int a=allBytesLength/l;
-			BetterMapRenderer[] mapRenderers=new BetterMapRenderer[a];
-			int[] mapIds=new int[a];
-			for(int i=0; i<a; i++) {
-				int index=i*l;
-				int mapId=
-						(0xff & allBytes[index  ]) << 24  |
-						(0xff & allBytes[index+1]) << 16  |
-						(0xff & allBytes[index+2]) << 8   |
-						(0xff & allBytes[index+3]) << 0;
-				mapIds[i]=mapId;
-				byte[] bytes=new byte[128*128];
-				for(int j=0; j<bytes.length; j++) {
-					bytes[j]=allBytes[index+j+4];
-				}
-				mapRenderers[i]=new BetterMapRenderer(bytes);
+		
+		byte[] allBytes = Files.readAllBytes(f.toPath());
+		
+		Inflater inflater = new Inflater();
+		inflater.setInput(allBytes);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(allBytes.length);  
+		byte[] buffer = new byte[(128*128+4)*2];
+		while(!inflater.finished()) {
+			int count = inflater.inflate(buffer);
+		    outputStream.write(buffer, 0, count);
+		}
+		outputStream.close();
+		inflater.end();
+		allBytes = outputStream.toByteArray();
+		
+		BlockFace dir=BlockFace.valueOf(split[4]);
+		int delay=Integer.valueOf(split[5]);
+		int allBytesLength=allBytes.length;
+		int l=128*128+4;
+		int a=allBytesLength/l;
+		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[a];
+		int[] mapIds=new int[a];
+		for(int i=0; i<a; i++) {
+			int index=i*l;
+			int mapId=
+					(0xff & allBytes[index  ]) << 24  |
+					(0xff & allBytes[index+1]) << 16  |
+					(0xff & allBytes[index+2]) << 8   |
+					(0xff & allBytes[index+3]) << 0;
+			mapIds[i]=mapId;
+			byte[] bytes=new byte[128*128];
+			for(int j=0; j<bytes.length; j++) {
+				bytes[j]=allBytes[index+j+4];
 			}
-			
+			mapRenderers[i]=new BetterMapRenderer(bytes);
+		}
+		
+		if(itemFrame==null) {
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
 				frame=new BetterFrame114(mapIds, loc, dir, mapRenderers, currentTime, delay);
@@ -178,31 +200,55 @@ public class WorldUtil {
 		} else {
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(blocked);
+				frame=new BetterFrame114(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(blocked);
+				frame=new BetterFrame115(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(blocked);
+				frame=new BetterFrame18(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			}
 			return frame;
 		}
 	}
 	private static void saveFrame(BetterFrame frame) throws IOException {
-		frame.remove();
 	    MapView[] views=frame.getMapViews();
 		Location loc=frame.getLocation();
 		String path=loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+","+frame.getDelay();
 		
-		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+path+".gsign");
-    	for(MapView view:views) {
+		int l=128*128+4;
+		byte[] totalBytes=new byte[views.length*l];
+    	for(int i=0; i<views.length; i++) {
+    		int index=i*l;
+    		
+    		MapView view=views[i];
     		int id=enumUtil.getMapId(view);
-    		fos.write((byte)((id >> 24) & 0xff));
-    		fos.write((byte)((id >> 16) & 0xff));
-            fos.write((byte)((id >> 8) & 0xff));
-            fos.write((byte)((id >> 0) & 0xff));
+    		totalBytes[index  ]=((byte)((id >> 24) & 0xff));
+    		totalBytes[index+1]=((byte)((id >> 16) & 0xff));
+    		totalBytes[index+2]=((byte)((id >> 8) & 0xff));
+    		totalBytes[index+3]=((byte)((id >> 0) & 0xff));
     		byte[] bytes=((BetterMapRenderer)view.getRenderers().get(0)).getData();
-    		fos.write(bytes);
+    		for(int j=0; j<bytes.length; j++) {
+    			totalBytes[index+4+j]=bytes[j];
+    		}
     	}
+    	
+	    Deflater compressor = new Deflater();
+		compressor.setLevel(Deflater.BEST_SPEED);
+		
+		// Give the compressor the data to compress
+		compressor.setInput(totalBytes);
+		compressor.finish();
+		
+		// Create an expandable byte array to hold the compressed data.
+		// It is not necessary that the compressed data will be smaller than
+		// the uncompressed data.
+		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+path+".gsign");
+		
+		// Compress the data
+		byte[] buf = new byte[totalBytes.length*2];
+		while (!compressor.finished()) {
+		      int count = compressor.deflate(buf);
+		      fos.write(buf, 0, count);
+		}
     	fos.close();
 	}
 	
