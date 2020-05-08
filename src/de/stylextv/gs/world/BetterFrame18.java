@@ -26,7 +26,7 @@ import net.minecraft.server.v1_8_R3.EntityItemFrame;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 
-public class BetterFrame18 implements BetterFrame {
+public class BetterFrame18 extends BetterFrame {
 	
 	private ItemFrame itemFrame;
 	private PacketPlayOutEntityMetadata[] packets;
@@ -98,8 +98,33 @@ public class BetterFrame18 implements BetterFrame {
 		}
 		itemFrame.setItem(null);
 	}
-	public BetterFrame18(ItemFrame itemFrame) {
+	@SuppressWarnings({ "deprecation" })
+	public BetterFrame18(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
+		this.views=new MapView[mapRenderers.length];
+		this.startTime=startTime;
+		this.delay=delay;
+		
 		this.itemFrame=itemFrame;
+		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
+		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
+		for(int i=0; i<views.length; i++) {
+			int id=mapIds[i];
+			try {
+				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+				views[i]=view;
+				
+				view.getRenderers().clear();
+				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
+				view.addRenderer(mapRenderers[i]);
+				
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+			
+			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
+			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
+		}
+		itemFrame.setItem(null);
 	}
 
 	public boolean update(long currentTime) {
@@ -158,7 +183,7 @@ public class BetterFrame18 implements BetterFrame {
 	}
 	public void sendContent(Player p) {
 		if(!playersSentTo.contains(p)) {
-			if(views.length==1||ConnectionManager.canSend(p)) {
+			if(views.length==1||ConnectionManager.canSend(p,views.length)) {
 				playersSentTo.add(p);
 				new BukkitRunnable() {
 					@Override
@@ -172,9 +197,6 @@ public class BetterFrame18 implements BetterFrame {
 		}
 	}
 	
-	public void remove() {
-		itemFrame.remove();
-	}
 	public boolean isDead() {
 		return itemFrame.isDead();
 	}
