@@ -24,8 +24,8 @@ WORLD_NAME,X,Y,Z,FACING,DELAY
 "DELAY" is the amount of milliseconds between frames. If the frame is a still image the value is 0.
 
 After that the file will now be filled with the data of the map views. Each map view (or frame) will be stored in order, one after the other:
-1. The map id of the map is stored as '4' bytes.
-1. The pixel data will be stored as a byte array of size '16384', as each frame has a width and height of 128.
+1. The map id of the map is stored as `4` bytes.
+1. The pixel data will be stored as a byte array of size `16384`, as each frame has a width and height of 128.
 When each mapview has been stored the entire map data will be compressed using the Deflater to reduce file size:
 ```java
 Deflater compressor = new Deflater();
