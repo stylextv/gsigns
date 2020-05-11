@@ -122,7 +122,9 @@ public class CommandHandler {
 	}
 	private static void sendFile(Player p, String file) {
 		TextComponent comp=new TextComponent("        ");
-		TextComponent clickComp=new TextComponent("§7- "+file);
+		String displayName=file;
+		if(displayName.length()>36) displayName=displayName.substring(0, 33)+"...";
+		TextComponent clickComp=new TextComponent("§7- "+displayName);
 		clickComp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(new TextComponent("§7Click here to get a §ecommand§7 for this file.")).create()));
 		clickComp.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/gs create {bg-img:"+file+"}"));
 		comp.addExtra(clickComp);
