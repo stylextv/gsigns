@@ -164,8 +164,11 @@ public class BetterFrame115 extends BetterFrame {
 								sendContent(all);
 						        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
 						        connection.sendPacket(packet);
-							} else playersInRadius.remove(all);
-						} else if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
+							}
+						} else {
+							playersInRadius.remove(all);
+							if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
+						}
 					} else removePlayer(all);
 				}
 				
