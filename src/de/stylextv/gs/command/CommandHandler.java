@@ -124,10 +124,9 @@ public class CommandHandler {
 		TextComponent comp=new TextComponent("        ");
 		String displayName=file;
 		if(displayName.length()>36) displayName=displayName.substring(0, 33)+"...";
-		TextComponent clickComp=new TextComponent("§7- "+displayName);
-		clickComp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(new TextComponent("§7Click here to get a §ecommand§7 for this file.")).create()));
-		clickComp.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/gs create {bg-img:"+file+"}"));
-		comp.addExtra(clickComp);
+		comp.addExtra(
+				createClickableComponent("§7- "+displayName, "§7Click here to get a §ecommand§7 for this file.", "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
+		);
 		p.spigot().sendMessage(comp);
 	}
 	private static void sendPageArrows(Player p, int page, int pages) {
@@ -139,17 +138,13 @@ public class CommandHandler {
 		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false));
 		else comp.addExtra(getPageArrow(false));
 		comp.addExtra(line);
-		TextComponent compRefresh=new TextComponent("§e[§lREFRESH§e]");
-		compRefresh.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(new TextComponent("§7Click here to refresh the §ecurrent§7 page.")).create()));
-		compRefresh.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gs listfiles "+(page+1)));
-		comp.addExtra(compRefresh);
+		comp.addExtra(
+				createClickableComponent("§e[§lREFRESH§e]", "§7Click here to refresh the §ecurrent§7 page.", "/gs listfiles "+(page+1), ClickEvent.Action.RUN_COMMAND)
+		);
 		p.spigot().sendMessage(comp);
 	}
 	private static TextComponent getPageArrow(int page, boolean dir) {
-		TextComponent comp=new TextComponent(dir ? "§6§l<--" : "§6§l-->");
-		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(new TextComponent(dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.")).create()));
-	    comp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gs listfiles "+(page+1)));
-	    return comp;
+	    return createClickableComponent(dir ? "§6§l<--" : "§6§l-->", dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs listfiles "+(page+1), ClickEvent.Action.RUN_COMMAND);
 	}
 	private static TextComponent getPageArrow(boolean dir) {
 		TextComponent comp=new TextComponent(dir ? "§8§l<--" : "§8§l-->");
@@ -195,6 +190,20 @@ public class CommandHandler {
 		p.sendMessage("    §8 (Please visit our spigot site for updates)");
 		p.sendMessage("");
 		p.sendMessage("§5>§m------------------------------------------------§5<");
+	}
+	
+	private static TextComponent createClickableComponent(String baseText, String hoverText, String clickText, ClickEvent.Action clickAction) {
+		if(WorldUtil.getMcVersion()==WorldUtil.MCVERSION_1_8) {
+			TextComponent comp=new TextComponent(baseText);
+			comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverText).create()));
+			comp.setClickEvent(new ClickEvent(clickAction, clickText));
+			return comp;
+		} else {
+			TextComponent comp=new TextComponent(baseText);
+			comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(new TextComponent(hoverText)).create()));
+			comp.setClickEvent(new ClickEvent(clickAction, clickText));
+			return comp;
+		}
 	}
 	
 }
