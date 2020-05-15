@@ -8,9 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItemFrame;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -21,12 +21,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.player.ConnectionManager;
-import net.minecraft.server.v1_8_R3.DataWatcher;
-import net.minecraft.server.v1_8_R3.EntityItemFrame;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
+import net.minecraft.server.v1_12_R1.PlayerConnection;
+import net.minecraft.server.v1_12_R1.DataWatcher;
+import net.minecraft.server.v1_12_R1.DataWatcherObject;
+import net.minecraft.server.v1_12_R1.DataWatcherRegistry;
+import net.minecraft.server.v1_12_R1.EntityItemFrame;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntityMetadata;
 
-public class BetterFrame18 extends BetterFrame {
+public class BetterFrame112 extends BetterFrame {
 	
 	private ItemFrame itemFrame;
 	private PacketPlayOutEntityMetadata[] packets;
@@ -39,8 +41,8 @@ public class BetterFrame18 extends BetterFrame {
 	private int currentItemIndex=-1;
 	private int delay;
 	
-	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+	public BetterFrame112(Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
@@ -63,13 +65,13 @@ public class BetterFrame18 extends BetterFrame {
 			view.addRenderer(mapRenderers[i]);
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			dataWatcher.set(new DataWatcherObject(6, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
 		}
 		itemFrame.setItem(null);
 	}
-	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(int[] mapIds, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+	public BetterFrame112(int[] mapIds, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
@@ -92,14 +94,14 @@ public class BetterFrame18 extends BetterFrame {
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
 			
-			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			ItemStack item = new ItemStack(Material.MAP, 1, (short) id);
+			dataWatcher.set(new DataWatcherObject(6, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
 		}
 		itemFrame.setItem(null);
 	}
-	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
+	public BetterFrame112(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
@@ -120,13 +122,13 @@ public class BetterFrame18 extends BetterFrame {
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
 			
-			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			ItemStack item = new ItemStack(Material.MAP, 1, (short) id);
+			dataWatcher.set(new DataWatcherObject(6, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
 		}
 		itemFrame.setItem(null);
 	}
-	
+
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
 		if(packets!=null) {
