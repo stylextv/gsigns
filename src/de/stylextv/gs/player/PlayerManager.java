@@ -234,6 +234,13 @@ public class PlayerManager {
 										}
 									}
 								} else {
+									if(WorldUtil.getMcVersion()<WorldUtil.MCVERSION_1_13) {
+										placed=true;
+										p.sendMessage(Vars.PREFIX+"Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.");
+										playerTasks.remove(p);
+										break;
+									}
+									
 									int minX;
 									int maxX;
 									int minZ;
