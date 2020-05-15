@@ -30,11 +30,11 @@ import de.stylextv.gs.render.BetterMapRenderer;
 
 public class WorldUtil {
 	
-	private static int MCVERSION_1_8=0;
-	private static int MCVERSION_1_12=1;
-	private static int MCVERSION_1_13=2;
-	private static int MCVERSION_1_14=3;
-	private static int MCVERSION_1_15=4;
+	public static final int MCVERSION_1_8=0;
+	public static final int MCVERSION_1_12=1;
+	public static final int MCVERSION_1_13=2;
+	public static final int MCVERSION_1_14=3;
+	public static final int MCVERSION_1_15=4;
 	
 	private static File signFolder=new File("plugins/GamemodeSigns/signs");
 	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
@@ -79,8 +79,9 @@ public class WorldUtil {
 							}
 						}
 					} catch(Exception ex) {
+						ex.printStackTrace();
 						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: "+f.getName());
-						f.delete();
+//						f.delete();
 					}
 				}
 			}
@@ -320,6 +321,9 @@ public class WorldUtil {
 	
 	public static int getTotalAmountOfFrames() {
 		return signFolder.listFiles().length;
+	}
+	public static int getMcVersion() {
+		return mcVersion;
 	}
 	
 }

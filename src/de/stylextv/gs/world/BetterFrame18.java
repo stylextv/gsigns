@@ -21,15 +21,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.player.ConnectionManager;
+import de.stylextv.gs.render.BetterMapRenderer;
 import net.minecraft.server.v1_8_R3.DataWatcher;
 import net.minecraft.server.v1_8_R3.EntityItemFrame;
+import net.minecraft.server.v1_8_R3.MapIcon;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMap;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 
 public class BetterFrame18 extends BetterFrame {
 	
+	private final static ArrayList<MapIcon> EMPTY_ICONLIST=new ArrayList<MapIcon>();
+	
 	private ItemFrame itemFrame;
 	private PacketPlayOutEntityMetadata[] packets;
+	private PacketPlayOutMap[] mapPackets;
 	private MapView[] views;
 	
 	private ArrayList<Player> playersSentTo=new ArrayList<Player>();
@@ -42,6 +48,7 @@ public class BetterFrame18 extends BetterFrame {
 	@SuppressWarnings({ "deprecation" })
 	public BetterFrame18(Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
+		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
 		this.delay=delay;
@@ -52,6 +59,8 @@ public class BetterFrame18 extends BetterFrame {
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
 		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
 		for(int i=0; i<views.length; i++) {
+			MapRenderer renderer=mapRenderers[i];
+			
 			MapView view = Bukkit.createMap(w);
 			views[i]=view;
 			short id=0;
@@ -60,17 +69,19 @@ public class BetterFrame18 extends BetterFrame {
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 			view.getRenderers().clear();
 			for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-			view.addRenderer(mapRenderers[i]);
+			view.addRenderer(renderer);
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			dataWatcher.watch(8, CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
+			mapPackets[i]=new PacketPlayOutMap(id, (byte) 0, EMPTY_ICONLIST, ((BetterMapRenderer)renderer).getData(), 0, 0, 128, 128);
 		}
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "deprecation" })
 	public BetterFrame18(int[] mapIds, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
+		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
 		this.delay=delay;
@@ -81,26 +92,30 @@ public class BetterFrame18 extends BetterFrame {
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
 		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
 		for(int i=0; i<views.length; i++) {
+			MapRenderer renderer=mapRenderers[i];
 			int id=mapIds[i];
+			
 			try {
 				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-				view.addRenderer(mapRenderers[i]);
+				view.addRenderer(renderer);
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			dataWatcher.watch(8, CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
+			mapPackets[i]=new PacketPlayOutMap(id, (byte) 0, EMPTY_ICONLIST, ((BetterMapRenderer)renderer).getData(), 0, 0, 128, 128);
 		}
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "deprecation" })
 	public BetterFrame18(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
+		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
 		this.delay=delay;
@@ -109,20 +124,23 @@ public class BetterFrame18 extends BetterFrame {
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
 		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
 		for(int i=0; i<views.length; i++) {
+			MapRenderer renderer=mapRenderers[i];
 			int id=mapIds[i];
+			
 			try {
 				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
-				view.addRenderer(mapRenderers[i]);
+				view.addRenderer(renderer);
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
-			dataWatcher.a(5, CraftItemStack.asNMSCopy(item));
+			dataWatcher.watch(8, CraftItemStack.asNMSCopy(item));
 			packets[i]=new PacketPlayOutEntityMetadata(itemFrame.getEntityId(), dataWatcher, false);
+			mapPackets[i]=new PacketPlayOutMap(id, (byte) 0, EMPTY_ICONLIST, ((BetterMapRenderer)renderer).getData(), 0, 0, 128, 128);
 		}
 		itemFrame.setItem(null);
 	}
@@ -188,11 +206,12 @@ public class BetterFrame18 extends BetterFrame {
 		if(!playersSentTo.contains(p)) {
 			if(views.length==1||ConnectionManager.canSend(p,views.length)) {
 				playersSentTo.add(p);
+		        PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						for(MapView view:views) {
-							p.sendMap(view);
+						for(PacketPlayOutMap packet:mapPackets) {
+							connection.sendPacket(packet);
 						}
 					}
 				}.runTaskAsynchronously(Main.getPlugin());
