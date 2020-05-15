@@ -31,8 +31,10 @@ import de.stylextv.gs.render.BetterMapRenderer;
 public class WorldUtil {
 	
 	private static int MCVERSION_1_8=0;
-	private static int MCVERSION_1_14=1;
-	private static int MCVERSION_1_15=2;
+	private static int MCVERSION_1_12=1;
+	private static int MCVERSION_1_13=2;
+	private static int MCVERSION_1_14=3;
+	private static int MCVERSION_1_15=4;
 	
 	private static File signFolder=new File("plugins/GamemodeSigns/signs");
 	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
@@ -51,8 +53,10 @@ public class WorldUtil {
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
 		if(version.contains("1.15")) mcVersion=MCVERSION_1_15;
+		else if(version.contains("1.13")) mcVersion=MCVERSION_1_13;
+		else if(version.contains("1.12")) mcVersion=MCVERSION_1_12;
 		else if(version.contains("1.8")) mcVersion=MCVERSION_1_8;
-		if(mcVersion==MCVERSION_1_8) enumUtil=new EnumUtil18();
+		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
 		else enumUtil=new EnumUtil114();
 		
 		customImagesFolder.mkdirs();
@@ -193,6 +197,10 @@ public class WorldUtil {
 				frame=new BetterFrame114(mapIds, loc, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_15) {
 				frame=new BetterFrame115(mapIds, loc, dir, mapRenderers, currentTime, delay);
+			} else if(mcVersion==MCVERSION_1_13) {
+				frame=new BetterFrame113(mapIds, loc, dir, mapRenderers, currentTime, delay);
+			} else if(mcVersion==MCVERSION_1_12) {
+				frame=new BetterFrame112(mapIds, loc, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_8) {
 				frame=new BetterFrame18(mapIds, loc, dir, mapRenderers, currentTime, delay);
 			}
@@ -203,6 +211,10 @@ public class WorldUtil {
 				frame=new BetterFrame114(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_15) {
 				frame=new BetterFrame115(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+			} else if(mcVersion==MCVERSION_1_13) {
+				frame=new BetterFrame113(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+			} else if(mcVersion==MCVERSION_1_12) {
+				frame=new BetterFrame112(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			} else if(mcVersion==MCVERSION_1_8) {
 				frame=new BetterFrame18(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
 			}
@@ -270,6 +282,10 @@ public class WorldUtil {
 			frame=new BetterFrame114(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
 		} else if(mcVersion==MCVERSION_1_15) {
 			frame=new BetterFrame115(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+		} else if(mcVersion==MCVERSION_1_13) {
+			frame=new BetterFrame113(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+		} else if(mcVersion==MCVERSION_1_12) {
+			frame=new BetterFrame112(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
 		} else if(mcVersion==MCVERSION_1_8) {
 			frame=new BetterFrame18(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
 		}
@@ -290,6 +306,10 @@ public class WorldUtil {
 					frame=new BetterFrame114(loc, direction, mapRenderers, startTime, delay);
 				} else if(mcVersion==MCVERSION_1_15) {
 					frame=new BetterFrame115(loc, direction, mapRenderers, startTime, delay);
+				} else if(mcVersion==MCVERSION_1_13) {
+					frame=new BetterFrame113(loc, direction, mapRenderers, startTime, delay);
+				} else if(mcVersion==MCVERSION_1_12) {
+					frame=new BetterFrame112(loc, direction, mapRenderers, startTime, delay);
 				} else if(mcVersion==MCVERSION_1_8) {
 					frame=new BetterFrame18(loc, direction, mapRenderers, startTime, delay);
 				}
