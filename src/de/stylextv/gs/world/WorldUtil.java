@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -47,8 +47,8 @@ public class WorldUtil {
 	
 	private static CopyOnWriteArrayList<BetterFrame> frames=new CopyOnWriteArrayList<BetterFrame>();
 	private static CopyOnWriteArrayList<BetterFrame> gifFrames=new CopyOnWriteArrayList<BetterFrame>();
-	private static HashMap<BetterFrame, File> savedFrames=new HashMap<BetterFrame, File>();
-	private static HashMap<BetterFrame, File> savedGifFrames=new HashMap<BetterFrame, File>();
+	private static ConcurrentHashMap<BetterFrame, File> savedFrames=new ConcurrentHashMap<BetterFrame, File>();
+	private static ConcurrentHashMap<BetterFrame, File> savedGifFrames=new ConcurrentHashMap<BetterFrame, File>();
 	
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
@@ -79,9 +79,8 @@ public class WorldUtil {
 							}
 						}
 					} catch(Exception ex) {
-						ex.printStackTrace();
 						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: "+f.getName());
-//						f.delete();
+						f.delete();
 					}
 				}
 			}
