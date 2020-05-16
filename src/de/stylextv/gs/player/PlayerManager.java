@@ -22,6 +22,8 @@ import de.stylextv.gs.world.WorldUtil;
 
 public class PlayerManager {
 	
+	private static int MAX_STONE_SEARCH=20;
+	
 	private static Direction[] directions=new Direction[]{new Direction(1, 0, 0),new Direction(0, 0, 1),new Direction(-1, 0, 0),new Direction(0, 0, -1),new Direction(0, -1, 0),new Direction(0, 1, 0)};
 	
 	private static ConcurrentHashMap<Player, Order> playerTasks=new ConcurrentHashMap<Player, Order>();
@@ -55,26 +57,26 @@ public class PlayerManager {
 					while(top.getBlock().getRelative(BlockFace.UP).getType().equals(Material.STONE)) {
 						top.add(0,1,0);
 						maxI++;
-						if(maxI>10) break;
+						if(maxI>MAX_STONE_SEARCH) break;
 					}
 					maxI=0;
 					while(bottom.getBlock().getRelative(BlockFace.DOWN).getType().equals(Material.STONE)) {
 						bottom.add(0,-1,0);
 						maxI++;
-						if(maxI>10) break;
+						if(maxI>MAX_STONE_SEARCH) break;
 					}
 					if(top.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.STONE)) {
 						maxI=0;
 						while(top.getBlock().getRelative(BlockFace.NORTH).getType().equals(Material.STONE)) {
 							top.add(0,0,-1);
 							maxI++;
-							if(maxI>10) break;
+							if(maxI>MAX_STONE_SEARCH) break;
 						}
 						maxI=0;
 						while(bottom.getBlock().getRelative(BlockFace.SOUTH).getType().equals(Material.STONE)) {
 							bottom.add(0,0,1);
 							maxI++;
-							if(maxI>10) break;
+							if(maxI>MAX_STONE_SEARCH) break;
 						}
 					}
 					if(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)||top.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
@@ -82,13 +84,13 @@ public class PlayerManager {
 						while(top.getBlock().getRelative(BlockFace.EAST).getType().equals(Material.STONE)) {
 							top.add(1,0,0);
 							maxI++;
-							if(maxI>10) break;
+							if(maxI>MAX_STONE_SEARCH) break;
 						}
 						maxI=0;
 						while(bottom.getBlock().getRelative(BlockFace.WEST).getType().equals(Material.STONE)) {
 							bottom.add(-1,0,0);
 							maxI++;
-							if(maxI>10) break;
+							if(maxI>MAX_STONE_SEARCH) break;
 						}
 					}
 					boolean placed=false;
