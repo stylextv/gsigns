@@ -1,8 +1,10 @@
 package de.stylextv.gs.player;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -57,8 +59,25 @@ public class CodeParser {
 							order.setTextColor(Color.decode(value));
 							break;
 						case "bg-url":
-							if(value.endsWith(".gif")) {
-								GifImage gif=BetterGifDecoder.read(new URL(value).openStream());
+							boolean isGif=false;
+							for(String section:value.split("\\?")) {
+								if(section.endsWith(".gif")) {
+									isGif=true;
+									break;
+								}
+							}
+							if(isGif) {
+								
+								ByteArrayOutputStream baos = new ByteArrayOutputStream();
+								InputStream is = null;
+								is = new URL(value).openStream ();
+								byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+								int n;
+								while ( (n = is.read(byteChunk)) > 0 ) {
+								    baos.write(byteChunk, 0, n);
+								}
+								
+								GifImage gif=BetterGifDecoder.read(baos.toByteArray());
 								order.setBackgroundGif(gif);
 							} else order.setBackground(ImageIO.read(new URL(value)));
 							break;
