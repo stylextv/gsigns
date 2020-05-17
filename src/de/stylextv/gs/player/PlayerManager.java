@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import de.stylextv.gs.decode.GifDecoder;
+import de.stylextv.gs.decode.GifObject;
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
@@ -135,15 +135,15 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifDecoder decoder=order.getBackgroundGif();
-												int amount=decoder.getFrameCount();
+												GifObject gif=order.getBackgroundGif();
+												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
 													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
 												}
 												
 												long startTime=System.currentTimeMillis();
-												int delay=decoder.getDelay(0);
+												int delay=gif.getDelay(0);
 												for(int z=minZ; z<=maxZ; z++) {
 													for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
 														Location loc=new Location(top.getWorld(), top.getBlockX(), y, z);
@@ -194,15 +194,15 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifDecoder decoder=order.getBackgroundGif();
-												int amount=decoder.getFrameCount();
+												GifObject gif=order.getBackgroundGif();
+												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
 													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
 												}
 												
 												long startTime=System.currentTimeMillis();
-												int delay=decoder.getDelay(0);
+												int delay=gif.getDelay(0);
 												for(int x=minX; x<=maxX; x++) {
 													for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
 														Location loc=new Location(top.getWorld(), x, y, top.getBlockZ());
@@ -280,8 +280,8 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifDecoder decoder=order.getBackgroundGif();
-												int amount=decoder.getFrameCount();
+												GifObject gif=order.getBackgroundGif();
+												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
 													BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight,i);
@@ -289,7 +289,7 @@ public class PlayerManager {
 												}
 												
 												long startTime=System.currentTimeMillis();
-												int delay=decoder.getDelay(0);
+												int delay=gif.getDelay(0);
 												for(int x=minX; x<=maxX; x++) {
 													for(int z=minZ; z<=maxZ; z++) {
 														Location loc=new Location(top.getWorld(), x, top.getBlockY(), z);

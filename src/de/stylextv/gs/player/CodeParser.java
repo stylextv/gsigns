@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import de.stylextv.gs.decode.GifDecoder;
+import de.stylextv.gs.decode.GifObject;
 import de.stylextv.gs.math.MathUtil;
 import de.stylextv.gs.world.WorldUtil;
 
@@ -55,18 +56,15 @@ public class CodeParser {
 							order.setTextColor(Color.decode(value));
 							break;
 						case "bg-url":
-							order.setBackground(ImageIO.read(new URL(value)));
+							if(value.endsWith(".gif")) {
+								GifObject gif=GifDecoder.readGif(new URL(value).openStream());
+								order.setBackgroundGif(gif);
+							} else order.setBackground(ImageIO.read(new URL(value)));
 							break;
 						case "bg-img":
 							if(value.endsWith(".gif")) {
-								GifDecoder decoder=new GifDecoder();
-								int status=decoder.read(WorldUtil.getCustomImagesFolder().getPath()+"/"+value);
-								if(status!=GifDecoder.STATUS_OK) {
-									String msg="STATUS_OPEN_ERROR";
-									if(status==GifDecoder.STATUS_FORMAT_ERROR) msg="STATUS_FORMAT_ERROR";
-									throw new IllegalArgumentException(msg);
-								}
-								order.setBackgroundGif(decoder);
+								GifObject gif=GifDecoder.readGif(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value));
+								order.setBackgroundGif(gif);
 							} else order.setBackground(ImageIO.read(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
 							break;
 						case "bg-blur":
