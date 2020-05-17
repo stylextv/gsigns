@@ -1,5 +1,7 @@
 package de.stylextv.gs.command;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,6 +20,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class CommandHandler {
+	
+	private static CopyOnWriteArrayList<String> oldFiles=null;
 	
 	public static boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(sender instanceof Player) {
@@ -41,6 +45,20 @@ public class CommandHandler {
 							if(files!=null) length=files.length;
 							int pages=length/14 + (length%14!=0 ? 1 : 0);
 							
+							if(oldFiles==null) {
+								oldFiles=new CopyOnWriteArrayList<String>();
+								for(String s:files) oldFiles.add(s);
+							} else for(String s:oldFiles) {
+								boolean remove=true;
+								for(String check:files) {
+									if(check.equalsIgnoreCase(s)) {
+										remove=false;
+										break;
+									}
+								}
+								if(remove) oldFiles.remove(s);
+							}
+							
 							if(length==0) {
 								p.sendMessage("§9>§m--------------------§6  Files  §9§m---------------------§9<");
 								p.sendMessage("");
@@ -59,8 +77,14 @@ public class CommandHandler {
 								p.sendMessage("    §7Page "+(page+1)+":");
 								for(int i=0; i<14; i++) {
 									int index=i+page*14;
-									if(index<=j) sendFile(p, files[index]);
-									else p.sendMessage("");
+									if(index<=j) {
+										String name=files[index];
+										boolean isNew=!oldFiles.contains(name);
+										if(isNew) {
+											oldFiles.add(name);
+										}
+										sendFile(p, name, isNew);
+									} else p.sendMessage("");
 								}
 								sendPageArrows(p, page, pages);
 								p.sendMessage("");
@@ -120,13 +144,15 @@ public class CommandHandler {
 		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
 		return false;
 	}
-	private static void sendFile(Player p, String file) {
+	private static void sendFile(Player p, String file, boolean isNew) {
 		TextComponent comp=new TextComponent("        ");
 		String displayName=file;
-		if(displayName.length()>36) displayName=displayName.substring(0, 33)+"...";
+		int j=isNew ? 6 : 0;
+		if(displayName.length()>36-j) displayName=displayName.substring(0, 33-j)+"...";
 		comp.addExtra(
 				createClickableComponent("§7- "+displayName, "§7Click here to get a §ecommand§7 for this file.", "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
 		);
+		if(isNew) comp.addExtra(new TextComponent(" §d[§lNEW§d]"));
 		p.spigot().sendMessage(comp);
 	}
 	private static void sendPageArrows(Player p, int page, int pages) {
