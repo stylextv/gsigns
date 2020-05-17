@@ -2,13 +2,14 @@ package de.stylextv.gs.player;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import de.stylextv.gs.decode.GifDecoder;
-import de.stylextv.gs.decode.GifObject;
+import de.stylextv.gs.decode.BetterGifDecoder;
+import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.math.MathUtil;
 import de.stylextv.gs.world.WorldUtil;
 
@@ -57,13 +58,13 @@ public class CodeParser {
 							break;
 						case "bg-url":
 							if(value.endsWith(".gif")) {
-								GifObject gif=GifDecoder.readGif(new URL(value).openStream());
+								GifImage gif=BetterGifDecoder.read(new URL(value).openStream());
 								order.setBackgroundGif(gif);
 							} else order.setBackground(ImageIO.read(new URL(value)));
 							break;
 						case "bg-img":
 							if(value.endsWith(".gif")) {
-								GifObject gif=GifDecoder.readGif(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value));
+								GifImage gif=BetterGifDecoder.read(new FileInputStream(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
 								order.setBackgroundGif(gif);
 							} else order.setBackground(ImageIO.read(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
 							break;
@@ -101,6 +102,7 @@ public class CodeParser {
 							break;
 						}
 					} catch(Exception ex) {
+						ex.printStackTrace();
 						order.setError(var+" | "+ex.getMessage());
 						return order;
 					}
