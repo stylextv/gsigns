@@ -7,9 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -56,17 +54,8 @@ public class BetterFrame18 extends BetterFrame {
 		this.delay=delay;
 		
 		World w=loc.getWorld();
-		loc.add(0, 0, -1);
-		BlockData backup=null;
-		Block b=loc.getBlock();
-		if(!b.getType().isSolid()) {
-			backup=b.getBlockData();
-			b.setType(Material.COBBLESTONE);
-		}
-		loc.add(0, 0, 1);
 		itemFrame=(ItemFrame) w.spawnEntity(loc, EntityType.ITEM_FRAME);
 		itemFrame.setFacingDirection(dir);
-		if(backup!=null) b.setBlockData(backup);
 		
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
 		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
@@ -97,19 +86,10 @@ public class BetterFrame18 extends BetterFrame {
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
 		this.delay=delay;
-		
+
 		World w=loc.getWorld();
-		loc.add(0, 0, -1);
-		BlockData backup=null;
-		Block b=loc.getBlock();
-		if(!b.getType().isSolid()) {
-			backup=b.getBlockData();
-			b.setType(Material.COBBLESTONE);
-		}
-		loc.add(0, 0, 1);
 		itemFrame=(ItemFrame) w.spawnEntity(loc, EntityType.ITEM_FRAME);
 		itemFrame.setFacingDirection(dir);
-		if(backup!=null) b.setBlockData(backup);
 		
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
 		DataWatcher dataWatcher=itemFrameEntity.getDataWatcher();
