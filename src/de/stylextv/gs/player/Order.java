@@ -3,7 +3,7 @@ package de.stylextv.gs.player;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import de.stylextv.gs.decode.GifObject;
+import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.math.MathUtil;
 
 public class Order {
@@ -11,7 +11,7 @@ public class Order {
 	private String text;
 	private Color textColor=new Color(255,255,255);
 	private BufferedImage background;
-	private GifObject backgroundGif;
+	private GifImage backgroundGif;
 	private int backgroundBlur;
 	private float backgroundBrightness=1;
 	private boolean dither=true;
@@ -49,10 +49,10 @@ public class Order {
 	public void setBackground(BufferedImage background) {
 		this.background = background;
 	}
-	public GifObject getBackgroundGif() {
+	public GifImage getBackgroundGif() {
 		return backgroundGif;
 	}
-	public void setBackgroundGif(GifObject backgroundGif) {
+	public void setBackgroundGif(GifImage backgroundGif) {
 		this.backgroundGif = backgroundGif;
 	}
 	public int getBackgroundBlur() {

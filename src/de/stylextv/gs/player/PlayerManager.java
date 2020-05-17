@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import de.stylextv.gs.decode.GifObject;
+import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
@@ -135,7 +135,7 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifObject gif=order.getBackgroundGif();
+												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
@@ -194,7 +194,7 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifObject gif=order.getBackgroundGif();
+												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
@@ -280,7 +280,7 @@ public class PlayerManager {
 										new BukkitRunnable() {
 											@Override
 											public void run() {
-												GifObject gif=order.getBackgroundGif();
+												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
 												BufferedImage frames[]=new BufferedImage[amount];
 												for(int i=0; i<amount; i++) {
