@@ -45,14 +45,21 @@ For ' \ ' use: \\
 Here is a list of arguments you can use:
 
 txt  | The text that is rendered.
+
 txt-col  | The text color in hexadecimal. Default: RGB(255,255,255) (White)
+
 bg-url  | The url to the background. Default: none (results in black background).
 If gifs don't work copy the gif into "GamemodeSigns/images" and use bg-img.
+
 bg-img  | The image for the background (in "plugins\GamemodeSigns\images").
 Default: none (results in black background)
+
 bg-blur  | The radius of the blur that is applied onto the background [Integer]. Default: 0 -> no blur
+
 bg-bright  | Allows you to control the brightness of the background [Float]. Default: 1
+
 dith  | Should the image be dithered [Boolean: true/false]. Default: true
+
 fnt  | The font family and style [NAME-STYLE].
 It is important that the name and the style have no spaces in it. Default: "Raleway-Bold"
 Examples:
@@ -60,11 +67,16 @@ Roboto-Regular; Roboto-Black (https://fonts.google.com/specimen/Roboto)
 UbuntuMono-BoldItalic (https://fonts.google.com/specimen/Ubuntu+Mono)
 Pacifico-Regular (https://fonts.google.com/specimen/Pacifico)
 More fonts can be found here: https://fonts.google.com/.
+
 fnt-siz  | The font size that is used for text rendering [Integer]. Default: 72
+
 fnt-sty  | The font style that is used for text rendering [Integer; PLAIN, BOLD, ITALIC (0-2)]. Default: 0
+
 sim-hue  | The hue of the color of the simplex noise [Float, 0-1].
 Default: none -> no simplex noise. "sim-hue:rdm" results in a random hue.
+
 sim-seed  | The seed used for the simplex noise texture [Integer]. Default: Random number from 1 to 1000.
+
 sim-siz  | The size of the noise intervals [Double]. Default: 150.
 
 Here are some example codes:
