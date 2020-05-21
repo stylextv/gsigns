@@ -1,5 +1,6 @@
 package de.stylextv.gs.map;
 
+import java.awt.Color;
 import java.io.InputStream;
 
 import de.stylextv.gs.world.WorldUtil;
@@ -28,6 +29,9 @@ public class MapColorPalette {
 	
     public static byte getColor(int r, int g, int b) {
         return COLOR_MAP_DATA.get(r, g, b);
+    }
+    public static Color getColor(byte b) {
+        return COLOR_MAP_DATA.getColor(b);
     }
 	
 }
