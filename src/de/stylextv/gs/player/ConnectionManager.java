@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class ConnectionManager {
 	
 	private static int SENDS_PER_TICK=15;
-	private static int SEND_COOLDOWN=4;
+	private static int SEND_COOLDOWN=5;
 	
 	private static HashMap<Player, Integer> sendCounts=new HashMap<Player, Integer>();
 	private static HashMap<Player, Integer> cooldowns=new HashMap<Player, Integer>();

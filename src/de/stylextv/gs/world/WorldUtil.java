@@ -1,6 +1,5 @@
 package de.stylextv.gs.world;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -276,7 +275,7 @@ public class WorldUtil {
 		}
 	}
 	
-	public static void spawnItemFrame(Location loc, BufferedImage image, BlockFace direction) {
+	public static void spawnItemFrame(Location loc, byte[] image, BlockFace direction) {
 		BetterFrame frame=null;
 		if(mcVersion==MCVERSION_1_14) {
 			frame=new BetterFrame114(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
@@ -291,7 +290,7 @@ public class WorldUtil {
 		}
 		frames.add(frame);
 	}
-	public static void spawnItemFrame(Location loc, BufferedImage[] frames, int delay, long startTime, BlockFace direction) {
+	public static void spawnItemFrame(Location loc, byte[][] frames, int delay, long startTime, BlockFace direction) {
 		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[frames.length];
 		for(int i=0; i<frames.length; i++) {
 			mapRenderers[i]=new BetterMapRenderer(frames[i]);

@@ -1,6 +1,5 @@
 package de.stylextv.gs.player;
 
-import java.awt.image.BufferedImage;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
@@ -137,7 +136,7 @@ public class PlayerManager {
 											public void run() {
 												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
-												BufferedImage frames[]=new BufferedImage[amount];
+												byte[][] frames=new byte[amount][];
 												for(int i=0; i<amount; i++) {
 													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
 												}
@@ -151,9 +150,9 @@ public class PlayerManager {
 														int imgX;
 														if(dir.getX()==-1) imgX=maxZ-z;
 														else imgX=z-minZ;
-														BufferedImage[] individualFrames=new BufferedImage[amount];
+														byte[][] individualFrames=new byte[amount][];
 														for(int i=0; i<amount; i++) {
-															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
+															individualFrames[i]=ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128);
 														}
 														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
@@ -162,7 +161,7 @@ public class PlayerManager {
 											}
 										}.runTaskAsynchronously(Main.getPlugin());
 									} else {
-										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										byte[] image=ImageGenerator.generate(order,imgWidth,imgHeight);
 										
 										for(int z=minZ; z<=maxZ; z++) {
 											for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
@@ -172,7 +171,7 @@ public class PlayerManager {
 												int imgX;
 												if(dir.getX()==-1) imgX=maxZ-z;
 												else imgX=z-minZ;
-												WorldUtil.spawnItemFrame(loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+												WorldUtil.spawnItemFrame(loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
 											}
 										}
 									}
@@ -196,7 +195,7 @@ public class PlayerManager {
 											public void run() {
 												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
-												BufferedImage frames[]=new BufferedImage[amount];
+												byte[][] frames=new byte[amount][];
 												for(int i=0; i<amount; i++) {
 													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
 												}
@@ -210,9 +209,9 @@ public class PlayerManager {
 														int imgX;
 														if(dir.getZ()==-1) imgX=x-minX;
 														else imgX=maxX-x;
-														BufferedImage[] individualFrames=new BufferedImage[amount];
+														byte[][] individualFrames=new byte[amount][];
 														for(int i=0; i<amount; i++) {
-															individualFrames[i]=frames[i].getSubimage(imgX*128, imgY*128, 128, 128);
+															individualFrames[i]=ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128);
 														}
 														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
@@ -221,7 +220,7 @@ public class PlayerManager {
 											}
 										}.runTaskAsynchronously(Main.getPlugin());
 									} else {
-										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										byte[] image=ImageGenerator.generate(order,imgWidth,imgHeight);
 										
 										for(int x=minX; x<=maxX; x++) {
 											for(int y=top.getBlockY(); y>=bottom.getBlockY(); y--) {
@@ -231,7 +230,7 @@ public class PlayerManager {
 												int imgX;
 												if(dir.getZ()==-1) imgX=x-minX;
 												else imgX=maxX-x;
-												WorldUtil.spawnItemFrame(loc, image.getSubimage(imgX*128, imgY*128, 128, 128), face);
+												WorldUtil.spawnItemFrame(loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
 											}
 										}
 									}
@@ -282,10 +281,9 @@ public class PlayerManager {
 											public void run() {
 												GifImage gif=order.getBackgroundGif();
 												int amount=gif.getFrameCount();
-												BufferedImage frames[]=new BufferedImage[amount];
+												byte[][] frames=new byte[amount][];
 												for(int i=0; i<amount; i++) {
-													BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight,i);
-													frames[i]=image;
+													frames[i]=ImageGenerator.generate(order,imgWidth,imgHeight,i);
 												}
 												
 												long startTime=System.currentTimeMillis();
@@ -310,9 +308,9 @@ public class PlayerManager {
 														} else if(imgRotation==3) {
 															imgX=(imgWidth-1)-imgX;
 														}
-														BufferedImage[] individualFrames=new BufferedImage[amount];
+														byte[][] individualFrames=new byte[amount][];
 														for(int i=0; i<amount; i++) {
-															individualFrames[i]=ImageGenerator.rotateImage(frames[i].getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90);
+															individualFrames[i]=ImageGenerator.rotateImage(ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation*90);
 														}
 														WorldUtil.spawnItemFrame(loc, individualFrames,delay,startTime, face);
 													}
@@ -321,7 +319,7 @@ public class PlayerManager {
 											}
 										}.runTaskAsynchronously(Main.getPlugin());
 									} else {
-										BufferedImage image=ImageGenerator.generate(order,imgWidth,imgHeight);
+										byte[] image=ImageGenerator.generate(order,imgWidth,imgHeight);
 										
 										for(int x=minX; x<=maxX; x++) {
 											for(int z=minZ; z<=maxZ; z++) {
@@ -344,7 +342,7 @@ public class PlayerManager {
 												} else if(imgRotation==3) {
 													imgX=(imgWidth-1)-imgX;
 												}
-												WorldUtil.spawnItemFrame(loc, ImageGenerator.rotateImage(image.getSubimage(imgX*128, imgY*128, 128, 128), imgRotation*90), face);
+												WorldUtil.spawnItemFrame(loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation*90), face);
 											}
 										}
 									}

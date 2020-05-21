@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -11,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.stylextv.gs.map.MapColorPalette;
 import de.stylextv.gs.math.SimplexNoise;
 import de.stylextv.gs.player.Order;
 
@@ -20,27 +22,7 @@ public class ImageGenerator {
 	
 	private static Color TEXT_SHADOWCOLOR=new Color(0,0,0,128+16);
 	
-	private static final double[] MATRIX;
-	private static final int N=8;
-	
-	static {
-		MATRIX = new double[] {
-				0,48,12,60,3,51,15,63,
-				32,16,44,28,35,19,47,31,
-				8,56,4,52,11,59,7,55,
-				40,24,36,20,43,27,39,23,
-				2,50,14,62,1,49,13,61,
-				34,18,46,30,33,17,45,29,
-				10,58,6,54,9,57,5,53,
-				42,26,38,22,41,25,37,21
-		};
-		double d=N*N;
-		for(int j=0; j<MATRIX.length; j++) {
-			MATRIX[j]=(MATRIX[j]+1)/d - 0.5;
-		}
-	}
-	
-	public static BufferedImage generate(Order order, int imgWidth, int imgHeight) {
+	public static byte[] generate(Order order, int imgWidth, int imgHeight) {
 		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
 		RenderUtil.setRenderingHints(imageGraphics);
@@ -100,11 +82,19 @@ public class ImageGenerator {
 			drawText(image, imageGraphics, order);
 		}
 		
-		if(order.shouldDither()) ditherImage(image, MATRIX, N);
+		if(order.shouldDither()) return ditherImage(image);
 		
-		return image;
+		byte[] data=new byte[image.getWidth()*image.getHeight()];
+		for(int y=0; y<image.getHeight(); y++) {
+			for(int x=0; x<image.getWidth(); x++) {
+				Color c=new Color(image.getRGB(x, y));
+				byte b=MapColorPalette.getColor(c.getRed(),c.getGreen(),c.getBlue());
+				data[y*image.getWidth()+x]=b;
+			}
+		}
+		return data;
 	}
-	public static BufferedImage generate(Order order, int imgWidth, int imgHeight, int gifFrame) {
+	public static byte[] generate(Order order, int imgWidth, int imgHeight, int gifFrame) {
 		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
 		RenderUtil.setRenderingHints(imageGraphics);
@@ -164,9 +154,17 @@ public class ImageGenerator {
 			drawText(image, imageGraphics, order);
 		}
 		
-		if(order.shouldDither()) ditherImage(image, MATRIX, N);
+		if(order.shouldDither()) return ditherImage(image);
 		
-		return image;
+		byte[] data=new byte[image.getWidth()*image.getHeight()];
+		for(int y=0; y<image.getHeight(); y++) {
+			for(int x=0; x<image.getWidth(); x++) {
+				Color c=new Color(image.getRGB(x, y));
+				byte b=MapColorPalette.getColor(c.getRed(),c.getGreen(),c.getBlue());
+				data[y*image.getWidth()+x]=b;
+			}
+		}
+		return data;
 	}
 	private static void drawText(BufferedImage image, Graphics2D imageGraphics, Order order) {
 		BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
@@ -249,24 +247,85 @@ public class ImageGenerator {
 		}
 	}
 	
-	public static void ditherImage(BufferedImage image, double[] matrix, int n) {
+	public static byte[] ditherImage(BufferedImage image) {
+		float[] pixels=new float[image.getWidth()*image.getHeight()*3];
 		for(int y=0; y<image.getHeight(); y++) {
 			for(int x=0; x<image.getWidth(); x++) {
 				Color c=new Color(image.getRGB(x, y));
-				double mValue=matrix[(y%n)+(x%n)*n];
-				double d=mValue*(255.0/n);
-				int r=(int)Math.round(c.getRed()+d);
-				int g=(int)Math.round(c.getGreen()+d);
-				int b=(int)Math.round(c.getBlue()+d);
-				if(r>255)r=255;
-				else if(r<0)r=0;
-				if(g>255)g=255;
-				else if(g<0)g=0;
-				if(b>255)b=255;
-				else if(b<0)b=0;
-				image.setRGB(x, y, new Color(r,g,b).getRGB());
+				int i=(y*image.getWidth()+x)*3;
+				pixels[i]=c.getRed()/255f;
+				pixels[i+1]=c.getGreen()/255f;
+				pixels[i+2]=c.getBlue()/255f;
 			}
 		}
+		byte[] data=new byte[image.getWidth()*image.getHeight()];
+		for(int y=0; y<image.getHeight(); y++) {
+			if(y%2!=0) {
+				for(int x=image.getWidth()-1; x>=0; x--) {
+					int i=(y*image.getWidth()+x)*3;
+					float oldpixelR=pixels[i];
+					float oldpixelG=pixels[i+1];
+					float oldpixelB=pixels[i+2];
+					int searchR=Math.round(oldpixelR*255);
+					int searchG=Math.round(oldpixelG*255);
+					int searchB=Math.round(oldpixelB*255);
+					if(searchR<0) searchR=0;
+					else if(searchR>255) searchR=255;
+					if(searchG<0) searchG=0;
+					else if(searchG>255) searchG=255;
+					if(searchB<0) searchB=0;
+					else if(searchB>255) searchB=255;
+					byte newColorByte=MapColorPalette.getColor(searchR,searchG,searchB);
+					Color newColor=MapColorPalette.getColor(newColorByte);
+					data[i/3]=newColorByte;
+					
+					float quant_errorR=oldpixelR - newColor.getRed()/255f;
+					float quant_errorG=oldpixelG - newColor.getGreen()/255f;
+					float quant_errorB=oldpixelB - newColor.getBlue()/255f;
+					spreadError(x+1, y, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 7f / 16);
+					spreadError(x-1, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 3f / 16);
+					spreadError(x, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 5f / 16);
+					spreadError(x+1, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 1f / 16);
+				}
+			} else {
+				for(int x=0; x<image.getWidth(); x++) {
+					int i=(y*image.getWidth()+x)*3;
+					float oldpixelR=pixels[i];
+					float oldpixelG=pixels[i+1];
+					float oldpixelB=pixels[i+2];
+					int searchR=Math.round(oldpixelR*255);
+					int searchG=Math.round(oldpixelG*255);
+					int searchB=Math.round(oldpixelB*255);
+					if(searchR<0) searchR=0;
+					else if(searchR>255) searchR=255;
+					if(searchG<0) searchG=0;
+					else if(searchG>255) searchG=255;
+					if(searchB<0) searchB=0;
+					else if(searchB>255) searchB=255;
+					byte newColorByte=MapColorPalette.getColor(searchR,searchG,searchB);
+					Color newColor=MapColorPalette.getColor(newColorByte);
+					data[i/3]=newColorByte;
+					
+					float quant_errorR=oldpixelR - newColor.getRed()/255f;
+					float quant_errorG=oldpixelG - newColor.getGreen()/255f;
+					float quant_errorB=oldpixelB - newColor.getBlue()/255f;
+					spreadError(x+1, y, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 7f / 16);
+					spreadError(x-1, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 3f / 16);
+					spreadError(x, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 5f / 16);
+					spreadError(x+1, y+1, pixels, image.getWidth(),image.getHeight(), quant_errorR, quant_errorG, quant_errorB, 1f / 16);
+				}
+			}
+		}
+		return data;
+	}
+	private static void spreadError(int x, int y, float[] pixels, int w, int h, float errorR, float errorG, float errorB, float m) {
+		if(x<0||y<0 || x>=w||y>=h) return;
+		
+		int i=(y*w+x)*3;
+		pixels[i  ]=pixels[i  ] +errorR*m;
+		pixels[i+1]=pixels[i+1] +errorG*m;
+		pixels[i+2]=pixels[i+2] +errorB*m;
+		
 	}
 	public static ConvolveOp getGaussianBlurFilter(int radius, boolean horizontal) {
         if (radius < 1) {
@@ -300,14 +359,39 @@ public class ImageGenerator {
         }
         return new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
     }
-	public static BufferedImage rotateImage(BufferedImage image, int angle) {
-		if(angle==0) return image;
-		BufferedImage rotated=new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-		Graphics2D graphics=(Graphics2D) rotated.getGraphics();
+	
+	public static byte[] rotateImage(byte[] image, int imgWidth,int imgHeight, int angle) {
+		byte[] rotated=new byte[image.length];
 		
-		graphics.rotate(Math.toRadians(angle), image.getWidth()/2,image.getHeight()/2);
-		graphics.drawImage(image, 0,0, null);
+		double rad=Math.toRadians(-angle);
+		
+		double centerX=(imgWidth-1)/2.0;
+		double centerY=(imgHeight-1)/2.0;
+		for(int y=0; y<imgHeight; y++) {
+			for(int x=0; x<imgWidth; x++) {
+				double[] pt = {x, y};
+				AffineTransform.getRotateInstance(rad, centerX, centerY)
+				  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
+				
+				int newX=(int)pt[0];
+				int newY=(int)pt[1];
+				rotated[y*imgWidth+x]=image[newY*imgWidth+newX];
+			}
+		}
 		return rotated;
+	}
+	public static byte[] getSubimage(byte[] data, int imgWidth, int x, int y, int width, int height) {
+		int realImgWidth=imgWidth*128;
+		
+		byte[] subData=new byte[width*height];
+		for(int cy=0; cy<height; cy++) {
+			for(int cx=0; cx<width; cx++) {
+				int dataX=x+cx;
+				int dataY=y+cy;
+				subData[cy*width+cx]=data[dataY*realImgWidth+dataX];
+			}
+		}
+		return subData;
 	}
 	
 }
