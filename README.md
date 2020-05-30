@@ -13,18 +13,22 @@ for(int i=0; i<data.length; i++) {
 }
 ```
 
-## GSIGN-Format (currently outdated)
+## GSIGN-Format
 
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
-First a file is created with a name that holds information about the location of the item frame. The name is structured in the following way:
+First a file is created with the smallest number that is not in use (starting at 0) as the name. Then a header consisting of `45` bytes is put at the beginning of the file:
 ```
-WORLD_NAME,X,Y,Z,FACING,DELAY
+WORLD_UUID (`16` bytes)
+SIGN_UUID (`16` bytes)
+X,Y,Z (`3 * 4` bytes)
+FACING (`1` byte)
 ```
+"SIGN_UUID" is the UUID of the sign. Item frames, that belong together, have the same UUID. This is used when deleting a whole sign at once.
 "FACING" is the direction the item frame is facing.
-"DELAY" is the amount of milliseconds between frames. If the frame is a still image the value is 0.
 
-After that the file will now be filled with the data of the map views. Each map view (or frame) will be stored in order, one after the other:
+After that the file will now be filled with the data of the map views. Each map view (or frame of a gif) will be stored in order, one after the other:
 1. The map id of the map is stored as `4` bytes.
+1. The delay is stored as `4` bytes. This is the amount of milliseconds between frames. If the item frame is a still image the value is 0.
 1. The pixel data will be stored as a byte array of size `16384`, as each frame has a width and height of 128.
 
 When each mapview has been stored the entire map data will be compressed using the Deflater to reduce file size:
