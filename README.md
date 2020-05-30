@@ -9,7 +9,7 @@ Instead of sending a giant packet that holds the entire map data each time the s
 The sending of the maps is also optimized as the images are not being rendered onto the map via MapCanvas#drawImage which would use the very slow MapPalette#matchColor function. Rather the r, g and b values will be pre converted into the corresponding byte colors which will then be put onto the map:
 ```java
 for(int i=0; i<data.length; i++) {
-	canvas.setPixel(i%128, i/128, data[i]);
+    canvas.setPixel(i%128, i/128, data[i]);
 }
 ```
 
