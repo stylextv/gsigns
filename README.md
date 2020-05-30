@@ -85,6 +85,8 @@ Here are some example codes:
 
 ## Project Layout
 
+Here you can view the current structuring of the project.
+
 ```bash
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
 ├─ 📂 src/            # 🌟 Source Files
