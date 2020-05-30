@@ -42,15 +42,20 @@ GSIGN-files in the "signs" folder that do not follow this format will be deleted
 
 ## Sign Coding
 
-Each code is structured like this: {ARGUMENT1:VALUE1,ARGUMENT2:VALUE2,ARGUMENT3:VALUE3, ...}
+Each code is structured like this:
+```
+{ARGUMENT1:VALUE1,ARGUMENT2:VALUE2,ARGUMENT3:VALUE3, ...}
+```
 It is important that their is no space between two arguments.
-If you want to use spaces or the character ' , ' inside values put the value in quotes like this: txt:"Text"
-If you want to use a ' " ' inside the quote use: \"
-
-For ' \ ' use: \\
-
+If you want to use spaces or the character `,` inside values put the value in quotes like this: `txt:"Text"`
+If you want to use a `"` inside the quote use: `\"`
+For `\` use: `\\`
 
 Here is a list of arguments you can use:
+First Header | Second Header
+------------ | -------------
+Content from cell 1 | Content from cell 2
+Content in the first column | Content in the second column
 ```
 txt  | The text that is rendered.
 
