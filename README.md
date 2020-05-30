@@ -33,7 +33,6 @@ The x-, y-, and z-coordinate.
 # 🧭 FACING (1 byte)
 The direction the item frame is facing.
 ```
-"SIGN_UUID" is 
 
 After that the file will now be filled with the data of the map views. Each map view (or frame of a gif) will be stored in order, one after the other:
 1. The map id of the map is stored as `4` bytes.
