@@ -23,11 +23,20 @@ public class CommandHandler {
 	
 	private static CopyOnWriteArrayList<String> oldFiles=null;
 	
+	public static void create() {
+		if(oldFiles==null) {
+			String[] files=WorldUtil.getCustomImagesFolder().list();
+			oldFiles=new CopyOnWriteArrayList<String>();
+			for(String s:files) oldFiles.add(s);
+		}
+	}
+	
 	public static boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(sender instanceof Player) {
 			Player p=(Player) sender;
 			boolean hasPermList=PermissionUtil.hasListPermission(p);
 			boolean hasPermCreate=PermissionUtil.hasCreatePermission(p);
+			boolean hasPermRemove=PermissionUtil.hasRemovePermission(p);
 			if(args.length>=1) {
 				String sub=args[0];
 				if(sub.equalsIgnoreCase("listfiles")) {
@@ -92,7 +101,13 @@ public class CommandHandler {
 							}
 						} else p.sendMessage(Vars.PREFIX+"§7Please use §8\"§7/gs listfiles §c[page]§8\"§7.");
 					} else sendNoPermission(p);
-				} else if(hasPermList||hasPermCreate) {
+				} else if(sub.equalsIgnoreCase("remove")) {
+					if(hasPermRemove) {
+						if(args.length==1) {
+							PlayerManager.toggleRemovingPhase(p);
+						} else p.sendMessage(Vars.PREFIX+"§7Please use §8\"§7/gs §cremove§8\"§7.");
+					} else sendNoPermission(p);
+				} else if(hasPermList||hasPermCreate||hasPermRemove) {
 					if(args.length==1) {
 						if(sub.equalsIgnoreCase("create")) {
 							if(hasPermCreate) sendCreateSuggestion(p);
@@ -138,7 +153,7 @@ public class CommandHandler {
 					sendInfo(p);
 				}
 			} else {
-				if(hasPermList||hasPermCreate) sendHelpSuggestion(p);
+				if(hasPermList||hasPermCreate||hasPermRemove) sendHelpSuggestion(p);
 				else sendInfo(p);
 			}
 		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
@@ -188,9 +203,12 @@ public class CommandHandler {
 	private static void sendHelp(Player p) {
 		p.sendMessage("§a>§m---------------------§6  Help  §a§m---------------------§a<");
 		p.sendMessage("");
-		p.sendMessage("    §7/gs §ecreate §7<code>§7: Lets you create and place a");
+		p.sendMessage("    §7/gs §ecreate §7<code>: Lets you create and place a");
 		p.sendMessage("    §7 new sign");
 		p.sendMessage("    §8 (Requires the permission: gsigns.create)");
+		p.sendMessage("");
+		p.sendMessage("    §7/gs §eremove§7: Lets you remove a sign.");
+		p.sendMessage("    §8 (Requires the permission: gsigns.remove)");
 		p.sendMessage("");
 		p.sendMessage("    §7/gs §ecancel§7: Cancels the current placement process");
 		p.sendMessage("    §8 (Requires the permission: gsigns.create)");

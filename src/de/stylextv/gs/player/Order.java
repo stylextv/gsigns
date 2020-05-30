@@ -3,6 +3,8 @@ package de.stylextv.gs.player;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import org.bukkit.Location;
+
 import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.math.MathUtil;
 
@@ -22,11 +24,25 @@ public class Order {
 	private int abstractSeed=MathUtil.getRandom().nextInt(1000)+1;
 	
 	private String error;
+	private Location firstCorner;
+	private long lastSelect;
 	public String getError() {
 		return error;
 	}
 	public void setError(String error) {
 		this.error = error;
+	}
+	public Location getFirstCorner() {
+		return firstCorner;
+	}
+	public void setFirstCorner(Location firstCorner) {
+		this.firstCorner = firstCorner;
+	}
+	public long getLastSelect() {
+		return lastSelect;
+	}
+	public void setLastSelect(long lastSelect) {
+		this.lastSelect = lastSelect;
 	}
 	
 	public String getText() {
