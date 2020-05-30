@@ -13,7 +13,7 @@ for(int i=0; i<data.length; i++) {
 }
 ```
 
-## GSIGN-Format
+## GSIGN-Format (currently outdated)
 
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
 First a file is created with a name that holds information about the location of the item frame. The name is structured in the following way:
