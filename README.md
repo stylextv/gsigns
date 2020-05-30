@@ -54,10 +54,6 @@ For `\` use: `\\`
 Here is a list of arguments you can use:
 Argument-Name | Description
 ------------ | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
 txt | The text that is rendered.
 txt-col | The text color in hexadecimal. Default: RGB(255,255,255) (White)
 bg-url | The url to the background. Default: none (results in black background).
@@ -67,9 +63,7 @@ Default: none (results in black background)
 bg-blur | The radius of the blur that is applied onto the background [Integer]. Default: 0 -> no blur
 bg-bright | Allows you to control the brightness of the background [Float]. Default: 1
 dith | Should the image be dithered [Boolean: true/false]. Default: true
-fnt | The font family and style [NAME-STYLE].
-It is important that the name and the style have no spaces in it. Default: "Raleway-Bold"
-Examples:
+fnt | The font family and style [NAME-STYLE]. It is important that the name and the style have no spaces in it. Default: "Raleway-Bold". Examples:
 Roboto-Regular; Roboto-Black (https://fonts.google.com/specimen/Roboto)
 UbuntuMono-BoldItalic (https://fonts.google.com/specimen/Ubuntu+Mono)
 Pacifico-Regular (https://fonts.google.com/specimen/Pacifico)
