@@ -17,7 +17,7 @@ for(int i=0; i<data.length; i++) {
 
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
 First a file is created with the smallest number that is not in use (starting at 0) as the name. Then a header consisting of `45` bytes is put at the beginning of the file:
-```
+```bash
 WORLD_UUID (16 bytes)
 SIGN_UUID (16 bytes)
 X,Y,Z (3 * 4 bytes)
@@ -43,7 +43,7 @@ GSIGN-files in the "signs" folder that do not follow this format will be deleted
 ## Sign Coding
 
 Each code is structured like this:
-```
+```bash
 {ARGUMENT1:VALUE1,ARGUMENT2:VALUE2,ARGUMENT3:VALUE3, ...}
 ```
 It is important that their is no space between two arguments.
@@ -76,7 +76,7 @@ Here are some example codes:
 
 ## Project Layout
 
-```
+```bash
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
 ├─ 📂 src/            # 🌟 Source Files
 │  ├─ 📂 assets/
