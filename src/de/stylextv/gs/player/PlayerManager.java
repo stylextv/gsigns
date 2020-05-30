@@ -86,6 +86,7 @@ public class PlayerManager {
 						Location bottom=new Location(first.getWorld(), Math.min(first.getBlockX(), second.getBlockX()), Math.min(first.getBlockY(), second.getBlockY()), Math.max(first.getBlockZ(), second.getBlockZ()));
 						
 						boolean placed=false;
+						boolean validFound=false;
 						for(Direction dir:directions) {
 							boolean valid=true;
 							if(dir.getX()!=0) {
@@ -95,6 +96,7 @@ public class PlayerManager {
 							} else valid=top.getBlockY()==bottom.getBlockY();
 							
 							if(valid) {
+								validFound=true;
 								boolean save=true;
 								for(int x=bottom.getBlockX(); x<=top.getBlockX(); x++) {
 									for(int y=bottom.getBlockY(); y<=top.getBlockY(); y++) {
@@ -353,7 +355,10 @@ public class PlayerManager {
 								}
 							}
 						}
-						if(!placed) p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign.");
+						if(!placed) {
+							if(!validFound) p.sendMessage(Vars.PREFIX+"This is not a §cvalid§7 position for a sign.");
+							else p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign.");
+						}
 						e.setCancelled(true);
 					} else {
 						p.sendMessage(Vars.PREFIX+"The two corners have to be in the same §cworld§7.");

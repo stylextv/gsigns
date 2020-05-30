@@ -26,8 +26,10 @@ public class CommandHandler {
 	public static void create() {
 		if(oldFiles==null) {
 			String[] files=WorldUtil.getCustomImagesFolder().list();
-			oldFiles=new CopyOnWriteArrayList<String>();
-			for(String s:files) oldFiles.add(s);
+			if(files!=null) {
+				oldFiles=new CopyOnWriteArrayList<String>();
+				for(String s:files) oldFiles.add(s);
+			}
 		}
 	}
 	
@@ -54,20 +56,6 @@ public class CommandHandler {
 							if(files!=null) length=files.length;
 							int pages=length/14 + (length%14!=0 ? 1 : 0);
 							
-							if(oldFiles==null) {
-								oldFiles=new CopyOnWriteArrayList<String>();
-								for(String s:files) oldFiles.add(s);
-							} else for(String s:oldFiles) {
-								boolean remove=true;
-								for(String check:files) {
-									if(check.equalsIgnoreCase(s)) {
-										remove=false;
-										break;
-									}
-								}
-								if(remove) oldFiles.remove(s);
-							}
-							
 							if(length==0) {
 								p.sendMessage("§9>§m--------------------§6  Files  §9§m---------------------§9<");
 								p.sendMessage("");
@@ -77,6 +65,20 @@ public class CommandHandler {
 								p.sendMessage("");
 								p.sendMessage("§9>§m------------------------------------------------§9<");
 							} else {
+								if(oldFiles==null) {
+									oldFiles=new CopyOnWriteArrayList<String>();
+									for(String s:files) oldFiles.add(s);
+								} else for(String s:oldFiles) {
+									boolean remove=true;
+									for(String check:files) {
+										if(check.equalsIgnoreCase(s)) {
+											remove=false;
+											break;
+										}
+									}
+									if(remove) oldFiles.remove(s);
+								}
+								
 								if(page<0) page=0;
 								else if(page>=pages) page=pages-1;
 								int j=page*14+13;
