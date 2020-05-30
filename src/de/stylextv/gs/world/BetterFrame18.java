@@ -2,6 +2,7 @@ package de.stylextv.gs.world;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,18 +41,23 @@ public class BetterFrame18 extends BetterFrame {
 	
 	private ArrayList<Player> playersSentTo=new ArrayList<Player>();
 	private ArrayList<Player> playersInRadius=new ArrayList<Player>();
+	private int stillRefreshCooldown;
 	
+	private UUID signUid;
 	private long startTime;
 	private int currentItemIndex=-1;
-	private int delay;
+	private int[] delays;
+	private int totalTime=0;
 	
 	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	public BetterFrame18(UUID signUid, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int[] delays) {
+		this.signUid=signUid;
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
-		this.delay=delay;
+		this.delays=delays;
+		if(delays!=null) for(int i:delays) totalTime+=i;
 		
 		World w=loc.getWorld();
 		itemFrame=(ItemFrame) w.spawnEntity(loc, EntityType.ITEM_FRAME);
@@ -80,12 +86,14 @@ public class BetterFrame18 extends BetterFrame {
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(int[] mapIds, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	public BetterFrame18(UUID signUid, int[] mapIds, Location loc, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int[] delays) {
+		this.signUid=signUid;
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
-		this.delay=delay;
+		this.delays=delays;
+		if(delays!=null) for(int i:delays) totalTime+=i;
 
 		World w=loc.getWorld();
 		itemFrame=(ItemFrame) w.spawnEntity(loc, EntityType.ITEM_FRAME);
@@ -98,14 +106,14 @@ public class BetterFrame18 extends BetterFrame {
 			int id=mapIds[i];
 			
 			try {
-				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+				MapView view=(MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 				view.addRenderer(renderer);
 				
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
 			dataWatcher.watch(8, CraftItemStack.asNMSCopy(item));
@@ -115,12 +123,14 @@ public class BetterFrame18 extends BetterFrame {
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int delay) {
+	public BetterFrame18(UUID signUid, int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int[] delays) {
+		this.signUid=signUid;
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
 		this.startTime=startTime;
-		this.delay=delay;
+		this.delays=delays;
+		if(delays!=null) for(int i:delays) totalTime+=i;
 		
 		this.itemFrame=itemFrame;
 		EntityItemFrame itemFrameEntity=((CraftItemFrame) itemFrame).getHandle();
@@ -130,14 +140,14 @@ public class BetterFrame18 extends BetterFrame {
 			int id=mapIds[i];
 			
 			try {
-				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+				MapView view=(MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 				view.addRenderer(renderer);
 				
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
 			dataWatcher.watch(8, CraftItemStack.asNMSCopy(item));
@@ -154,10 +164,16 @@ public class BetterFrame18 extends BetterFrame {
 			
 			int a=packets.length;
 			if(a>1) {
-				int totalTime=delay*a;
-				long msIntoGif=currentTime-startTime;
-				double d=(msIntoGif%totalTime)/(double)totalTime;
-				currentItemIndex=(int) (a*d);
+				int msIntoGif=(int) ((currentTime-startTime)%totalTime);
+				int j=0;
+				for(int i=0; i<delays.length; i++) {
+					int delay=delays[i];
+					if(msIntoGif<j+delay) {
+						currentItemIndex=i;
+						break;
+					}
+					j+=delay;
+				}
 			} else currentItemIndex=0;
 			
 			if(currentItemIndex!=prevFrame) {
@@ -165,7 +181,9 @@ public class BetterFrame18 extends BetterFrame {
 				PacketPlayOutEntityMetadata packet=packets[currentItemIndex];
 				for(Player all:Bukkit.getOnlinePlayers()) {
 					if(all.getWorld()==itemFrame.getWorld()) {
-						double dis=all.getLocation().distanceSquared(itemFrame.getLocation());
+						Location loc1=all.getLocation();
+						Location loc2=itemFrame.getLocation();
+						double dis=(loc1.getX()-loc2.getX())*(loc1.getX()-loc2.getX()) + (loc1.getZ()-loc2.getZ())*(loc1.getZ()-loc2.getZ());
 						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
 							sendContent(all);
 					        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
@@ -176,15 +194,23 @@ public class BetterFrame18 extends BetterFrame {
 				
 			} else if(a==1) {
 				
+				stillRefreshCooldown--;
+				if(stillRefreshCooldown<=0) stillRefreshCooldown=10;
+				
 				PacketPlayOutEntityMetadata packet=packets[0];
 				for(Player all:Bukkit.getOnlinePlayers()) {
 					if(all.getWorld()==itemFrame.getWorld()) {
-						double dis=all.getLocation().distanceSquared(itemFrame.getLocation());
+						Location loc1=all.getLocation();
+						Location loc2=itemFrame.getLocation();
+						double dis=(loc1.getX()-loc2.getX())*(loc1.getX()-loc2.getX()) + (loc1.getZ()-loc2.getZ())*(loc1.getZ()-loc2.getZ());
 						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
 							if(!playersInRadius.contains(all)) {
 								playersInRadius.add(all);
 								
 								sendContent(all);
+						        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
+						        connection.sendPacket(packet);
+							} else if(stillRefreshCooldown==1) {
 						        PlayerConnection connection = ((CraftPlayer) all).getHandle().playerConnection;
 						        connection.sendPacket(packet);
 							}
@@ -224,6 +250,10 @@ public class BetterFrame18 extends BetterFrame {
 	public boolean isDead() {
 		return itemFrame.isDead();
 	}
+	@Override
+	public ItemFrame getItemFrame() {
+		return itemFrame;
+	}
 	public BlockFace getFacing() {
 		return itemFrame.getFacing();
 	}
@@ -231,14 +261,19 @@ public class BetterFrame18 extends BetterFrame {
 		return itemFrame.getLocation();
 	}
 	
+	@Override
+	public UUID getSignUid() {
+		return signUid;
+	}
 	public int getCurrentItemIndex() {
 		return currentItemIndex;
 	}
 	public void setCurrentItemIndex(int currentItemIndex) {
 		this.currentItemIndex = currentItemIndex;
 	}
-	public int getDelay() {
-		return delay;
+	public int getDelay(int index) {
+		if(delays==null) return 0;
+		return delays[index];
 	}
 	
 	public MapView[] getMapViews() {

@@ -16,10 +16,11 @@ public class MainTabCompleter implements TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		if(sender instanceof Player && (cmd.getName().equalsIgnoreCase("gs")||cmd.getName().equalsIgnoreCase("gsigns")||cmd.getName().equalsIgnoreCase("gamemodesigns"))) {
 			Player p = (Player) sender;
-			if(PermissionUtil.hasCreatePermission(p)||PermissionUtil.hasListPermission(p)) {
+			if(PermissionUtil.hasCreatePermission(p)||PermissionUtil.hasListPermission(p)||PermissionUtil.hasRemovePermission(p)) {
 				if(args.length==1) {
 					ArrayList<String> tabs=new ArrayList<String>();
 					tabs.add("create");
+					tabs.add("remove");
 					tabs.add("cancel");
 					tabs.add("listfiles");
 					tabs.add("help");

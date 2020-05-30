@@ -339,6 +339,13 @@ public final class BetterGifDecoder {
 		public final int getDelay(final int index) {
 			return frames.get(index).delay*10;
 		}
+		public final int[] getDelays() {
+			final int[] delays=new int[frames.size()];
+			for(int i=0; i<delays.length; i++) {
+				delays[i]=frames.get(i).delay*10;
+			}
+			return delays;
+		}
 
 		/**
 		 * @param index
