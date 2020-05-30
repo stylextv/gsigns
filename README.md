@@ -18,13 +18,19 @@ for(int i=0; i<data.length; i++) {
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
 First a file is created with the smallest number that is not in use (starting at 0) as the name. Then a header consisting of `45` bytes is put at the beginning of the file:
 ```bash
-WORLD_UUID (16 bytes)
-SIGN_UUID (16 bytes)
-X,Y,Z (3 * 4 bytes)
-FACING (1 byte)
+# 🌎 WORLD_UUID (16 bytes)
+The UUID of the world.
+
+# 📎 SIGN_UUID (16 bytes)
+The UUID of the sign. Item frames, that belong together, have the same UUID. This is used when deleting a whole sign at once.
+
+# 📍 X,Y,Z (3 * 4 bytes)
+The x-, y-, and z-coordinate.
+
+# 🧭 FACING (1 byte)
+The direction the item frame is facing.
 ```
-"SIGN_UUID" is the UUID of the sign. Item frames, that belong together, have the same UUID. This is used when deleting a whole sign at once.
-"FACING" is the direction the item frame is facing.
+"SIGN_UUID" is 
 
 After that the file will now be filled with the data of the map views. Each map view (or frame of a gif) will be stored in order, one after the other:
 1. The map id of the map is stored as `4` bytes.
