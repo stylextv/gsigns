@@ -22,7 +22,8 @@ First a file is created with the smallest number that is not in use (starting at
 The UUID of the world.
 
 # 📎 SIGN_UUID (16 bytes)
-The UUID of the sign. Item frames, that belong together, have the same UUID. This is used when deleting a whole sign at once.
+The UUID of the sign. Item frames, that belong together, have the same UUID.
+This is used when deleting a whole sign at once.
 
 # 📍 X,Y,Z (3 * 4 bytes)
 The x-, y-, and z-coordinate.
