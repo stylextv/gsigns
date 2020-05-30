@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
@@ -26,6 +27,7 @@ import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
 import de.stylextv.gs.player.ConnectionManager;
 import de.stylextv.gs.render.BetterMapRenderer;
+import de.stylextv.gs.util.UUIDHelper;
 
 public class WorldUtil {
 	
@@ -34,6 +36,8 @@ public class WorldUtil {
 	public static final int MCVERSION_1_13=2;
 	public static final int MCVERSION_1_14=3;
 	public static final int MCVERSION_1_15=4;
+	
+	private static int FILE_HEADER_LENGTH=45;
 	
 	private static File signFolder=new File("plugins/GamemodeSigns/signs");
 	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
@@ -68,7 +72,7 @@ public class WorldUtil {
 					try {
 						String name=f.getName();
 						if(name.endsWith(".gsign")) {
-							BetterFrame frame=loadFrame(name, f, currentTime);
+							BetterFrame frame=loadFrame(f, currentTime);
 							
 							if(frame.getMapViews().length>1) {
 								savedGifFrames.put(frame,f);
@@ -78,7 +82,7 @@ public class WorldUtil {
 							}
 						}
 					} catch(Exception ex) {
-						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: "+f.getName());
+						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
 						f.delete();
 					}
 				}
@@ -133,27 +137,7 @@ public class WorldUtil {
 		}
 	}
 	
-	private static BetterFrame loadFrame(String path, File f, long currentTime) throws IOException, DataFormatException {
-		path=path.replace(".gsign", "");
-		String[] split=path.split(",");
-		String w=split[0];
-		int x=Integer.valueOf(split[1]);
-		int y=Integer.valueOf(split[2]);
-		int z=Integer.valueOf(split[3]);
-		World world=Bukkit.getWorld(w);
-		Location loc=new Location(world, x, y, z);
-		
-		ItemFrame itemFrame=null;
-		for(Entity e:loc.getChunk().getEntities()) {
-			if(e instanceof ItemFrame) {
-				Location eLoc=e.getLocation();
-				if(eLoc.getBlockX()==x&&eLoc.getBlockY()==y&&eLoc.getBlockZ()==z) {
-					itemFrame=(ItemFrame) e;
-					break;
-				}
-			}
-		}
-		
+	private static BetterFrame loadFrame(File f, long currentTime) throws IOException, DataFormatException {
 		byte[] allBytes = Files.readAllBytes(f.toPath());
 		
 		Inflater inflater = new Inflater();
@@ -168,24 +152,71 @@ public class WorldUtil {
 		inflater.end();
 		allBytes = outputStream.toByteArray();
 		
-		BlockFace dir=BlockFace.valueOf(split[4]);
-		int delay=Integer.valueOf(split[5]);
-		int allBytesLength=allBytes.length;
-		int l=128*128+4;
+		byte[] worldUidBytes=new byte[16];
+		for(int i=0; i<worldUidBytes.length; i++) {
+			worldUidBytes[i]=allBytes[i];
+		}
+		World world=Bukkit.getWorld(UUIDHelper.getUUIDFromBytes(worldUidBytes));
+		
+		byte[] signUidBytes=new byte[16];
+		for(int i=0; i<signUidBytes.length; i++) {
+			signUidBytes[i]=allBytes[i+16];
+		}
+		UUID signUid=UUIDHelper.getUUIDFromBytes(signUidBytes);
+		
+		int x=
+				(0xff & allBytes[16*2  ]) << 24  |
+				(0xff & allBytes[16*2+1]) << 16  |
+				(0xff & allBytes[16*2+2]) << 8   |
+				(0xff & allBytes[16*2+3]) << 0;
+		int y=
+				(0xff & allBytes[16*2+4]) << 24  |
+				(0xff & allBytes[16*2+5]) << 16  |
+				(0xff & allBytes[16*2+6]) << 8   |
+				(0xff & allBytes[16*2+7]) << 0;
+		int z=
+				(0xff & allBytes[16*2+8]) << 24  |
+				(0xff & allBytes[16*2+9]) << 16  |
+				(0xff & allBytes[16*2+10]) << 8   |
+				(0xff & allBytes[16*2+11]) << 0;
+		Location loc=new Location(world, x, y, z);
+		
+		int facing=allBytes[44];
+		BlockFace dir=BlockFace.values()[facing];
+		
+		ItemFrame itemFrame=null;
+		for(Entity e:loc.getChunk().getEntities()) {
+			if(e instanceof ItemFrame) {
+				Location eLoc=e.getLocation();
+				if(eLoc.getBlockX()==x&&eLoc.getBlockY()==y&&eLoc.getBlockZ()==z) {
+					itemFrame=(ItemFrame) e;
+					break;
+				}
+			}
+		}
+		
+		int allBytesLength=allBytes.length-FILE_HEADER_LENGTH;
+		int l=128*128+4*2;
 		int a=allBytesLength/l;
 		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[a];
 		int[] mapIds=new int[a];
+		int[] delays=new int[a];
 		for(int i=0; i<a; i++) {
-			int index=i*l;
+			int index=i*l+FILE_HEADER_LENGTH;
 			int mapId=
 					(0xff & allBytes[index  ]) << 24  |
 					(0xff & allBytes[index+1]) << 16  |
 					(0xff & allBytes[index+2]) << 8   |
 					(0xff & allBytes[index+3]) << 0;
+			delays[i]=
+					(0xff & allBytes[index+4]) << 24  |
+					(0xff & allBytes[index+5]) << 16  |
+					(0xff & allBytes[index+6]) << 8   |
+					(0xff & allBytes[index+7]) << 0;
 			mapIds[i]=mapId;
 			byte[] bytes=new byte[128*128];
 			for(int j=0; j<bytes.length; j++) {
-				bytes[j]=allBytes[index+j+4];
+				bytes[j]=allBytes[index+j+8];
 			}
 			mapRenderers[i]=new BetterMapRenderer(bytes);
 		}
@@ -193,29 +224,29 @@ public class WorldUtil {
 		if(itemFrame==null) {
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(mapIds, loc, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame114(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(mapIds, loc, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame115(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_13) {
-				frame=new BetterFrame113(mapIds, loc, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame113(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_12) {
-				frame=new BetterFrame112(mapIds, loc, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame112(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(mapIds, loc, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame18(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			}
 			return frame;
 		} else {
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame114(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame115(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_13) {
-				frame=new BetterFrame113(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame113(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_12) {
-				frame=new BetterFrame112(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame112(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(mapIds, itemFrame, dir, mapRenderers, currentTime, delay);
+				frame=new BetterFrame18(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
 			}
 			return frame;
 		}
@@ -223,22 +254,61 @@ public class WorldUtil {
 	private static void saveFrame(BetterFrame frame) throws IOException {
 	    MapView[] views=frame.getMapViews();
 		Location loc=frame.getLocation();
-		String path=loc.getWorld().getName()+","+loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ()+","+frame.getFacing()+","+frame.getDelay();
 		
-		int l=128*128+4;
-		byte[] totalBytes=new byte[views.length*l];
+		int l=128*128+4*2;
+		byte[] totalBytes=new byte[views.length*l+FILE_HEADER_LENGTH];
+		
+		byte[] worldUidBytes=UUIDHelper.getBytesFromUUID(loc.getWorld().getUID());
+		for(int i=0; i<worldUidBytes.length; i++) {
+			totalBytes[i]=worldUidBytes[i];
+		}
+		byte[] signUidBytes=UUIDHelper.getBytesFromUUID(frame.getSignUid());
+		for(int i=0; i<signUidBytes.length; i++) {
+			totalBytes[i+16]=signUidBytes[i];
+		}
+		int x=loc.getBlockX();
+		int y=loc.getBlockY();
+		int z=loc.getBlockZ();
+		totalBytes[16*2  ]=((byte)((x >> 24) & 0xff));
+		totalBytes[16*2+1]=((byte)((x >> 16) & 0xff));
+		totalBytes[16*2+2]=((byte)((x >> 8) & 0xff));
+		totalBytes[16*2+3]=((byte)((x >> 0) & 0xff));
+		
+		totalBytes[16*2+4]=((byte)((y >> 24) & 0xff));
+		totalBytes[16*2+5]=((byte)((y >> 16) & 0xff));
+		totalBytes[16*2+6]=((byte)((y >> 8) & 0xff));
+		totalBytes[16*2+7]=((byte)((y >> 0) & 0xff));
+		
+		totalBytes[16*2+8]=((byte)((z >> 24) & 0xff));
+		totalBytes[16*2+9]=((byte)((z >> 16) & 0xff));
+		totalBytes[16*2+10]=((byte)((z >> 8) & 0xff));
+		totalBytes[16*2+11]=((byte)((z >> 0) & 0xff));
+		
+		int facing=0;
+		BlockFace face=frame.getFacing();
+		for(BlockFace check:BlockFace.values()) {
+			if(face==check) break;
+			facing++;
+		}
+		totalBytes[44]=(byte)facing;
+		
     	for(int i=0; i<views.length; i++) {
-    		int index=i*l;
+    		int index=i*l+FILE_HEADER_LENGTH;
     		
     		MapView view=views[i];
     		int id=enumUtil.getMapId(view);
+    		int delay=frame.getDelay(i);
     		totalBytes[index  ]=((byte)((id >> 24) & 0xff));
     		totalBytes[index+1]=((byte)((id >> 16) & 0xff));
     		totalBytes[index+2]=((byte)((id >> 8) & 0xff));
     		totalBytes[index+3]=((byte)((id >> 0) & 0xff));
+    		totalBytes[index+4]=((byte)((delay >> 24) & 0xff));
+    		totalBytes[index+5]=((byte)((delay >> 16) & 0xff));
+    		totalBytes[index+6]=((byte)((delay >> 8) & 0xff));
+    		totalBytes[index+7]=((byte)((delay >> 0) & 0xff));
     		byte[] bytes=((BetterMapRenderer)view.getRenderers().get(0)).getData();
     		for(int j=0; j<bytes.length; j++) {
-    			totalBytes[index+4+j]=bytes[j];
+    			totalBytes[index+8+j]=bytes[j];
     		}
     	}
     	
@@ -252,7 +322,11 @@ public class WorldUtil {
 		// Create an expandable byte array to hold the compressed data.
 		// It is not necessary that the compressed data will be smaller than
 		// the uncompressed data.
-		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+path+".gsign");
+		int number=0;
+		while(new File(signFolder.getPath()+"/"+number+".gsign").exists()) {
+			number++;
+		}
+		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+number+".gsign");
 		
 		// Compress the data
 		byte[] buf = new byte[totalBytes.length*2];
@@ -275,22 +349,22 @@ public class WorldUtil {
 		}
 	}
 	
-	public static void spawnItemFrame(Location loc, byte[] image, BlockFace direction) {
+	public static void spawnItemFrame(UUID signUid, Location loc, byte[] image, BlockFace direction) {
 		BetterFrame frame=null;
 		if(mcVersion==MCVERSION_1_14) {
-			frame=new BetterFrame114(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+			frame=new BetterFrame114(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_15) {
-			frame=new BetterFrame115(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+			frame=new BetterFrame115(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_13) {
-			frame=new BetterFrame113(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+			frame=new BetterFrame113(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_12) {
-			frame=new BetterFrame112(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+			frame=new BetterFrame112(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_8) {
-			frame=new BetterFrame18(loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, 0);
+			frame=new BetterFrame18(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		}
 		frames.add(frame);
 	}
-	public static void spawnItemFrame(Location loc, byte[][] frames, int delay, long startTime, BlockFace direction) {
+	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
 		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[frames.length];
 		for(int i=0; i<frames.length; i++) {
 			mapRenderers[i]=new BetterMapRenderer(frames[i]);
@@ -302,19 +376,96 @@ public class WorldUtil {
 				
 				BetterFrame frame=null;
 				if(mcVersion==MCVERSION_1_14) {
-					frame=new BetterFrame114(loc, direction, mapRenderers, startTime, delay);
+					frame=new BetterFrame114(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_15) {
-					frame=new BetterFrame115(loc, direction, mapRenderers, startTime, delay);
+					frame=new BetterFrame115(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_13) {
-					frame=new BetterFrame113(loc, direction, mapRenderers, startTime, delay);
+					frame=new BetterFrame113(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_12) {
-					frame=new BetterFrame112(loc, direction, mapRenderers, startTime, delay);
+					frame=new BetterFrame112(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_8) {
-					frame=new BetterFrame18(loc, direction, mapRenderers, startTime, delay);
+					frame=new BetterFrame18(signUid, loc, direction, mapRenderers, startTime, delays);
 				}
 				gifFrames.add(frame);
 			}
 		}.runTask(Main.getPlugin());
+	}
+	
+	public static UUID randomSignUid() {
+		UUID uid=UUID.randomUUID();
+		while(true) {
+			boolean exists=false;
+			for(BetterFrame frame:frames) {
+				if(frame.getSignUid().compareTo(uid)==0) {
+					exists=true;
+					break;
+				}
+			}
+			if(!exists) for(BetterFrame frame:gifFrames) {
+				if(frame.getSignUid().compareTo(uid)==0) {
+					exists=true;
+					break;
+				}
+			}
+			if(!exists) for(BetterFrame frame:savedFrames.keySet()) {
+				if(frame.getSignUid().compareTo(uid)==0) {
+					exists=true;
+					break;
+				}
+			}
+			
+			if(exists) {
+				uid=UUID.randomUUID();
+			} else break;
+		}
+		return uid;
+	}
+	public static BetterFrame getFrame(ItemFrame itemFrame) {
+		for(BetterFrame frame:frames) {
+			if(frame.getItemFrame().equals(itemFrame)) {
+				return frame;
+			}
+		}
+		for(BetterFrame frame:gifFrames) {
+			if(frame.getItemFrame().equals(itemFrame)) {
+				return frame;
+			}
+		}
+		for(BetterFrame frame:savedFrames.keySet()) {
+			if(frame.getItemFrame().equals(itemFrame)) {
+				return frame;
+			}
+		}
+		return null;
+	}
+	public static void removeSign(UUID uid) {
+		for(BetterFrame frame:frames) {
+			if(frame.getSignUid().compareTo(uid)==0) {
+				frame.getItemFrame().remove();
+				frames.remove(frame);
+			}
+		}
+		for(BetterFrame frame:savedGifFrames.keySet()) {
+			if(frame.getSignUid().compareTo(uid)==0) {
+				frame.getItemFrame().remove();
+				savedGifFrames.get(frame).delete();
+				savedGifFrames.remove(frame);
+				gifFrames.remove(frame);
+			}
+		}
+		for(BetterFrame frame:gifFrames) {
+			if(frame.getSignUid().compareTo(uid)==0) {
+				frame.getItemFrame().remove();
+				gifFrames.remove(frame);
+			}
+		}
+		for(BetterFrame frame:savedFrames.keySet()) {
+			if(frame.getSignUid().compareTo(uid)==0) {
+				frame.getItemFrame().remove();
+				savedFrames.get(frame).delete();
+				savedFrames.remove(frame);
+			}
+		}
 	}
 	
 	public static int getTotalAmountOfFrames() {

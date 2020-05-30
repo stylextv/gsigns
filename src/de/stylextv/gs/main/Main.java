@@ -18,7 +18,9 @@ import de.stylextv.gs.bstats.Metrics;
 import de.stylextv.gs.command.CommandGS;
 import de.stylextv.gs.command.CommandGSigns;
 import de.stylextv.gs.command.CommandGamemodeSigns;
+import de.stylextv.gs.command.CommandHandler;
 import de.stylextv.gs.command.MainTabCompleter;
+import de.stylextv.gs.event.EventItemFrame;
 import de.stylextv.gs.event.EventPlayerInteract;
 import de.stylextv.gs.event.EventPlayerJoinQuit;
 import de.stylextv.gs.world.WorldUtil;
@@ -34,6 +36,7 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		register();
 		
+		CommandHandler.create();
 		WorldUtil.onEnable();
 		
 		enableBStats();
@@ -55,6 +58,7 @@ public class Main extends JavaPlugin {
 		PluginManager pm=Bukkit.getPluginManager();
 		pm.registerEvents(new EventPlayerInteract(), plugin);
 		pm.registerEvents(new EventPlayerJoinQuit(), plugin);
+		pm.registerEvents(new EventItemFrame(), plugin);
 	}
 	private void enableBStats() {
 		Metrics metrics = new Metrics(this);
