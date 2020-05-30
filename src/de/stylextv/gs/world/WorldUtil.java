@@ -469,7 +469,9 @@ public class WorldUtil {
 	}
 	
 	public static int getTotalAmountOfFrames() {
-		return signFolder.listFiles().length;
+		File[] files=signFolder.listFiles();
+		if(files==null) return 0;
+		return files.length;
 	}
 	public static int getMcVersion() {
 		return mcVersion;

@@ -36,8 +36,8 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		register();
 		
-		CommandHandler.create();
 		WorldUtil.onEnable();
+		CommandHandler.create();
 		
 		enableBStats();
 		checkAutoUpdaterResult();
