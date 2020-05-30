@@ -51,7 +51,7 @@ For ' \ ' use: \\
 
 
 Here is a list of arguments you can use:
-
+```
 txt  | The text that is rendered.
 
 txt-col  | The text color in hexadecimal. Default: RGB(255,255,255) (White)
@@ -86,6 +86,7 @@ Default: none -> no simplex noise. "sim-hue:rdm" results in a random hue.
 sim-seed  | The seed used for the simplex noise texture [Integer]. Default: Random number from 1 to 1000.
 
 sim-siz  | The size of the noise intervals [Double]. Default: 150.
+```
 
 Here are some example codes:
 - {txt:Hello,fnt:"Pacifico-Regular"}
