@@ -52,7 +52,7 @@ If you want to use a `"` inside the quote use: `\"`
 For `\` use: `\\`
 
 Here is a list of arguments you can use:
-Argument-Name | Description
+Argument Name | Description
 ------------ | -------------
 txt | The text that is rendered.
 txt-col | The text color in hexadecimal. Default: RGB(255,255,255) (White)
