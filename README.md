@@ -18,10 +18,10 @@ for(int i=0; i<data.length; i++) {
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
 First a file is created with the smallest number that is not in use (starting at 0) as the name. Then a header consisting of `45` bytes is put at the beginning of the file:
 ```
-WORLD_UUID (`16` bytes)
-SIGN_UUID (`16` bytes)
-X,Y,Z (`3 * 4` bytes)
-FACING (`1` byte)
+WORLD_UUID (16 bytes)
+SIGN_UUID (16 bytes)
+X,Y,Z (3 * 4 bytes)
+FACING (1 byte)
 ```
 "SIGN_UUID" is the UUID of the sign. Item frames, that belong together, have the same UUID. This is used when deleting a whole sign at once.
 "FACING" is the direction the item frame is facing.
