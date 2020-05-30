@@ -72,3 +72,15 @@ Here are some example codes:
 - `{txt:Hello,fnt:"Pacifico-Regular"}`
 - `{fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/bg0.png}`
 - `{txt:Bedwars,sim-hue:0.94}`
+
+
+## Project Layout
+
+├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
+├─ 📂 src/            # 🌟 Source Files
+│  ├─ 📂 assets/
+│  │  └─ 📂 color_tables  # 📦 Color Tables
+│  ├─ 📂 de/stylextv/gs   # ✉️ Source Code
+│  └─ 📄 plugin.yml       # 📌 Plugin-YML
+├─ 📂 version/        # 📬 Versions (used by the auto-updater)
+└─ 📃 readme.md       # 📖 Read Me!
