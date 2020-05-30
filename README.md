@@ -76,12 +76,16 @@ sim-seed | The seed used for the simplex noise texture [Integer]. Default: Rando
 sim-siz | The size of the noise intervals [Double]. Default: 150.
 
 Here are some example codes:
-- `{txt:Hello,fnt:"Pacifico-Regular"}`
-- `{fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/bg0.png}`
-- `{txt:Bedwars,sim-hue:0.94}`
+```bash
+- {txt:Hello,fnt:"Pacifico-Regular"}
+- {fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/bg0.png}
+- {txt:Bedwars,sim-hue:0.94}
+```
 
 
 ## Project Layout
+
+Here you can view the current structuring of the project.
 
 ```bash
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
