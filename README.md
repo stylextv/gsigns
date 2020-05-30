@@ -91,7 +91,7 @@ Here you can view the current structuring of the project.
 ```bash
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
 ├─ 📂 src/            # 🌟 Source Files
-│  ├─ 📂 assets/
+│  ├─ 📂 assets/          # ✒️ Plugin Assets
 │  │  └─ 📂 color_tables  # 📦 Color Tables
 │  ├─ 📂 de/stylextv/gs   # ✉️ Source Code
 │  └─ 📄 plugin.yml       # 📌 Plugin-YML
