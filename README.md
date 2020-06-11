@@ -63,6 +63,10 @@ Here is a list of arguments you can use:
 Argument Name | Description
 ------------ | -------------
 txt | The text that is rendered.
+
+Argument Name | Description
+------------ | -------------
+txt | The text that is rendered.
 txt-col | The text color in hexadecimal. Default: RGB(255,255,255) (White)
 bg-url | The url to the background. Default: none (results in black background). If gifs don't work copy the gif into "GamemodeSigns/images" and use bg-img.
 bg-img | The image for the background (in "plugins\GamemodeSigns\images"). Default: none (results in black background)
