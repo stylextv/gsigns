@@ -60,7 +60,7 @@ If you want to use a `"` inside the quote use: `\"`
 For `\` use: `\\`
 
 Here is a list of arguments you can use:
- | 
+Argument Name | Description
 ------------ | -------------
 txt | The text that is rendered.
 
