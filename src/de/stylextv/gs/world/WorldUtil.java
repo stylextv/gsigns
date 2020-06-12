@@ -148,8 +148,8 @@ public class WorldUtil {
 		
 		Inflater inflater = new Inflater();
 		inflater.setInput(allBytes);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(allBytes.length);  
-		byte[] buffer = new byte[(128*128+4*2)+FILE_HEADER_LENGTH];
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(allBytes.length);
+		byte[] buffer = new byte[allBytes.length*3];//(128*128+4*2)+FILE_HEADER_LENGTH
 		while(!inflater.finished()) {
 			int count = inflater.inflate(buffer);
 		    outputStream.write(buffer, 0, count);
@@ -158,17 +158,16 @@ public class WorldUtil {
 		inflater.end();
 		allBytes = outputStream.toByteArray();
 		
-		byte[] worldUidBytes=new byte[16];
-		for(int i=0; i<worldUidBytes.length; i++) {
-			worldUidBytes[i]=allBytes[i];
+		byte[] uidBuffer=new byte[16];
+		for(int i=0; i<uidBuffer.length; i++) {
+			uidBuffer[i]=allBytes[i];
 		}
-		World world=Bukkit.getWorld(UUIDHelper.getUUIDFromBytes(worldUidBytes));
+		World world=Bukkit.getWorld(UUIDHelper.getUUIDFromBytes(uidBuffer));
 		
-		byte[] signUidBytes=new byte[16];
-		for(int i=0; i<signUidBytes.length; i++) {
-			signUidBytes[i]=allBytes[i+16];
+		for(int i=0; i<uidBuffer.length; i++) {
+			uidBuffer[i]=allBytes[i+16];
 		}
-		UUID signUid=UUIDHelper.getUUIDFromBytes(signUidBytes);
+		UUID signUid=UUIDHelper.getUUIDFromBytes(uidBuffer);
 		
 		int x=
 				(0xff & allBytes[16*2  ]) << 24  |
@@ -294,7 +293,7 @@ public class WorldUtil {
 		int facing=0;
 		BlockFace face=frame.getFacing();
 		for(BlockFace check:BlockFace.values()) {
-			if(face==check) break;
+			if(face.equals(check)) break;
 			facing++;
 		}
 		totalBytes[44]=(byte)facing;

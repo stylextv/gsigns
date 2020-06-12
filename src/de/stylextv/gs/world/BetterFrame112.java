@@ -140,7 +140,7 @@ public class BetterFrame112 extends BetterFrame {
 		}
 		itemFrame.setItem(null);
 	}
-
+	
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
 		if(packets!=null) {
