@@ -391,7 +391,7 @@ public class Metrics {
     public static abstract class CustomChart {
 
         // The id of the chart
-        final String chartId;
+        private final String chartId;
 
         /**
          * Class constructor.
