@@ -123,7 +123,7 @@ public class BetterFrame18 extends BetterFrame {
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "deprecation" })
-	public BetterFrame18(UUID signUid, int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int[] delays) {
+	public BetterFrame18(UUID signUid, int[] mapIds, ItemFrame itemFrame, MapRenderer[] mapRenderers, long startTime, int[] delays) {
 		this.signUid=signUid;
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.mapPackets=new PacketPlayOutMap[mapRenderers.length];
@@ -231,19 +231,17 @@ public class BetterFrame18 extends BetterFrame {
 		playersInRadius.remove(p);
 	}
 	public void sendContent(Player p) {
-		if(!playersSentTo.contains(p)) {
-			if(views.length==1||ConnectionManager.canSend(p,views.length)) {
-				playersSentTo.add(p);
-		        PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						for(PacketPlayOutMap packet:mapPackets) {
-							connection.sendPacket(packet);
-						}
+		if(!playersSentTo.contains(p)&&(views.length==1||ConnectionManager.canSend(p,views.length))) {
+			playersSentTo.add(p);
+	        PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					for(PacketPlayOutMap packet:mapPackets) {
+						connection.sendPacket(packet);
 					}
-				}.runTaskAsynchronously(Main.getPlugin());
-			}
+				}
+			}.runTaskAsynchronously(Main.getPlugin());
 		}
 	}
 	

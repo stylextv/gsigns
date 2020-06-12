@@ -110,7 +110,7 @@ public class CodeParser {
 							break;
 						case "sim-hue":
 							float f;
-							if(value.equals("rdm")) f=MathUtil.getRandom().nextFloat();
+							if("rdm".equals(value)) f=MathUtil.getRandom().nextFloat();
 							else f=Float.valueOf(value);
 							order.setAbstractColor(Color.getHSBColor(f, 0.98f, 0.80f));
 							break;

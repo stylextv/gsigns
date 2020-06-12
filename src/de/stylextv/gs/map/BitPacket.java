@@ -2,8 +2,9 @@ package de.stylextv.gs.map;
 
 public class BitPacket implements Cloneable {
 	
-    public int data, bits;
-
+    public int data;
+    public int bits;
+    
     public BitPacket() {
         this.data = 0;
         this.bits = 0;
