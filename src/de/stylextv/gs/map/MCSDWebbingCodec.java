@@ -4,8 +4,10 @@ import java.io.IOException;
 
 public class MCSDWebbingCodec {
 	
-    private int last_x, last_y;
-    private int last_dx, last_dy;
+    private int last_x;
+    private int last_y;
+    private int last_dx;
+    private int last_dy;
     public boolean[]    strands       = new boolean[1 << 16];
     private BitPacket[] packets       = new BitPacket[1024];
 
@@ -14,7 +16,6 @@ public class MCSDWebbingCodec {
             this.packets[i] = new BitPacket();
         }
     }
-
 
     public void reset(boolean[] cells, boolean copyCells) {
         if (copyCells) {
@@ -27,7 +28,6 @@ public class MCSDWebbingCodec {
         this.last_dx = 1;
         this.last_dy = 1;
     }
-
 
     public boolean readNext(BitInputStream stream) throws IOException {
         int op = stream.readBits(2);
