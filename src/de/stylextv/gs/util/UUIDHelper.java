@@ -9,7 +9,7 @@ public class UUIDHelper {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
-
+        
         return bb.array();
     }
     
@@ -17,7 +17,7 @@ public class UUIDHelper {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
         Long high = byteBuffer.getLong();
         Long low = byteBuffer.getLong();
-
+        
         return new UUID(high, low);
     }
     
