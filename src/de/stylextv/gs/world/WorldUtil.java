@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -38,6 +41,7 @@ public class WorldUtil {
 	public static final int MCVERSION_1_15=4;
 	
 	private static int FILE_HEADER_LENGTH=45;
+	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	
 	private static File signFolder=new File("plugins/GamemodeSigns/signs");
 	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
@@ -56,9 +60,11 @@ public class WorldUtil {
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
 		if(version.contains("1.15")) mcVersion=MCVERSION_1_15;
+		else if(version.contains("1.14")) mcVersion=MCVERSION_1_14;
 		else if(version.contains("1.13")) mcVersion=MCVERSION_1_13;
 		else if(version.contains("1.12")) mcVersion=MCVERSION_1_12;
 		else if(version.contains("1.8")) mcVersion=MCVERSION_1_8;
+		else Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
 		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
 		else enumUtil=new EnumUtil114();
 		
@@ -68,6 +74,7 @@ public class WorldUtil {
 			@Override
 			public void run() {
 				long currentTime=System.currentTimeMillis();
+				int loaded=0;
 				if(signFolder.exists()) for(File f:signFolder.listFiles()) {
 					try {
 						String name=f.getName();
@@ -81,11 +88,13 @@ public class WorldUtil {
 								savedFrames.put(frame,f);
 							}
 						}
+						loaded++;
 					} catch(Exception ex) {
 						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
 						f.delete();
 					}
 				}
+				Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Succesfully loaded §"+(loaded == 0 ? "e" : "a")+loaded+"§r item-frames in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
 			}
 		}.runTaskLater(Main.getPlugin(), 2);
 		new BukkitRunnable() {
