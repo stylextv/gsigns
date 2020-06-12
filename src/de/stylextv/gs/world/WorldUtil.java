@@ -45,9 +45,6 @@ public class WorldUtil {
 	
 	private static File signFolder=new File("plugins/GamemodeSigns/signs");
 	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
-	public static File getCustomImagesFolder() {
-		return customImagesFolder;
-	}
 	
 	private static EnumUtil enumUtil;
 	private static int mcVersion=MCVERSION_1_14;
@@ -152,7 +149,7 @@ public class WorldUtil {
 		Inflater inflater = new Inflater();
 		inflater.setInput(allBytes);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(allBytes.length);  
-		byte[] buffer = new byte[(128*128+4)*2];
+		byte[] buffer = new byte[(128*128+4*2)+FILE_HEADER_LENGTH];
 		while(!inflater.finished()) {
 			int count = inflater.inflate(buffer);
 		    outputStream.write(buffer, 0, count);
@@ -189,9 +186,6 @@ public class WorldUtil {
 				(0xff & allBytes[16*2+10]) << 8   |
 				(0xff & allBytes[16*2+11]) << 0;
 		Location loc=new Location(world, x, y, z);
-		
-		int facing=allBytes[44];
-		BlockFace dir=BlockFace.values()[facing];
 		
 		ItemFrame itemFrame=null;
 		for(Entity e:loc.getChunk().getEntities()) {
@@ -231,6 +225,10 @@ public class WorldUtil {
 		}
 		
 		if(itemFrame==null) {
+			
+			int facing=allBytes[44];
+			BlockFace dir=BlockFace.values()[facing];
+			
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
 				frame=new BetterFrame114(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
@@ -247,15 +245,15 @@ public class WorldUtil {
 		} else {
 			BetterFrame frame=null;
 			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
+				frame=new BetterFrame114(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
+				frame=new BetterFrame115(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_13) {
-				frame=new BetterFrame113(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
+				frame=new BetterFrame113(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_12) {
-				frame=new BetterFrame112(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
+				frame=new BetterFrame112(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(signUid, mapIds, itemFrame, dir, mapRenderers, currentTime, delays);
+				frame=new BetterFrame18(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			}
 			return frame;
 		}
@@ -338,7 +336,7 @@ public class WorldUtil {
 		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+number+".gsign");
 		
 		// Compress the data
-		byte[] buf = new byte[totalBytes.length*2];
+		byte[] buf = new byte[totalBytes.length];
 		while (!compressor.finished()) {
 		      int count = compressor.deflate(buf);
 		      fos.write(buf, 0, count);
@@ -477,6 +475,9 @@ public class WorldUtil {
 		}
 	}
 	
+	public static File getCustomImagesFolder() {
+		return customImagesFolder;
+	}
 	public static int getTotalAmountOfFrames() {
 		File[] files=signFolder.listFiles();
 		if(files==null) return 0;

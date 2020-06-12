@@ -8,6 +8,7 @@ public class Vars {
 	public static String PREFIX="§8» §5§lG§6§lSigns §8| §7";
 	public static String PREFIX_CONSOLE=NAME+" | ";
 	
-	public static String AUTHOR,VERSION;
+	public static String AUTHOR;
+	public static String VERSION;
 	
 }

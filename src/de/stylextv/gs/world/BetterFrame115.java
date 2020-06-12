@@ -128,7 +128,7 @@ public class BetterFrame115 extends BetterFrame {
 		itemFrame.setItem(null);
 	}
 	@SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
-	public BetterFrame115(UUID signUid, int[] mapIds, ItemFrame itemFrame, BlockFace dir, MapRenderer[] mapRenderers, long startTime, int[] delays) {
+	public BetterFrame115(UUID signUid, int[] mapIds, ItemFrame itemFrame, MapRenderer[] mapRenderers, long startTime, int[] delays) {
 		this.signUid=signUid;
 		this.packets=new PacketPlayOutEntityMetadata[mapRenderers.length];
 		this.views=new MapView[mapRenderers.length];
@@ -230,18 +230,16 @@ public class BetterFrame115 extends BetterFrame {
 		playersInRadius.remove(p);
 	}
 	public void sendContent(Player p) {
-		if(!playersSentTo.contains(p)) {
-			if(views.length==1||ConnectionManager.canSend(p,views.length)) {
-				playersSentTo.add(p);
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						for(MapView view:views) {
-							p.sendMap(view);
-						}
+		if(!playersSentTo.contains(p)&&(views.length==1||ConnectionManager.canSend(p,views.length))) {
+			playersSentTo.add(p);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					for(MapView view:views) {
+						p.sendMap(view);
 					}
-				}.runTaskAsynchronously(Main.getPlugin());
-			}
+				}
+			}.runTaskAsynchronously(Main.getPlugin());
 		}
 	}
 	
