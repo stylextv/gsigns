@@ -95,14 +95,14 @@ public class BetterFrame112 extends BetterFrame {
 		for(int i=0; i<views.length; i++) {
 			int id=mapIds[i];
 			try {
-				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+				MapView view=(MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 				view.addRenderer(mapRenderers[i]);
 				
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short) id);
 			dataWatcher.set(new DataWatcherObject(6, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));
@@ -125,14 +125,14 @@ public class BetterFrame112 extends BetterFrame {
 		for(int i=0; i<views.length; i++) {
 			int id=mapIds[i];
 			try {
-				MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+				MapView view=(MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, (short)id);
 				views[i]=view;
 				
 				view.getRenderers().clear();
 				for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 				view.addRenderer(mapRenderers[i]);
 				
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
 			
 			ItemStack item = new ItemStack(Material.MAP, 1, (short) id);
 			dataWatcher.set(new DataWatcherObject(6, DataWatcherRegistry.f), CraftItemStack.asNMSCopy(item));

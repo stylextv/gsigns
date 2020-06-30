@@ -33,7 +33,7 @@ public class EnumUtil18 extends EnumUtil {
 		if(backup!=null) b.setBlockData(backup);
 		
 		try {
-			MapView view=(MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, (short)id);
+			MapView view=(MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, (short)id);
 			
 			view.getRenderers().clear();
 			for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
@@ -41,7 +41,7 @@ public class EnumUtil18 extends EnumUtil {
 			ItemStack item = new ItemStack(Material.MAP, 1, (short)id);
 			
 			frame.setItem(item);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {ex.printStackTrace();}
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
 		return frame;
 	}
 	
@@ -79,8 +79,8 @@ public class EnumUtil18 extends EnumUtil {
 	public MapView getMapView(ItemStack item) {
 		if(item==null) return null;
 		try {
-			return (MapView) Bukkit.class.getMethods()[5].invoke(Bukkit.class, item.getDurability());
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {}
+			return (MapView) Bukkit.class.getMethod("getMap", short.class).invoke(Bukkit.class, item.getDurability());
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 		return null;
 	}
 	
