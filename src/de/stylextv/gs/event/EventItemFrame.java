@@ -1,13 +1,18 @@
 package de.stylextv.gs.event;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
+import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import de.stylextv.gs.player.PlayerManager;
 import de.stylextv.gs.world.BetterFrame;
@@ -35,14 +40,42 @@ public class EventItemFrame implements Listener {
 		}
 	}
 	
-//	@EventHandler(priority = EventPriority.LOWEST)
-//	public void onItemFrameInteract(PlayerInteractEntityEvent e) {
-//		if(e.getRightClicked() instanceof ItemFrame) {
-//			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getRightClicked());
-//			if(frame!=null) {
-//				e.setCancelled(true);
-//			}
-//		}
-//	}
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onItemFrameInteract(PlayerInteractEntityEvent e) {
+		if(e.getRightClicked() instanceof ItemFrame) {
+			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getRightClicked());
+			if(frame!=null) {
+				e.setCancelled(true);
+			}
+		}
+	}
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onItemFrameInteract(PlayerInteractAtEntityEvent e) {
+		if(e.getRightClicked() instanceof ItemFrame) {
+			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getRightClicked());
+			if(frame!=null) {
+				e.setCancelled(true);
+			}
+		}
+	}
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onItemFrameInteract(HangingPlaceEvent e) {
+		if(e.getEntity().getType()==EntityType.ITEM_FRAME) {
+			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			if(frame!=null) {
+				e.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onItemFrameDamage(EntityDamageEvent e) {
+		if(e.getEntity().getType()==EntityType.ITEM_FRAME) {
+			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			if(frame!=null) {
+				e.setCancelled(true);
+			}
+		}
+	}
 	
 }
