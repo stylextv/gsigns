@@ -39,6 +39,7 @@ public class WorldUtil {
 	public static final int MCVERSION_1_13=2;
 	public static final int MCVERSION_1_14=3;
 	public static final int MCVERSION_1_15=4;
+	public static final int MCVERSION_1_16=5;
 	
 	private static int FILE_HEADER_LENGTH=45;
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
@@ -56,12 +57,13 @@ public class WorldUtil {
 	
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
-		if(version.contains("1.15")) mcVersion=MCVERSION_1_15;
+		if(version.contains("1.16")) mcVersion=MCVERSION_1_16;
+		else if(version.contains("1.15")) mcVersion=MCVERSION_1_15;
 		else if(version.contains("1.14")) mcVersion=MCVERSION_1_14;
 		else if(version.contains("1.13")) mcVersion=MCVERSION_1_13;
 		else if(version.contains("1.12")) mcVersion=MCVERSION_1_12;
 		else if(version.contains("1.8")) mcVersion=MCVERSION_1_8;
-		else Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
+		else Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The server-version (Â§c"+version+"Â§r) you are running is not supported by this plugin!");
 		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
 		else enumUtil=new EnumUtil114();
 		
@@ -87,11 +89,11 @@ public class WorldUtil {
 						}
 						loaded++;
 					} catch(Exception ex) {
-						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
+						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: Â§c"+f.getName());
 						f.delete();
 					}
 				}
-				Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Succesfully loaded §"+(loaded == 0 ? "e" : "a")+loaded+"§r item-frames in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
+				Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Succesfully loaded Â§"+(loaded == 0 ? "e" : "a")+loaded+"Â§r item-frames in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
 			}
 		}.runTaskLater(Main.getPlugin(), 2);
 		new BukkitRunnable() {
@@ -233,6 +235,8 @@ public class WorldUtil {
 				frame=new BetterFrame114(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_15) {
 				frame=new BetterFrame115(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
+			} else if(mcVersion==MCVERSION_1_16) {
+				frame=new BetterFrame116(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_13) {
 				frame=new BetterFrame113(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_12) {
@@ -247,6 +251,8 @@ public class WorldUtil {
 				frame=new BetterFrame114(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_15) {
 				frame=new BetterFrame115(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
+			} else if(mcVersion==MCVERSION_1_16) {
+				frame=new BetterFrame116(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_13) {
 				frame=new BetterFrame113(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 			} else if(mcVersion==MCVERSION_1_12) {
@@ -361,6 +367,8 @@ public class WorldUtil {
 			frame=new BetterFrame114(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_15) {
 			frame=new BetterFrame115(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
+		} else if(mcVersion==MCVERSION_1_16) {
+			frame=new BetterFrame116(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_13) {
 			frame=new BetterFrame113(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
 		} else if(mcVersion==MCVERSION_1_12) {
@@ -385,6 +393,8 @@ public class WorldUtil {
 					frame=new BetterFrame114(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_15) {
 					frame=new BetterFrame115(signUid, loc, direction, mapRenderers, startTime, delays);
+				} else if(mcVersion==MCVERSION_1_16) {
+					frame=new BetterFrame116(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_13) {
 					frame=new BetterFrame113(signUid, loc, direction, mapRenderers, startTime, delays);
 				} else if(mcVersion==MCVERSION_1_12) {
