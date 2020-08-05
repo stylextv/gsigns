@@ -1,6 +1,8 @@
 ![Cover Art](https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/cover.png)
 
 # 🚩 GSigns
+[![HitCount](http://hits.dwyl.com/StylexTV/GSigns.svg)](http://hits.dwyl.com/StylexTV/GSigns)
+
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6)](https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade)
 
 GSigns is a spigot plugin that allows the creation of item frames that hold images and gifs.
