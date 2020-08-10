@@ -4,7 +4,9 @@ package de.stylextv.gs.map;
  * Simple container for multiple bits of data.
  */
 public class BitPacket implements Cloneable {
-    public int data, bits;
+	
+    public int data;
+    public int bits;
 
     public BitPacket() {
         this.data = 0;

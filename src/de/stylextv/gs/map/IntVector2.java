@@ -16,7 +16,8 @@ import java.io.IOException;
 public class IntVector2 {
 
     public static final IntVector2 ZERO = new IntVector2(0, 0);
-    public final int x, z;
+    public final int x;
+    public final int z;
 
     public IntVector2(Chunk chunk) {
         this(chunk.getX(), chunk.getZ());
