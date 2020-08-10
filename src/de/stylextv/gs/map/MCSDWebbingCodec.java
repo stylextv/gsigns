@@ -42,9 +42,13 @@ import de.stylextv.gs.math.MathUtil;
  * </ul>
  */
 public class MCSDWebbingCodec {
+	
     private int written_cells;
-    private int last_x, last_y;
-    private int last_dx, last_dy;
+    private int last_x;
+    private int last_y;
+    private int last_dx;
+    private int last_dy;
+    
     public boolean[] strands = new boolean[1 << 16];
     private BitPacket[] packets = new BitPacket[1024];
     private int packets_count = 0;
@@ -341,7 +345,8 @@ public class MCSDWebbingCodec {
         int best_count = 0;
         double best_cost = Double.MAX_VALUE;
         int iterations = 0;
-        int index_a, index_b;
+        int index_a;
+        int index_b;
         while (++iterations < max_iterations) {
             // Create a new random pair of coordinates that will be swapped
             // If both were inactive last run, skip those coordinates
@@ -389,8 +394,9 @@ public class MCSDWebbingCodec {
     }
 
     private static class StartPoint {
-        int x, y;
-        boolean active;
+        private int x;
+        private int y;
+        private boolean active;
     }
 
     public static final Pattern EDGE_PATTERN = new Pattern(new int[][] {
@@ -453,7 +459,8 @@ public class MCSDWebbingCodec {
                 for (int mode = 0; mode < num_transforms; mode++) {
                     boolean[] pattern = this.patterns[patternIndex++];
 
-                    int sx, sy;
+                    int sx;
+                    int sy;
                     int idx = 0;
                     for (int y = 0; y < 3; y++) {
                         for (int x = 0; x < 3; x++) {

@@ -19,9 +19,9 @@ import java.util.zip.GZIPOutputStream;
  * are then filled with colors to reproduce the original image.
  */
 public class MCSDBubbleFormat extends MapColorSpaceData {
+	
     public final boolean[][] strands = new boolean[256][256 * 256];
     public final ArrayList<Bubble> bubbles = new ArrayList<Bubble>();
-    private MapColorSpaceData input_colors = null;
     private int max_iterations = 1000;
 
     /**
@@ -118,8 +118,8 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
 
             // Input colors will be used to correct errors in the color model
             // These are never written to and serve as a backup while writing
-            this.input_colors = new MapColorSpaceData();
-            this.input_colors.readFrom(this);
+        	MapColorSpaceData input_colors = new MapColorSpaceData();
+            input_colors.readFrom(this);
 
             // Load in all bubble boundary information
             System.out.println("Loading bubble boundaries...");
@@ -162,7 +162,7 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
                     this.bubbles.add(bubble);
                 }
             }
-            this.readFrom(this.input_colors);
+            this.readFrom(input_colors);
 
             // Merge the blobs with same colors sharing points
             System.out.println("Connecting bubbles in the z-axis...");
@@ -173,7 +173,7 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
                     Bubble otherBubble = iter.next();
 
                     // Mergable?
-                    if (bubble == otherBubble || bubble.color != otherBubble.color) {
+                    if (bubble.equals(otherBubble) || bubble.color != otherBubble.color) {
                         continue;
                     }
 
@@ -270,7 +270,7 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
                     int x = (i & 0xFF);
                     int y = (i >> 8) & 0xFF;
                     BitPacket code = new BitPacket();
-                    byte color = this.input_colors.get(i);
+                    byte color = input_colors.get(i);
                     if (x > 0 && this.get(i - 1) == color) {
                         code.write(0, 1);
                     } else {
