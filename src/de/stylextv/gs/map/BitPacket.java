@@ -1,10 +1,11 @@
 package de.stylextv.gs.map;
 
+/**
+ * Simple container for multiple bits of data.
+ */
 public class BitPacket implements Cloneable {
-	
-    public int data;
-    public int bits;
-    
+    public int data, bits;
+
     public BitPacket() {
         this.data = 0;
         this.bits = 0;
@@ -13,6 +14,30 @@ public class BitPacket implements Cloneable {
     public BitPacket(int data, int bits) {
         this.data = data;
         this.bits = bits;
+    }
+
+    /**
+     * Reads some bits from this packet, shifting the bits out of the buffer
+     * 
+     * @param nBits to read
+     * @return bit data
+     */
+    public int read(int nBits) {
+        int result = data & ((1 << nBits) - 1);
+        this.data >>= nBits;
+        this.bits -= nBits;
+        return result;
+    }
+
+    /**
+     * Writes some bits to this packet, increasing the number of bits stored
+     * 
+     * @param data to write
+     * @param nBits of data
+     */
+    public void write(int data, int nBits) {
+        this.data |= (data << this.bits);
+        this.bits += nBits;
     }
 
     @Override
@@ -45,5 +70,4 @@ public class BitPacket implements Cloneable {
         }
         return str;
     }
-    
 }
