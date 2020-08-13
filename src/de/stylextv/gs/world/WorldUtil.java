@@ -28,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Vars;
+import de.stylextv.gs.packet.PacketListener;
 import de.stylextv.gs.player.ConnectionManager;
 import de.stylextv.gs.render.BetterMapRenderer;
 import de.stylextv.gs.util.UUIDHelper;
@@ -68,6 +69,9 @@ public class WorldUtil {
 		else enumUtil=new EnumUtil114();
 		
 		customImagesFolder.mkdirs();
+		
+		PacketListener packetListener = new PacketListener();
+		packetListener.start();
 		
 		new BukkitRunnable() {
 			@Override
@@ -482,6 +486,29 @@ public class WorldUtil {
 				savedFrames.remove(frame);
 			}
 		}
+	}
+	public static boolean isFrame(int entityId) {
+		for(BetterFrame frame:frames) {
+			if(frame.getItemFrame().getEntityId()==entityId) {
+				return true;
+			}
+		}
+		for(BetterFrame frame:savedGifFrames.keySet()) {
+			if(frame.getItemFrame().getEntityId()==entityId) {
+				return true;
+			}
+		}
+		for(BetterFrame frame:gifFrames) {
+			if(frame.getItemFrame().getEntityId()==entityId) {
+				return true;
+			}
+		}
+		for(BetterFrame frame:savedFrames.keySet()) {
+			if(frame.getItemFrame().getEntityId()==entityId) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static File getCustomImagesFolder() {
