@@ -39,6 +39,7 @@ public class CommandHandler {
 			boolean hasPermList=PermissionUtil.hasListPermission(p);
 			boolean hasPermCreate=PermissionUtil.hasCreatePermission(p);
 			boolean hasPermRemove=PermissionUtil.hasRemovePermission(p);
+			boolean hasPermUpdate=PermissionUtil.hasUpdatePermission(p);
 			if(args.length>=1) {
 				String sub=args[0];
 				if(sub.equalsIgnoreCase("listfiles")) {
@@ -103,19 +104,36 @@ public class CommandHandler {
 							}
 						} else p.sendMessage(Vars.PREFIX+"§7Please use §8\"§7/gs listfiles §c[page]§8\"§7.");
 					} else sendNoPermission(p);
+				} else if(sub.equalsIgnoreCase("help")) {
+					if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) {
+						int page=1;
+						if(args.length==2) try {
+							page=Integer.valueOf(args[1]);
+							if(page<1) page=1;
+							else if(page>2) page=2;
+						} catch(NumberFormatException ex) {
+							p.sendMessage(Vars.PREFIX+"§7Please enter a valid §cpage number§7.");
+							return false;
+						}
+						sendHelp(p, page);
+					} else sendInfo(p);
 				} else if(sub.equalsIgnoreCase("remove")) {
 					if(hasPermRemove) {
 						if(args.length==1) {
 							PlayerManager.toggleRemovingPhase(p);
 						} else p.sendMessage(Vars.PREFIX+"§7Please use §8\"§7/gs §cremove§8\"§7.");
 					} else sendNoPermission(p);
-				} else if(hasPermList||hasPermCreate||hasPermRemove) {
+				} else if(sub.equalsIgnoreCase("update")) {
+					if(hasPermUpdate) {
+						if(args.length==1) {
+							Main.getPlugin().runAutoUpdater(p);
+						} else p.sendMessage(Vars.PREFIX+"§7Please use §8\"§7/gs §cupdate§8\"§7.");
+					} else sendNoPermission(p);
+				} else if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) {
 					if(args.length==1) {
 						if(sub.equalsIgnoreCase("create")) {
 							if(hasPermCreate) sendCreateSuggestion(p);
 							else sendNoPermission(p);
-						} else if(sub.equalsIgnoreCase("help")) {
-							sendHelp(p);
 						} else if(sub.equalsIgnoreCase("info")) {
 							sendInfo(p);
 						} else if(sub.equalsIgnoreCase("cancel")) {
@@ -155,7 +173,7 @@ public class CommandHandler {
 					sendInfo(p);
 				}
 			} else {
-				if(hasPermList||hasPermCreate||hasPermRemove) sendHelpSuggestion(p);
+				if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) sendHelpSuggestion(p);
 				else sendInfo(p);
 			}
 		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
@@ -174,11 +192,11 @@ public class CommandHandler {
 	}
 	private static void sendPageArrows(Player p, int page, int pages) {
 		TextComponent comp=new TextComponent("    ");
-		if(page>0) comp.addExtra(getPageArrow(page-1, true));
+		if(page>0) comp.addExtra(getPageArrow(page-1, true, "listfiles"));
 		else comp.addExtra(getPageArrow(true));
 		TextComponent line=new TextComponent(" §8| ");
 		comp.addExtra(line);
-		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false));
+		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false, "listfiles"));
 		else comp.addExtra(getPageArrow(false));
 		comp.addExtra(line);
 		comp.addExtra(
@@ -186,12 +204,22 @@ public class CommandHandler {
 		);
 		p.spigot().sendMessage(comp);
 	}
-	private static TextComponent getPageArrow(int page, boolean dir) {
-	    return createClickableComponent(dir ? "§6§l<--" : "§6§l-->", dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs listfiles "+(page+1), ClickEvent.Action.RUN_COMMAND);
+	private static TextComponent getPageArrow(int page, boolean dir, String cmd) {
+	    return createClickableComponent(dir ? "§6§l<--" : "§6§l-->", dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
 	}
 	private static TextComponent getPageArrow(boolean dir) {
 		TextComponent comp=new TextComponent(dir ? "§8§l<--" : "§8§l-->");
 		return comp;
+	}
+	private static void sendPageArrowsHelp(Player p, int page, int pages) {
+		TextComponent comp=new TextComponent("    ");
+		if(page>0) comp.addExtra(getPageArrow(page-1, true, "help"));
+		else comp.addExtra(getPageArrow(true));
+		TextComponent line=new TextComponent(" §8| ");
+		comp.addExtra(line);
+		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false, "help"));
+		else comp.addExtra(getPageArrow(false));
+		p.spigot().sendMessage(comp);
 	}
 	private static void sendHelpSuggestion(Player p) {
 		p.sendMessage(Vars.PREFIX+"§7Please enter §8\"§7/gs §ehelp§8\"§7 to get a list of commands.");
@@ -202,28 +230,53 @@ public class CommandHandler {
 	private static void sendNoPermission(Player p) {
 		p.sendMessage(Vars.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
 	}
-	private static void sendHelp(Player p) {
-		p.sendMessage("§a>§m---------------------§6  Help  §a§m---------------------§a<");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §ecreate §7<code>: Lets you create and place a");
-		p.sendMessage("    §7 new sign");
-		p.sendMessage("    §8 (Requires the permission: gsigns.create)");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §eremove§7: Lets you remove a sign.");
-		p.sendMessage("    §8 (Requires the permission: gsigns.remove)");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §ecancel§7: Cancels the current placement process");
-		p.sendMessage("    §8 (Requires the permission: gsigns.create)");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §elistfiles§7: Lists the files in your image folder");
-		p.sendMessage("    §8 (Requires the permission: gsigns.list)");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §ehelp§7: Shows this command list");
-		p.sendMessage("    §8 (Requires any of the plugins permissions)");
-		p.sendMessage("");
-		p.sendMessage("    §7/gs §einfo§7: Shows general information about this plugin");
-		p.sendMessage("");
-		p.sendMessage("§a>§m------------------------------------------------§a<");
+	private static void sendHelp(Player p, int page) {
+		switch(page) {
+		case 1:
+			p.sendMessage("§a>§m-----------------§6  Help §8- §7Page §61  §a§m-----------------§a<");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §ecreate §7<code>: Lets you create and place a");
+			p.sendMessage("    §7 new sign");
+			p.sendMessage("    §8 (Requires the permission: gsigns.create)");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §eremove§7: Lets you remove a sign.");
+			p.sendMessage("    §8 (Requires the permission: gsigns.remove)");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §ecancel§7: Cancels the current placement process");
+			p.sendMessage("    §8 (Requires the permission: gsigns.create)");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §elistfiles §7[page]: Lists the files in your image folder");
+			p.sendMessage("    §8 (Requires the permission: gsigns.list)");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			sendPageArrowsHelp(p, 0, 2);
+			p.sendMessage("");
+			p.sendMessage("§a>§m------------------------------------------------§a<");
+			break;
+		case 2:
+			p.sendMessage("§a>§m-----------------§6  Help §8- §7Page §62  §a§m-----------------§a<");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §eupdate§7: Updates the plugin to the latest version");
+			p.sendMessage("    §8 (Requires the permission: gsigns.update)");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §ehelp §7[page]: Shows this command list");
+			p.sendMessage("    §8 (Requires any of the plugins permissions)");
+			p.sendMessage("");
+			p.sendMessage("    §7/gs §einfo§7: Shows general information about this plugin");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			p.sendMessage("");
+			sendPageArrowsHelp(p, 1, 2);
+			p.sendMessage("");
+			p.sendMessage("§a>§m------------------------------------------------§a<");
+			break;
+		}
 	}
 	private static void sendInfo(Player p) {
 		p.sendMessage("§5>§m------------------§6  Information  §5§m------------------§5<");
