@@ -13,5 +13,8 @@ public class PermissionUtil {
 	public static boolean hasListPermission(Player p) {
 		return p.hasPermission("gsigns.*")||p.hasPermission("gsigns.list");
 	}
+	public static boolean hasUpdatePermission(Player p) {
+		return p.hasPermission("gsigns.*")||p.hasPermission("gsigns.update");
+	}
 	
 }
