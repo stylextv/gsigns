@@ -49,22 +49,30 @@ public class CommandHandler {
 							if(args.length==2) try {
 								page=Integer.valueOf(args[1])-1;
 							} catch(NumberFormatException ex) {
-								p.sendMessage(Vars.PREFIX+"ง7Please enter a valid งcpage numberง7.");
+								p.sendMessage(Vars.PREFIX+"ยง7Please enter a valid ยงcpage numberยง7.");
 								return false;
 							}
 							String[] files=WorldUtil.getCustomImagesFolder().list();
 							int length=0;
 							if(files!=null) length=files.length;
-							int pages=length/14 + (length%14!=0 ? 1 : 0);
+							int pages=length/11 + (length%11!=0 ? 1 : 0);
+							
+							if(page<0) page=0;
+							else if(page>=pages) {
+								page=pages==0 ? 0 : pages-1;
+							}
 							
 							if(length==0) {
-								p.sendMessage("ง9>งm--------------------ง6  Files  ง9งm---------------------ง9<");
+								p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
+								p.sendMessage("                       ยงaFiles");
 								p.sendMessage("");
-								p.sendMessage("    ง7Sorry, but your folder seems to be งcemptyง7.");
-								for(int i=0; i<14; i++) p.sendMessage("");
+								p.sendMessage("ยง8- ยงaPage 1 ยง8>");
+								p.sendMessage("    ยง8- ยง7ยงoFolder is empty =(");
+								for(int i=0; i<11; i++) p.sendMessage("");
 								sendPageArrows(p, page, pages);
+								p.sendMessage("ยงe*ยง7: Newly added");
 								p.sendMessage("");
-								p.sendMessage("ง9>งm------------------------------------------------ง9<");
+								p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
 							} else {
 								if(oldFiles==null) {
 									oldFiles=new CopyOnWriteArrayList<String>();
@@ -80,15 +88,14 @@ public class CommandHandler {
 									if(remove) oldFiles.remove(s);
 								}
 								
-								if(page<0) page=0;
-								else if(page>=pages) page=pages-1;
-								int j=page*14+13;
+								int j=page*11+10;
 								if(j>=length) j=length-1;
-								p.sendMessage("ง9>งm--------------------ง6  Files  ง9งm---------------------ง9<");
+								p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
+								p.sendMessage("                       ยงaFiles");
 								p.sendMessage("");
-								p.sendMessage("    ง7Page "+(page+1)+":");
-								for(int i=0; i<14; i++) {
-									int index=i+page*14;
+								p.sendMessage("ยง8- ยงaPage "+(page+1)+" ยง8>");
+								for(int i=0; i<11; i++) {
+									int index=i+page*11;
 									if(index<=j) {
 										String name=files[index];
 										boolean isNew=!oldFiles.contains(name);
@@ -98,42 +105,33 @@ public class CommandHandler {
 										sendFile(p, name, isNew);
 									} else p.sendMessage("");
 								}
-								sendPageArrows(p, page, pages);
 								p.sendMessage("");
-								p.sendMessage("ง9>งm------------------------------------------------ง9<");
+								sendPageArrows(p, page, pages);
+								p.sendMessage("ยงe*ยง7: Newly added");
+								p.sendMessage("");
+								p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
 							}
-						} else p.sendMessage(Vars.PREFIX+"ง7Please use ง8\"ง7/gs listfiles งc[page]ง8\"ง7.");
+						} else p.sendMessage(Vars.PREFIX+"ยง7Use ยงc/gs listfiles [Page]");
 					} else sendNoPermission(p);
-				} else if(sub.equalsIgnoreCase("help")) {
-					if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) {
-						int page=1;
-						if(args.length==2) try {
-							page=Integer.valueOf(args[1]);
-							if(page<1) page=1;
-							else if(page>2) page=2;
-						} catch(NumberFormatException ex) {
-							p.sendMessage(Vars.PREFIX+"ง7Please enter a valid งcpage numberง7.");
-							return false;
-						}
-						sendHelp(p, page);
-					} else sendInfo(p);
 				} else if(sub.equalsIgnoreCase("remove")) {
 					if(hasPermRemove) {
 						if(args.length==1) {
 							PlayerManager.toggleRemovingPhase(p);
-						} else p.sendMessage(Vars.PREFIX+"ง7Please use ง8\"ง7/gs งcremoveง8\"ง7.");
+						} else p.sendMessage(Vars.PREFIX+"ยง7Use ยงc/gs remove");
 					} else sendNoPermission(p);
 				} else if(sub.equalsIgnoreCase("update")) {
 					if(hasPermUpdate) {
 						if(args.length==1) {
 							Main.getPlugin().runAutoUpdater(p);
-						} else p.sendMessage(Vars.PREFIX+"ง7Please use ง8\"ง7/gs งcupdateง8\"ง7.");
+						} else p.sendMessage(Vars.PREFIX+"ยง7Use ยงc/gs update");
 					} else sendNoPermission(p);
 				} else if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) {
 					if(args.length==1) {
 						if(sub.equalsIgnoreCase("create")) {
 							if(hasPermCreate) sendCreateSuggestion(p);
 							else sendNoPermission(p);
+						} else if(sub.equalsIgnoreCase("help")) {
+							sendHelp(p);
 						} else if(sub.equalsIgnoreCase("info")) {
 							sendInfo(p);
 						} else if(sub.equalsIgnoreCase("cancel")) {
@@ -155,11 +153,11 @@ public class CommandHandler {
 											Order order=CodeParser.parseCode(code);
 											if(order!=null) {
 												if(order.getError()!=null) {
-													p.sendMessage(Vars.PREFIX+"ง7The following value could not be parsed: งc"+order.getError());
+													p.sendMessage(Vars.PREFIX+"ยง7The following value could not be parsed: ยงc"+order.getError());
 												} else {
 													PlayerManager.startPlacingPhase(p, order);
 												}
-											} else p.sendMessage(Vars.PREFIX+"ง7The งccodeง7 you provided could not be parsed.");
+											} else p.sendMessage(Vars.PREFIX+"ยง7The ยงccodeยง7 you provided could not be parsed.");
 											
 										}
 									}.runTaskAsynchronously(Main.getPlugin());
@@ -176,119 +174,79 @@ public class CommandHandler {
 				if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) sendHelpSuggestion(p);
 				else sendInfo(p);
 			}
-		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"ง7This command is for งcplayersงr only.");
+		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"ยง7This command is for ยงcplayersยงr only.");
 		return false;
 	}
 	private static void sendFile(Player p, String file, boolean isNew) {
-		TextComponent comp=new TextComponent("        ");
+		TextComponent comp=new TextComponent("    ");
 		String displayName=file;
-		int j=isNew ? 6 : 0;
-		if(displayName.length()>36-j) displayName=displayName.substring(0, 33-j)+"...";
+		int j=isNew ? 1 : 0;
+		if(displayName.length()>30-j) displayName=displayName.substring(0, 27-j)+"...";
 		comp.addExtra(
-				createClickableComponent("ง7- "+displayName, "ง7Click here to get a งecommandง7 for this file.", "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
+				createClickableComponent("ยง8- ยง7"+displayName, "ยง7Click here to get a ยงecommandยง7 for this file.", "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
 		);
-		if(isNew) comp.addExtra(new TextComponent(" งd[งlNEWงd]"));
+		if(isNew) comp.addExtra(new TextComponent("ยงe*"));
 		p.spigot().sendMessage(comp);
 	}
 	private static void sendPageArrows(Player p, int page, int pages) {
 		TextComponent comp=new TextComponent("    ");
 		if(page>0) comp.addExtra(getPageArrow(page-1, true, "listfiles"));
 		else comp.addExtra(getPageArrow(true));
-		TextComponent line=new TextComponent(" ง8| ");
+		TextComponent line=new TextComponent(" ยง8| ");
 		comp.addExtra(line);
 		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false, "listfiles"));
 		else comp.addExtra(getPageArrow(false));
 		comp.addExtra(line);
 		comp.addExtra(
-				createClickableComponent("งe[งlREFRESHงe]", "ง7Click here to refresh the งecurrentง7 page.", "/gs listfiles "+(page+1), ClickEvent.Action.RUN_COMMAND)
+				createClickableComponent("ยงeRefresh", "ยง7Click here to refresh the ยงecurrentยง7 page.", "/gs listfiles "+(page+1), ClickEvent.Action.RUN_COMMAND)
 		);
 		p.spigot().sendMessage(comp);
 	}
 	private static TextComponent getPageArrow(int page, boolean dir, String cmd) {
-	    return createClickableComponent(dir ? "ง6งl<--" : "ง6งl-->", dir ? "ง7Click here to view the งepreviousง7 page." : "ง7Click here to view the งenextง7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
+	    return createClickableComponent(dir ? "ยงdยงlโ" : "ยงdยงlโ’", dir ? "ยง7Click here to view the ยงepreviousยง7 page." : "ยง7Click here to view the ยงenextยง7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
 	}
 	private static TextComponent getPageArrow(boolean dir) {
-		TextComponent comp=new TextComponent(dir ? "ง8งl<--" : "ง8งl-->");
+		TextComponent comp=new TextComponent(dir ? "ยง8ยงlโ" : "ยง8ยงlโ’");
 		return comp;
 	}
-	private static void sendPageArrowsHelp(Player p, int page, int pages) {
-		TextComponent comp=new TextComponent("    ");
-		if(page>0) comp.addExtra(getPageArrow(page-1, true, "help"));
-		else comp.addExtra(getPageArrow(true));
-		TextComponent line=new TextComponent(" ง8| ");
-		comp.addExtra(line);
-		if(page<pages-1) comp.addExtra(getPageArrow(page+1, false, "help"));
-		else comp.addExtra(getPageArrow(false));
-		p.spigot().sendMessage(comp);
-	}
 	private static void sendHelpSuggestion(Player p) {
-		p.sendMessage(Vars.PREFIX+"ง7Please enter ง8\"ง7/gs งehelpง8\"ง7 to get a list of commands.");
+		p.sendMessage(Vars.PREFIX+"ยง7Use ยงe/gs helpยง7 to get a list of commands.");
 	}
 	private static void sendCreateSuggestion(Player p) {
-		p.sendMessage(Vars.PREFIX+"ง7Please use ง8\"ง7/gs create งc<code>ง8\"ง7.");
+		p.sendMessage(Vars.PREFIX+"ยง7Use ยงc/gs create (Code)");
 	}
 	private static void sendNoPermission(Player p) {
-		p.sendMessage(Vars.PREFIX+"ง7You don't have the right งcpermissionง7 to do that.");
+		p.sendMessage(Vars.PREFIX+"ยง7You don't have the right ยงcpermissionยง7 to do that.");
 	}
-	private static void sendHelp(Player p, int page) {
-		switch(page) {
-		case 1:
-			p.sendMessage("งa>งm-----------------ง6  Help ง8- ง7Page ง61  งaงm-----------------งa<");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งecreate ง7<code>: Lets you create and place a");
-			p.sendMessage("    ง7 new sign");
-			p.sendMessage("    ง8 (Requires the permission: gsigns.create)");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งeremoveง7: Lets you remove a sign.");
-			p.sendMessage("    ง8 (Requires the permission: gsigns.remove)");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งecancelง7: Cancels the current placement process");
-			p.sendMessage("    ง8 (Requires the permission: gsigns.create)");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งelistfiles ง7[page]: Lists the files in your image folder");
-			p.sendMessage("    ง8 (Requires the permission: gsigns.list)");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			sendPageArrowsHelp(p, 0, 2);
-			p.sendMessage("");
-			p.sendMessage("งa>งm------------------------------------------------งa<");
-			break;
-		case 2:
-			p.sendMessage("งa>งm-----------------ง6  Help ง8- ง7Page ง62  งaงm-----------------งa<");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งeupdateง7: Updates the plugin to the latest version");
-			p.sendMessage("    ง8 (Requires the permission: gsigns.update)");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งehelp ง7[page]: Shows this command list");
-			p.sendMessage("    ง8 (Requires any of the plugins permissions)");
-			p.sendMessage("");
-			p.sendMessage("    ง7/gs งeinfoง7: Shows general information about this plugin");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			p.sendMessage("");
-			sendPageArrowsHelp(p, 1, 2);
-			p.sendMessage("");
-			p.sendMessage("งa>งm------------------------------------------------งa<");
-			break;
-		}
+	private static void sendHelp(Player p) {
+		p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
+		p.sendMessage("                     ยงa"+Vars.NAME);
+		p.sendMessage("");
+		p.sendMessage("ยง8- ยงa/gs create (Code) ยง8> ยง7Create signยงe*");
+		p.sendMessage("ยง8- ยงa/gs remove ยง8> ยง7Remove signยงe*");
+		p.sendMessage("ยง8- ยงa/gs cancel ยง8> ยง7Cancel placementยงe*");
+		p.sendMessage("ยง8- ยงa/gs listfiles [Page] ยง8> ยง7Lists your imagesยงe*");
+		p.sendMessage("ยง8- ยงa/gs update ยง8> ยง7Update pluginยงe*");
+		p.sendMessage("ยง8- ยงa/gs help ยง8> ยง7Show help");
+		p.sendMessage("ยง8- ยงa/gs info ยง8> ยง7Show plugin information");
+		p.sendMessage("");
+		p.sendMessage("ยง7(): ยงaRequiredยง7, []: ยงaOptional");
+		p.sendMessage("ยงe*ยง7: Needs extra permission to be executed");
+		p.sendMessage("");
+		p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
 	}
 	private static void sendInfo(Player p) {
-		p.sendMessage("ง5>งm------------------ง6  Information  ง5งm------------------ง5<");
+		p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
+		p.sendMessage("                   ยงaInformation");
 		p.sendMessage("");
-		p.sendMessage("    ง7This server uses the free plugin งbG-Signsง7.");
+		p.sendMessage("ยง7ยงoThis server uses the free and open");
+		p.sendMessage("ยง7ยงo source plugin ยงe"+Vars.NAME+"ยง7ยงo to put images and");
+		p.sendMessage("ยง7ยงo gifs into item frames!");
 		p.sendMessage("");
-		p.sendMessage("    ง7Author: งe"+Vars.AUTHOR);
+		p.sendMessage("ยง8- ยง7Developed by ยง8> ยงd"+Vars.AUTHOR);
+		p.sendMessage("ยง8- ยง7Installed version ยง8> ยงd"+Vars.VERSION);
 		p.sendMessage("");
-		p.sendMessage("    ง7Version: ง6"+Vars.VERSION);
-		p.sendMessage("    ง8 (Please visit our spigot site for updates)");
-		p.sendMessage("");
-		p.sendMessage("ง5>งm------------------------------------------------ง5<");
+		p.sendMessage("ยง2ยงm#ยงaยงm---------------------------------ยง2ยงm#");
 	}
 	
 	private static TextComponent createClickableComponent(String baseText, String hoverText, String clickText, ClickEvent.Action clickAction) {

@@ -30,11 +30,11 @@ public class MainTabCompleter implements TabCompleter {
 				} else if(args.length==2) {
 					if(args[0].equalsIgnoreCase("create")) {
 						ArrayList<String> tabs=new ArrayList<String>();
-						tabs.add("<code>");
+						tabs.add("(Code)");
 						return tabs;
-					} else if(args[0].equalsIgnoreCase("listfiles")||args[0].equalsIgnoreCase("help")) {
+					} else if(args[0].equalsIgnoreCase("listfiles")) {
 						ArrayList<String> tabs=new ArrayList<String>();
-						tabs.add("[page]");
+						tabs.add("[Page]");
 						return tabs;
 					}
 				}
