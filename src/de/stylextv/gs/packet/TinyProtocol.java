@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class TinyProtocol {
 
     private static final AtomicInteger ID = new AtomicInteger(0);
+    private static boolean USE_NETWORK_MARKER_QUEUE;
 
     // Used in order to lookup a channel
     private static final Reflections.MethodInvoker getPlayerHandle = Reflections.getMethod("{obc}.entity.CraftPlayer", "getHandle");
@@ -34,7 +35,15 @@ public abstract class TinyProtocol {
     private static final Class<Object> serverConnectionClass = Reflections.getUntypedClass("{nms}.ServerConnection");
     private static final Reflections.FieldAccessor<Object> getMinecraftServer = Reflections.getField("{obc}.CraftServer", minecraftServerClass, 0);
     private static final Reflections.FieldAccessor<Object> getServerConnection = Reflections.getField(minecraftServerClass, serverConnectionClass, 0);
-    private static final Reflections.MethodInvoker getNetworkMarkers = Reflections.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass);
+    private static Reflections.MethodInvoker getNetworkMarkers;
+    static {
+    	try {
+    		getNetworkMarkers = Reflections.getTypedMethod(serverConnectionClass, null, List.class, serverConnectionClass);
+    	} catch(Exception ex) {
+    		USE_NETWORK_MARKER_QUEUE = true;
+    		getNetworkMarkers = Reflections.getTypedMethod(serverConnectionClass, null, Queue.class, serverConnectionClass);
+    	}
+    }
 
     // Packets we have to intercept
     private static final Class<?> PACKET_LOGIN_IN_START = Reflections.getMinecraftClass("PacketLoginInStart");
@@ -50,7 +59,8 @@ public abstract class TinyProtocol {
     private Set<Channel> uninjectedChannels = Collections.newSetFromMap(new MapMaker().weakKeys().makeMap());
 
     // List of network markers
-    private List<Object> networkManagers;
+    private List<Object> networkManagersList;
+    private Queue<Object> networkManagersQueue;
 
     // Injected channel handlers
     private List<Channel> serverChannels = Lists.newArrayList();
@@ -97,7 +107,7 @@ public abstract class TinyProtocol {
             protected void initChannel(Channel channel) throws Exception {
                 try {
                     // This can take a while, so we need to stop the main thread from interfering
-                    synchronized (networkManagers) {
+                    synchronized (USE_NETWORK_MARKER_QUEUE ? networkManagersQueue : networkManagersList) {
                         // Stop injecting channels
                         if (!closed) {
                             channel.eventLoop().submit(() -> injectChannelInternal(channel));
@@ -170,7 +180,11 @@ public abstract class TinyProtocol {
         boolean looking = true;
 
         // We need to synchronize against this list
-        networkManagers = (List<Object>) getNetworkMarkers.invoke(null, serverConnection);
+        if(USE_NETWORK_MARKER_QUEUE) {
+        	networkManagersQueue = (Queue<Object>) getNetworkMarkers.invoke(null, serverConnection);
+        } else {
+        	networkManagersList = (List<Object>) getNetworkMarkers.invoke(null, serverConnection);
+        }
         createServerChannelHandler();
 
         // Find the correct list, or implicitly throw an exception

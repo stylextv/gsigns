@@ -46,7 +46,7 @@ public class PlayerManager {
 			p.sendMessage(Vars.PREFIX+"The removal process has been §ccanceled§7.");
 		} else {
 			playersInRemove.add(p);
-			p.sendMessage(Vars.PREFIX+"Please §ahit§7 a sign to remove it or type §8\"§7/gs §eremove§8\"§7 again to cancel the process.");
+			p.sendMessage(Vars.PREFIX+"§aPunch§7 a sign to remove it or use §e/gs remove§7 again to cancel the process.");
 		}
 	}
 	
@@ -381,13 +381,13 @@ public class PlayerManager {
 				WorldUtil.removeSign(frame.getSignUid());
 				p.sendMessage(Vars.PREFIX+"§7The sign has been §aremoved§7.");
 			} else {
-				p.sendMessage(Vars.PREFIX+"§7You no longer have §cpermission§7 to remove signs.");
+				p.sendMessage(Vars.PREFIX+"§7You no longer have the §cpermission§7 to remove signs.");
 			}
 			
 		} else {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
-				p.sendMessage(Vars.PREFIX+"§7Please enter §8\"§7/gs §eremove§8\"§7 to remove a sign.");
+				p.sendMessage(Vars.PREFIX+"§7Use §e/gs remove§7 to remove a sign.");
 				if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_8) p.playSound(p.getLocation(), "random.click", 0.5f,0.75f);
 				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_12) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", SoundCategory.BLOCKS, 1,1);
 				else p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 1,1);

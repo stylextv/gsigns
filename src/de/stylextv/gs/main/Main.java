@@ -3,6 +3,7 @@ package de.stylextv.gs.main;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import de.stylextv.gs.bstats.Metrics;
 import de.stylextv.gs.command.CommandGS;
@@ -37,6 +39,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	private String updateRequest;
+	private boolean inUpdateCheck;
 	
 	@Override
 	public void onEnable() {
@@ -149,8 +152,13 @@ public class Main extends JavaPlugin {
 						}.runTask(plugin);
 					}
 				} catch(Exception ex) {
-					Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"An exception occurred while §cchecking for new updates§r:");
-					ex.printStackTrace();
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"An exception occurred while §cchecking for new updates§r:");
+							ex.printStackTrace();
+						}
+					}.runTask(plugin);
 				}
 			}
 		}.runTaskLaterAsynchronously(plugin, 5);
@@ -163,45 +171,67 @@ public class Main extends JavaPlugin {
 	}
 	
 	public void runAutoUpdater(Player p) {
-		p.sendMessage(Vars.PREFIX+"§7Checking for new updates...");
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				try {
-					int currentVersion=(int) (Double.valueOf(Vars.VERSION)*10);
-					int future=1;
-					String found=null;
-					while(future<100) {
-						int i=currentVersion+future;
-						try {
-							String fileUrl=i/10+"."+i%10;
-							URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
-							ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-							rbc.close();
-							found=fileUrl;
-						} catch(Exception ex) {
-							break;
-						}
-					    
-					    future++;
-					}
-					
-					if(found!=null) {
-						updateRequest=found;
-						p.sendMessage(Vars.PREFIX+"§8§m----------------------------------------");
-						p.sendMessage(Vars.PREFIX+"§7A new update has been §afound§7. Version: "+found);
-						p.sendMessage(Vars.PREFIX+"§7The update is installed when the server is");
-						p.sendMessage(Vars.PREFIX+"§eclosed §7or §erestarted§7.");
-						p.sendMessage(Vars.PREFIX+"§8§m----------------------------------------");
-					} else {
-						p.sendMessage(Vars.PREFIX+"§7The plugin is up to date! You are running the §alatest§7 version of G-Signs.");
-					}
-				} catch(Exception ex) {
-					p.sendMessage(Vars.PREFIX+"§7An exception occurred while §cchecking for new updates§7!");
-					ex.printStackTrace();
+		if(updateRequest!=null) {
+			p.sendMessage(Vars.PREFIX+"§7A new update has §ealready§7 been found. Version: "+updateRequest);
+			p.sendMessage(Vars.PREFIX+"§7The update is installed when the server is §eclosed §7or §erestarted§7.");
+		} else if(inUpdateCheck) {
+			p.sendMessage(Vars.PREFIX+"§eSomeone else§7 is already checking for an update.");
+		} else {
+			inUpdateCheck=true;
+			p.sendMessage(Vars.PREFIX+"§7Checking for new updates...");
+			BukkitTask runnable=new BukkitRunnable() {
+				@Override
+				public void run() {
+					p.sendMessage(Vars.PREFIX+"§7...");
 				}
-			}
-		}.runTaskLaterAsynchronously(plugin, 5);
+			}.runTaskTimerAsynchronously(plugin, 120, 120);
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					try {
+						int currentVersion=(int) (Double.valueOf(Vars.VERSION)*10);
+						int future=1;
+						String found=null;
+						boolean noConnection=false;
+						while(future<100) {
+							int i=currentVersion+future;
+							try {
+								String fileUrl=i/10+"."+i%10;
+								URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
+								ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+								rbc.close();
+								found=fileUrl;
+							} catch(Exception ex) {
+								if(!(ex instanceof FileNotFoundException)) {
+									noConnection=true;
+								}
+								break;
+							}
+						    
+						    future++;
+						}
+						
+						if(noConnection) {
+							p.sendMessage(Vars.PREFIX+"§7Couldn't connect to the server. Make sure you are connected to the §cinternet§7.");
+						} else if(found!=null) {
+							updateRequest=found;
+							p.sendMessage(Vars.PREFIX+"§8§m----------------------------------------");
+							p.sendMessage(Vars.PREFIX+"§7A new update has been §afound§7. Version: "+found);
+							p.sendMessage(Vars.PREFIX+"§7The update is installed when the server is");
+							p.sendMessage(Vars.PREFIX+"§eclosed §7or §erestarted§7.");
+							p.sendMessage(Vars.PREFIX+"§8§m----------------------------------------");
+						} else {
+							p.sendMessage(Vars.PREFIX+"§7The plugin is up to date! You are running the §alatest§7 version of "+Vars.NAME+".");
+						}
+					} catch(Exception ex) {
+						p.sendMessage(Vars.PREFIX+"§7An exception occurred while §cchecking for new updates§7!");
+						ex.printStackTrace();
+					}
+					inUpdateCheck=false;
+					runnable.cancel();
+				}
+			}.runTaskLaterAsynchronously(plugin, 5);
+		}
 	}
 	
 }
