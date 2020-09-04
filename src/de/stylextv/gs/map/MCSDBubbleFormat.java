@@ -353,7 +353,8 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
             // Alternate the direction in which we process every step
             // This prevents really slow filling when the direction is 'wrong'
             // The below logic is partially based on the light fixing algorithm in Light Cleaner
-            final int index_end, index_delta;
+            final int index_end;
+            final int index_delta;
             int index;
             byte color;
             if (mode = !mode) {
@@ -477,7 +478,8 @@ public class MCSDBubbleFormat extends MapColorSpaceData {
     }
 
     public static class Bubble {
-        public int x, y;
+        public int x;
+        public int y;
         public int z_min;
         public int z_max;
         public byte color;
