@@ -94,6 +94,7 @@ public class WorldUtil {
 						loaded++;
 					} catch(Exception ex) {
 						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
+						ex.printStackTrace();
 						f.delete();
 					}
 				}
@@ -234,37 +235,9 @@ public class WorldUtil {
 			int facing=allBytes[44];
 			BlockFace dir=BlockFace.values()[facing];
 			
-			BetterFrame frame=null;
-			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_16) {
-				frame=new BetterFrame116(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_13) {
-				frame=new BetterFrame113(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_12) {
-				frame=new BetterFrame112(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
-			}
-			return frame;
+			return new BetterFrame(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
 		} else {
-			BetterFrame frame=null;
-			if(mcVersion==MCVERSION_1_14) {
-				frame=new BetterFrame114(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_16) {
-				frame=new BetterFrame116(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_15) {
-				frame=new BetterFrame115(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_13) {
-				frame=new BetterFrame113(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_12) {
-				frame=new BetterFrame112(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			} else if(mcVersion==MCVERSION_1_8) {
-				frame=new BetterFrame18(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
-			}
-			return frame;
+			return new BetterFrame(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
 		}
 	}
 	private static void saveFrame(BetterFrame frame) throws IOException {
@@ -366,21 +339,7 @@ public class WorldUtil {
 	}
 	
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[] image, BlockFace direction) {
-		BetterFrame frame=null;
-		if(mcVersion==MCVERSION_1_14) {
-			frame=new BetterFrame114(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		} else if(mcVersion==MCVERSION_1_16) {
-			frame=new BetterFrame116(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		} else if(mcVersion==MCVERSION_1_15) {
-			frame=new BetterFrame115(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		} else if(mcVersion==MCVERSION_1_13) {
-			frame=new BetterFrame113(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		} else if(mcVersion==MCVERSION_1_12) {
-			frame=new BetterFrame112(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		} else if(mcVersion==MCVERSION_1_8) {
-			frame=new BetterFrame18(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null);
-		}
-		frames.add(frame);
+		frames.add(new BetterFrame(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null));
 	}
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
 		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[frames.length];
@@ -392,21 +351,7 @@ public class WorldUtil {
 			public void run() {
 				loc.getBlock().setType(Material.AIR);
 				
-				BetterFrame frame=null;
-				if(mcVersion==MCVERSION_1_14) {
-					frame=new BetterFrame114(signUid, loc, direction, mapRenderers, startTime, delays);
-				} else if(mcVersion==MCVERSION_1_16) {
-					frame=new BetterFrame116(signUid, loc, direction, mapRenderers, startTime, delays);
-				} else if(mcVersion==MCVERSION_1_15) {
-					frame=new BetterFrame115(signUid, loc, direction, mapRenderers, startTime, delays);
-				} else if(mcVersion==MCVERSION_1_13) {
-					frame=new BetterFrame113(signUid, loc, direction, mapRenderers, startTime, delays);
-				} else if(mcVersion==MCVERSION_1_12) {
-					frame=new BetterFrame112(signUid, loc, direction, mapRenderers, startTime, delays);
-				} else if(mcVersion==MCVERSION_1_8) {
-					frame=new BetterFrame18(signUid, loc, direction, mapRenderers, startTime, delays);
-				}
-				gifFrames.add(frame);
+				gifFrames.add(new BetterFrame(signUid, loc, direction, mapRenderers, startTime, delays));
 			}
 		}.runTask(Main.getPlugin());
 	}

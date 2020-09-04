@@ -25,8 +25,8 @@ public abstract class TinyProtocol {
     private static boolean USE_NETWORK_MARKER_QUEUE;
 
     // Used in order to lookup a channel
-    private static final Reflections.MethodInvoker getPlayerHandle = Reflections.getMethod("{obc}.entity.CraftPlayer", "getHandle");
-    private static final Reflections.FieldAccessor<Object> getConnection = Reflections.getField("{nms}.EntityPlayer", "playerConnection", Object.class);
+    public static final Reflections.MethodInvoker getPlayerHandle = Reflections.getMethod("{obc}.entity.CraftPlayer", "getHandle");
+    public static final Reflections.FieldAccessor<Object> getConnection = Reflections.getField("{nms}.EntityPlayer", "playerConnection", Object.class);
     private static final Reflections.FieldAccessor<Object> getManager = Reflections.getField("{nms}.PlayerConnection", "networkManager", Object.class);
     private static final Reflections.FieldAccessor<Channel> getChannel = Reflections.getField("{nms}.NetworkManager", Channel.class, 0);
 
