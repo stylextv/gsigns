@@ -87,13 +87,13 @@ public class Main extends JavaPlugin {
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			fos.close();
 			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(plugin.getDataFolder().getPath()+"/au-result"));
+			BufferedWriter writer = new BufferedWriter(new FileWriter("plugins/GamemodeSigns/au-result"));
 			writer.write(Vars.VERSION);
 		    writer.close();
 		} catch(Exception ex) {ex.printStackTrace();}
 	}
 	private void checkAutoUpdater() {
-		File f=new File(plugin.getDataFolder().getPath()+"/au-result");
+		File f=new File("plugins/GamemodeSigns/au-result");
 		if(f.exists()) {
 			new BukkitRunnable() {
 				@Override
@@ -147,7 +147,7 @@ public class Main extends JavaPlugin {
 							@Override
 							public void run() {
 								Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"A new §aupdate§r has been found. Version: "+foundF);
-								Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Enter /§egs update§r into your ingame chat to install the update.");
+								Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Enter §e/gs update§r into your ingame chat to install the update.");
 							}
 						}.runTask(plugin);
 					}
