@@ -15,6 +15,15 @@ import java.util.regex.Pattern;
  * @author Kristian
  */
 public final class Reflections {
+	
+    // Deduce the net.minecraft.server.v* package
+    private static String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
+    private static String NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
+    private static String VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
+
+    // Variable replacement
+    private static Pattern MATCH_VARIABLE = Pattern.compile("\\{([^}]+)\\}");
+    
     /**
      * An interface for invoking a specific constructor.
      */
@@ -72,15 +81,7 @@ public final class Reflections {
          */
         boolean hasField(Object target);
     }
-
-    // Deduce the net.minecraft.server.v* package
-    private static String OBC_PREFIX = Bukkit.getServer().getClass().getPackage().getName();
-    private static String NMS_PREFIX = OBC_PREFIX.replace("org.bukkit.craftbukkit", "net.minecraft.server");
-    private static String VERSION = OBC_PREFIX.replace("org.bukkit.craftbukkit", "").replace(".", "");
-
-    // Variable replacement
-    private static Pattern MATCH_VARIABLE = Pattern.compile("\\{([^}]+)\\}");
-
+    
     private Reflections() {
         // Seal class
     }
@@ -390,4 +391,5 @@ public final class Reflections {
         matcher.appendTail(output);
         return output.toString();
     }
+    
 }

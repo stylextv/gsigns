@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
-import de.stylextv.gs.main.Vars;
+import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
 import de.stylextv.gs.player.CodeParser;
 import de.stylextv.gs.player.Order;
@@ -49,7 +49,7 @@ public class CommandHandler {
 							if(args.length==2) try {
 								page=Integer.valueOf(args[1])-1;
 							} catch(NumberFormatException ex) {
-								p.sendMessage(Vars.PREFIX+"§7Please enter a valid §cpage number§7.");
+								p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cpage number§7.");
 								return false;
 							}
 							String[] files=WorldUtil.getCustomImagesFolder().list();
@@ -111,19 +111,19 @@ public class CommandHandler {
 								p.sendMessage("");
 								p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
 							}
-						} else p.sendMessage(Vars.PREFIX+"§7Use §c/gs listfiles [Page]");
+						} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs listfiles [Page]");
 					} else sendNoPermission(p);
 				} else if(sub.equalsIgnoreCase("remove")) {
 					if(hasPermRemove) {
 						if(args.length==1) {
 							PlayerManager.toggleRemovingPhase(p);
-						} else p.sendMessage(Vars.PREFIX+"§7Use §c/gs remove");
+						} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs remove");
 					} else sendNoPermission(p);
 				} else if(sub.equalsIgnoreCase("update")) {
 					if(hasPermUpdate) {
 						if(args.length==1) {
 							Main.getPlugin().runAutoUpdater(p);
-						} else p.sendMessage(Vars.PREFIX+"§7Use §c/gs update");
+						} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs update");
 					} else sendNoPermission(p);
 				} else if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) {
 					if(args.length==1) {
@@ -153,11 +153,11 @@ public class CommandHandler {
 											Order order=CodeParser.parseCode(code);
 											if(order!=null) {
 												if(order.getError()!=null) {
-													p.sendMessage(Vars.PREFIX+"§7The following value could not be parsed: §c"+order.getError());
+													p.sendMessage(Variables.PREFIX+"§7The following value could not be parsed: §c"+order.getError());
 												} else {
 													PlayerManager.startPlacingPhase(p, order);
 												}
-											} else p.sendMessage(Vars.PREFIX+"§7The §ccode§7 you provided could not be parsed.");
+											} else p.sendMessage(Variables.PREFIX+"§7The §ccode§7 you provided could not be parsed.");
 											
 										}
 									}.runTaskAsynchronously(Main.getPlugin());
@@ -174,7 +174,7 @@ public class CommandHandler {
 				if(hasPermList||hasPermCreate||hasPermRemove||hasPermUpdate) sendHelpSuggestion(p);
 				else sendInfo(p);
 			}
-		} else sender.sendMessage(Vars.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
+		} else sender.sendMessage(Variables.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
 		return false;
 	}
 	private static void sendFile(Player p, String file, boolean isNew) {
@@ -210,17 +210,17 @@ public class CommandHandler {
 		return comp;
 	}
 	private static void sendHelpSuggestion(Player p) {
-		p.sendMessage(Vars.PREFIX+"§7Use §e/gs help§7 to get a list of commands.");
+		p.sendMessage(Variables.PREFIX+"§7Use §e/gs help§7 to get a list of commands.");
 	}
 	private static void sendCreateSuggestion(Player p) {
-		p.sendMessage(Vars.PREFIX+"§7Use §c/gs create (Code)");
+		p.sendMessage(Variables.PREFIX+"§7Use §c/gs create (Code)");
 	}
 	private static void sendNoPermission(Player p) {
-		p.sendMessage(Vars.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
+		p.sendMessage(Variables.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
 	}
 	private static void sendHelp(Player p) {
 		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
-		p.sendMessage("                     §a"+Vars.NAME);
+		p.sendMessage("                     §a"+Variables.NAME);
 		p.sendMessage("");
 		p.sendMessage("§8- §a/gs create (Code) §8> §7Create sign§e*");
 		p.sendMessage("§8- §a/gs remove §8> §7Remove sign§e*");
@@ -240,11 +240,11 @@ public class CommandHandler {
 		p.sendMessage("                   §aInformation");
 		p.sendMessage("");
 		p.sendMessage("§7§oThis server uses the free and open");
-		p.sendMessage("§7§o source plugin §e"+Vars.NAME+"§7§o to put images and");
+		p.sendMessage("§7§o source plugin §e"+Variables.NAME+"§7§o to put images and");
 		p.sendMessage("§7§o gifs into item frames!");
 		p.sendMessage("");
-		p.sendMessage("§8- §7Developed by §8> §d"+Vars.AUTHOR);
-		p.sendMessage("§8- §7Installed version §8> §d"+Vars.VERSION);
+		p.sendMessage("§8- §7Developed by §8> §d"+Variables.AUTHOR);
+		p.sendMessage("§8- §7Installed version §8> §d"+Variables.VERSION);
 		p.sendMessage("");
 		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
 	}
