@@ -19,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Main;
-import de.stylextv.gs.main.Vars;
+import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
 import de.stylextv.gs.world.BetterFrame;
 import de.stylextv.gs.world.Direction;
@@ -34,19 +34,19 @@ public class PlayerManager {
 	
 	public static void startPlacingPhase(Player p, Order order) {
 		playerTasks.put(p, order);
-		p.sendMessage(Vars.PREFIX+"Your sign was created §asuccessfully§7. Please click one of the §ecorners§7 of the frame.");
+		p.sendMessage(Variables.PREFIX+"Your sign was created §asuccessfully§7. Please click one of the §ecorners§7 of the frame.");
 	}
 	public static void cancelPlacingPhase(Player p) {
 		Order o=playerTasks.remove(p);
-		if(o!=null) p.sendMessage(Vars.PREFIX+"The placement process has been §ccanceled§7.");
-		else p.sendMessage(Vars.PREFIX+"You are currently not in a placement §cprocess§7.");
+		if(o!=null) p.sendMessage(Variables.PREFIX+"The placement process has been §ccanceled§7.");
+		else p.sendMessage(Variables.PREFIX+"You are currently not in a placement §cprocess§7.");
 	}
 	public static void toggleRemovingPhase(Player p) {
 		if(playersInRemove.remove(p)) {
-			p.sendMessage(Vars.PREFIX+"The removal process has been §ccanceled§7.");
+			p.sendMessage(Variables.PREFIX+"The removal process has been §ccanceled§7.");
 		} else {
 			playersInRemove.add(p);
-			p.sendMessage(Vars.PREFIX+"§aPunch§7 a sign to remove it or use §e/gs remove§7 again to cancel the process.");
+			p.sendMessage(Variables.PREFIX+"§aPunch§7 a sign to remove it or use §e/gs remove§7 again to cancel the process.");
 		}
 	}
 	
@@ -154,7 +154,7 @@ public class PlayerManager {
 														}
 													}
 													System.gc();
-													p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+													p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 												}
 											}.runTaskAsynchronously(Main.getPlugin());
 										} else {
@@ -214,7 +214,7 @@ public class PlayerManager {
 														}
 													}
 													System.gc();
-													p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+													p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 												}
 											}.runTaskAsynchronously(Main.getPlugin());
 										} else {
@@ -235,7 +235,7 @@ public class PlayerManager {
 									} else {
 										if(WorldUtil.getMcVersion()<WorldUtil.MCVERSION_1_13) {
 											placed=true;
-											p.sendMessage(Vars.PREFIX+"Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.");
+											p.sendMessage(Variables.PREFIX+"Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.");
 											playerTasks.remove(p);
 											break;
 										}
@@ -314,7 +314,7 @@ public class PlayerManager {
 														}
 													}
 													System.gc();
-													p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+													p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 												}
 											}.runTaskAsynchronously(Main.getPlugin());
 										} else {
@@ -348,25 +348,25 @@ public class PlayerManager {
 									}
 									
 									placed=true;
-									if(order.getBackgroundGif()!=null) p.sendMessage(Vars.PREFIX+"Please §ewait§7 until the sign has been placed. This may take a bit...");
-									else p.sendMessage(Vars.PREFIX+"Your sign has been §aplaced§7 successfully.");
+									if(order.getBackgroundGif()!=null) p.sendMessage(Variables.PREFIX+"Please §ewait§7 until the sign has been placed. This may take a bit...");
+									else p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 									playerTasks.remove(p);
 									break;
 								}
 							}
 						}
 						if(!placed) {
-							if(!validFound) p.sendMessage(Vars.PREFIX+"This is not a §cvalid§7 position for a sign.");
-							else p.sendMessage(Vars.PREFIX+"There must be §csolid §7blocks to hang a sign.");
+							if(!validFound) p.sendMessage(Variables.PREFIX+"This is not a §cvalid§7 position for a sign.");
+							else p.sendMessage(Variables.PREFIX+"There must be §csolid §7blocks to hang a sign.");
 						}
 						e.setCancelled(true);
 					} else {
-						p.sendMessage(Vars.PREFIX+"The two corners have to be in the same §cworld§7.");
+						p.sendMessage(Variables.PREFIX+"The two corners have to be in the same §cworld§7.");
 						e.setCancelled(true);
 					}
 				} else {
 					order.setFirstCorner(b.getRelative(e.getBlockFace()).getLocation());
-					p.sendMessage(Vars.PREFIX+"The first corner has been §aset§7. Now please click on the §eopposite§7 corner.");
+					p.sendMessage(Variables.PREFIX+"The first corner has been §aset§7. Now please click on the §eopposite§7 corner.");
 					e.setCancelled(true);
 				}
 				
@@ -379,15 +379,15 @@ public class PlayerManager {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
 				WorldUtil.removeSign(frame.getSignUid());
-				p.sendMessage(Vars.PREFIX+"§7The sign has been §aremoved§7.");
+				p.sendMessage(Variables.PREFIX+"§7The sign has been §aremoved§7.");
 			} else {
-				p.sendMessage(Vars.PREFIX+"§7You no longer have the §cpermission§7 to remove signs.");
+				p.sendMessage(Variables.PREFIX+"§7You no longer have the §cpermission§7 to remove signs.");
 			}
 			
 		} else {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
-				p.sendMessage(Vars.PREFIX+"§7Use §e/gs remove§7 to remove a sign.");
+				p.sendMessage(Variables.PREFIX+"§7Use §e/gs remove§7 to remove a sign.");
 				if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_8) p.playSound(p.getLocation(), "random.click", 0.5f,0.75f);
 				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_12) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", SoundCategory.BLOCKS, 1,1);
 				else p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 1,1);

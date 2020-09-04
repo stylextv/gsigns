@@ -27,7 +27,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
-import de.stylextv.gs.main.Vars;
+import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.packet.PacketListener;
 import de.stylextv.gs.player.ConnectionManager;
 import de.stylextv.gs.render.BetterMapRenderer;
@@ -64,7 +64,7 @@ public class WorldUtil {
 		else if(version.contains("1.13")) mcVersion=MCVERSION_1_13;
 		else if(version.contains("1.12")) mcVersion=MCVERSION_1_12;
 		else if(version.contains("1.8")) mcVersion=MCVERSION_1_8;
-		else Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
+		else Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
 		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
 		else enumUtil=new EnumUtil114();
 		
@@ -93,12 +93,12 @@ public class WorldUtil {
 						}
 						loaded++;
 					} catch(Exception ex) {
-						Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
+						Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
 						ex.printStackTrace();
 						f.delete();
 					}
 				}
-				Bukkit.getConsoleSender().sendMessage(Vars.PREFIX_CONSOLE+"Succesfully loaded §"+(loaded == 0 ? "e" : "a")+loaded+"§r item-frames in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
+				Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Succesfully loaded §"+(loaded == 0 ? "e" : "a")+loaded+"§r item-frames in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
 			}
 		}.runTaskLater(Main.getPlugin(), 2);
 		new BukkitRunnable() {
