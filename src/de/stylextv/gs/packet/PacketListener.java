@@ -22,23 +22,19 @@ public class PacketListener {
         new TinyProtocol() {
             @Override
             public Object onPacketInAsync(Player player, Object packet) {
-                return handleInteractPacket(player, packet) ? super.onPacketInAsync(player, packet) : null;
+                return handleInteractPacket(packet) ? super.onPacketInAsync(player, packet) : null;
             }
         };
     }
     
-    private boolean handleInteractPacket(Player player, Object packet) {
+    private boolean handleInteractPacket(Object packet) {
         if (!packetPlayInUseEntityClazz.isInstance(packet))
             return true; // We aren't handling the packet.
         
         int packetEntityId = (int) entityIdField.get(packet);
         boolean attack = interactTypeField.get(packet).toString().equals("ATTACK");
         
-        if(!attack&&WorldUtil.isFrame(packetEntityId)) {
-        	return false;
-        }
-        
-        return true;
+        return !(!attack&&WorldUtil.isFrame(packetEntityId));
     }
     
 }
