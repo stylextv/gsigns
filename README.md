@@ -85,7 +85,7 @@ sim-siz | The size of the noise intervals [Double]. Default: 150.
 Here are some example codes:
 ```bash
 - {txt:Hello,fnt:"Pacifico-Regular"}
-- {fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/bg0.png}
+- {fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/hypixel.png}
 - {txt:Bedwars,sim-hue:0.94}
 ```
 
