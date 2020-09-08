@@ -1,4 +1,4 @@
-![Cover Art](https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/cover.png)
+![Cover Art](https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/socials/cover.png)
 
 # 🚩 GSigns
 [![HitCount](http://hits.dwyl.com/StylexTV/GSigns.svg)](http://hits.dwyl.com/StylexTV/GSigns)
