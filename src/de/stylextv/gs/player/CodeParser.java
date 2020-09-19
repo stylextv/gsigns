@@ -58,6 +58,9 @@ public class CodeParser {
 						case "txt-col":
 							order.setTextColor(Color.decode(value));
 							break;
+						case "bg-col":
+							order.setBackgroundColor(Color.decode(value));
+							break;
 						case "bg-url":
 							boolean isGif=false;
 							for(String section:value.split("\\?")) {

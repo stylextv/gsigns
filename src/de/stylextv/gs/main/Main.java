@@ -110,7 +110,7 @@ public class Main extends JavaPlugin {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"A new update has been �ainstalled�r. Version: "+pastF+" -> "+Variables.VERSION);
+							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"A new update has been §ainstalled§r. Version: "+pastF+" -> "+Variables.VERSION);
 							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The changelog can be found here:");
 							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"https://www.spigotmc.org/resources/g-signs-a-unique-map-signs-plugin-for-lobbies.73693/updates");
 						}
@@ -146,8 +146,8 @@ public class Main extends JavaPlugin {
 						new BukkitRunnable() {
 							@Override
 							public void run() {
-								Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"A new �aupdate�r has been found. Version: "+foundF);
-								Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Enter �e/gs update�r into your ingame chat to install the update.");
+								Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"A new §aupdate§r has been found. Version: "+foundF);
+								Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Enter §e/gs update§r into your ingame chat to install the update.");
 							}
 						}.runTask(plugin);
 					}
@@ -155,7 +155,7 @@ public class Main extends JavaPlugin {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"An exception occurred while �cchecking for new updates�r:");
+							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"An exception occurred while §cchecking for new updates§r:");
 							ex.printStackTrace();
 						}
 					}.runTask(plugin);
@@ -172,17 +172,17 @@ public class Main extends JavaPlugin {
 	
 	public void runAutoUpdater(Player p) {
 		if(updateRequest!=null) {
-			p.sendMessage(Variables.PREFIX+"�7A new update has �ealready�7 been found. Version: "+updateRequest);
-			p.sendMessage(Variables.PREFIX+"�7The update is installed when the server is �eclosed �7or �erestarted�7.");
+			p.sendMessage(Variables.PREFIX+"§7A new update has §ealready§7 been found. Version: "+updateRequest);
+			p.sendMessage(Variables.PREFIX+"§7The update is installed when the server is §eclosed §7or §erestarted§7.");
 		} else if(inUpdateCheck) {
-			p.sendMessage(Variables.PREFIX+"�eSomeone else�7 is already checking for an update.");
+			p.sendMessage(Variables.PREFIX+"§eSomeone else§7 is already checking for an update.");
 		} else {
 			inUpdateCheck=true;
-			p.sendMessage(Variables.PREFIX+"�7Checking for new updates...");
+			p.sendMessage(Variables.PREFIX+"§7Checking for new updates...");
 			BukkitTask runnable=new BukkitRunnable() {
 				@Override
 				public void run() {
-					p.sendMessage(Variables.PREFIX+"�7...");
+					p.sendMessage(Variables.PREFIX+"§7...");
 				}
 			}.runTaskTimerAsynchronously(plugin, 120, 120);
 			new BukkitRunnable() {
@@ -212,19 +212,19 @@ public class Main extends JavaPlugin {
 						}
 						
 						if(noConnection) {
-							p.sendMessage(Variables.PREFIX+"�7Couldn't connect to the server. Make sure you are connected to the �cinternet�7.");
+							p.sendMessage(Variables.PREFIX+"§7Couldn't connect to the server. Make sure you are connected to the §cinternet§7.");
 						} else if(found!=null) {
 							updateRequest=found;
-							p.sendMessage(Variables.PREFIX+"�8�m----------------------------------------");
-							p.sendMessage(Variables.PREFIX+"�7A new update has been �afound�7. Version: "+found);
-							p.sendMessage(Variables.PREFIX+"�7The update is installed when the server is");
-							p.sendMessage(Variables.PREFIX+"�eclosed �7or �erestarted�7.");
-							p.sendMessage(Variables.PREFIX+"�8�m----------------------------------------");
+							p.sendMessage(Variables.PREFIX+"§8§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+							p.sendMessage(Variables.PREFIX+"§7A new update has been §afound§7. Version: "+found);
+							p.sendMessage(Variables.PREFIX+"§7The update is installed when the server is");
+							p.sendMessage(Variables.PREFIX+"§eclosed §7or §erestarted§7.");
+							p.sendMessage(Variables.PREFIX+"§8§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
 						} else {
-							p.sendMessage(Variables.PREFIX+"�7The plugin is up to date! You are running the �alatest�7 version of "+Variables.NAME+".");
+							p.sendMessage(Variables.PREFIX+"§7The plugin is up to date! You are running the §alatest§7 version of "+Variables.NAME+".");
 						}
 					} catch(Exception ex) {
-						p.sendMessage(Variables.PREFIX+"�7An exception occurred while �cchecking for new updates�7!");
+						p.sendMessage(Variables.PREFIX+"§7An exception occurred while §cchecking for new updates§7!");
 						ex.printStackTrace();
 					}
 					inUpdateCheck=false;

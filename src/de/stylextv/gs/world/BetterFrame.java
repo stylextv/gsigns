@@ -3,6 +3,7 @@ package de.stylextv.gs.world;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -31,7 +32,6 @@ import de.stylextv.gs.render.BetterMapRenderer;
 public class BetterFrame {
 	
 	private static final int VIEW_DISTANCE_SQ=32*32;
-	private static final int CONTENT_RELOAD_DISTANCE_SQ=VIEW_DISTANCE_SQ*2;
 	private static final ArrayList<Object> EMPTY_ICONLIST=new ArrayList<Object>();
 	
     private static final Class<Object> packetClass = Reflections.getUntypedClass("{nms}.Packet");
@@ -76,7 +76,7 @@ public class BetterFrame {
 	private Object[] mapPackets;
 	private MapView[] views;
 	
-	private ArrayList<Player> playersSentTo=new ArrayList<Player>();
+	private HashMap<Player, Integer> playersSentProgress=new HashMap<Player, Integer>();
 	private ArrayList<Player> playersInRadius=new ArrayList<Player>();
 	private int stillRefreshCooldown;
 	
@@ -367,7 +367,7 @@ public class BetterFrame {
 							sendContent(all);
 			        		Object connection = TinyProtocol.getConnection.get(TinyProtocol.getPlayerHandle.invoke(all));
 					        sendPacket.invoke(connection, packet);
-						} else if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
+						}
 					} else removePlayer(all);
 				}
 				
@@ -395,7 +395,6 @@ public class BetterFrame {
 							}
 						} else {
 							playersInRadius.remove(all);
-							if(dis>BetterFrame.CONTENT_RELOAD_DISTANCE_SQ) removePlayer(all);
 						}
 					} else removePlayer(all);
 				}
@@ -406,23 +405,29 @@ public class BetterFrame {
 	}
 	
 	public void removePlayer(Player p) {
-		playersSentTo.remove(p);
+		playersSentProgress.remove(p);
 		playersInRadius.remove(p);
 	}
 	public void sendContent(Player p) {
-		if(!playersSentTo.contains(p)&&(views.length==1||ConnectionManager.canSend(p,views.length))) {
-			playersSentTo.add(p);
+		Integer got=playersSentProgress.get(p);
+		if(got==null) got=0;
+		
+		int allowedToSend=1;
+		if(got!=views.length&&(views.length==1||(allowedToSend=ConnectionManager.canSend(p,views.length-got))!=0)) {
+			playersSentProgress.put(p, got+allowedToSend);
+			int gotF=got;
+			int allowedToSendF=allowedToSend;
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					if(WorldUtil.getMcVersion() == WorldUtil.MCVERSION_1_8) {
 		        		Object connection = TinyProtocol.getConnection.get(TinyProtocol.getPlayerHandle.invoke(p));
-						for(Object packet:mapPackets) {
-					        sendPacket.invoke(connection, packet);
+						for(int i=0; i<allowedToSendF; i++) {
+					        sendPacket.invoke(connection, mapPackets[gotF+i]);
 						}
 					} else {
-						for(MapView view:views) {
-							p.sendMap(view);
+						for(int i=0; i<allowedToSendF; i++) {
+							p.sendMap(views[gotF+i]);
 						}
 					}
 				}
