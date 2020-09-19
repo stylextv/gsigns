@@ -70,6 +70,7 @@ Argument Name | Description
 ------------ | -------------
 txt | The text that is rendered.
 txt-col | The text color in hexadecimal. Default: RGB(255,255,255) (White)
+bg-col | The color of the background in hexadecimal. Default: none (results in black background)
 bg-url | The url to the background. Default: none (results in black background). If gifs don't work copy the gif into "GamemodeSigns/images" and use bg-img.
 bg-img | The image for the background (in "plugins\GamemodeSigns\images"). Default: none (results in black background)
 bg-blur | The radius of the blur that is applied onto the background [Integer]. Default: 0 -> no blur
