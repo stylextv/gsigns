@@ -63,7 +63,7 @@ public class CommandHandler {
 							}
 							
 							if(length==0) {
-								p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+								p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 								p.sendMessage("                       §aFiles");
 								p.sendMessage("");
 								p.sendMessage("§8- §aPage 1 §8>");
@@ -72,7 +72,7 @@ public class CommandHandler {
 								sendPageArrows(p, page, pages);
 								p.sendMessage("§e*§7: Newly added");
 								p.sendMessage("");
-								p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+								p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 							} else {
 								if(oldFiles==null) {
 									oldFiles=new CopyOnWriteArrayList<String>();
@@ -90,7 +90,7 @@ public class CommandHandler {
 								
 								int j=page*11+10;
 								if(j>=length) j=length-1;
-								p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+								p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 								p.sendMessage("                       §aFiles");
 								p.sendMessage("");
 								p.sendMessage("§8- §aPage "+(page+1)+" §8>");
@@ -109,7 +109,7 @@ public class CommandHandler {
 								sendPageArrows(p, page, pages);
 								p.sendMessage("§e*§7: Newly added");
 								p.sendMessage("");
-								p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+								p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 							}
 						} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs listfiles [Page]");
 					} else sendNoPermission(p);
@@ -219,7 +219,7 @@ public class CommandHandler {
 		p.sendMessage(Variables.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
 	}
 	private static void sendHelp(Player p) {
-		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+		p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 		p.sendMessage("                     §a"+Variables.NAME);
 		p.sendMessage("");
 		p.sendMessage("§8- §a/gs create (Code) §8> §7Create sign§e*");
@@ -233,10 +233,10 @@ public class CommandHandler {
 		p.sendMessage("§7(): §aRequired§7, []: §aOptional");
 		p.sendMessage("§e*§7: Needs extra permission to be executed");
 		p.sendMessage("");
-		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+		p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 	}
 	private static void sendInfo(Player p) {
-		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+		p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 		p.sendMessage("                   §aInformation");
 		p.sendMessage("");
 		p.sendMessage("§7§oThis server uses the free and open");
@@ -246,7 +246,7 @@ public class CommandHandler {
 		p.sendMessage("§8- §7Developed by §8> §d"+Variables.AUTHOR);
 		p.sendMessage("§8- §7Installed version §8> §d"+Variables.VERSION);
 		p.sendMessage("");
-		p.sendMessage("§2§m#§a§m---------------------------------§2§m#");
+		p.sendMessage("§2§m#§a§m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯§2§m#");
 	}
 	
 	private static TextComponent createClickableComponent(String baseText, String hoverText, String clickText, ClickEvent.Action clickAction) {

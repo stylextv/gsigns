@@ -43,6 +43,9 @@ public class ImageGenerator {
 					image.setRGB(x, y, new Color(r,g,b).getRGB());
 				}
 			}
+		} else if(order.getBackgroundColor()!=null) {
+			imageGraphics.setColor(order.getBackgroundColor());
+			imageGraphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 		}
 		if(order.getBackground()!=null&&order.getBackgroundBrightness()>0) {
 			BufferedImage backgroundImage;
@@ -115,6 +118,9 @@ public class ImageGenerator {
 					image.setRGB(x, y, new Color(r,g,b).getRGB());
 				}
 			}
+		} else if(order.getBackgroundColor()!=null) {
+			imageGraphics.setColor(order.getBackgroundColor());
+			imageGraphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 		}
 		if(order.getBackgroundGif()!=null&&order.getBackgroundBrightness()>0) {
 			BufferedImage frame=order.getBackgroundGif().getFrame(gifFrame);
@@ -179,13 +185,53 @@ public class ImageGenerator {
 		ArrayList<String> lines=new ArrayList<String>();
 		String currentLine=null;
 		for(String s:order.getText().split(" ")) {
-			if(currentLine==null) {
-				currentLine=s;
-			} else if(graphics.getFontMetrics().stringWidth(currentLine+" "+s)<textImage.getWidth()) {
-				currentLine=currentLine+" "+s;
+			if(s.contains("\\n")) {
+				String currentElement="";
+				char[] chars=s.toCharArray();
+				for(int i=0; i<chars.length; i++) {
+					char ch=chars[i];
+					if(ch=='\\'&&i+1<chars.length&&chars[i+1]=='n') {
+						if(!currentElement.isEmpty()) {
+							if(currentLine==null) {
+								currentLine=currentElement;
+							} else if(graphics.getFontMetrics().stringWidth(currentLine+" "+currentElement)<textImage.getWidth()) {
+								currentLine=currentLine+" "+currentElement;
+							} else {
+								lines.add(currentLine);
+								currentLine=currentElement;
+							}
+						}
+						currentElement="";
+						if(currentLine==null) {
+							lines.add("");
+						} else {
+							lines.add(currentLine);
+							currentLine=null;
+						}
+						i++;
+					} else {
+						currentElement=currentElement+ch;
+					}
+				}
+				if(!currentElement.isEmpty()) {
+					if(currentLine==null) {
+						currentLine=currentElement;
+					} else if(graphics.getFontMetrics().stringWidth(currentLine+" "+currentElement)<textImage.getWidth()) {
+						currentLine=currentLine+" "+currentElement;
+					} else {
+						lines.add(currentLine);
+						currentLine=currentElement;
+					}
+				}
 			} else {
-				lines.add(currentLine);
-				currentLine=s;
+				if(currentLine==null) {
+					currentLine=s;
+				} else if(graphics.getFontMetrics().stringWidth(currentLine+" "+s)<textImage.getWidth()) {
+					currentLine=currentLine+" "+s;
+				} else {
+					lines.add(currentLine);
+					currentLine=s;
+				}
 			}
 		}
 		if(currentLine!=null) lines.add(currentLine);

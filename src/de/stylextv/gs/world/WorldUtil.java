@@ -342,16 +342,80 @@ public class WorldUtil {
 		frames.add(new BetterFrame(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null));
 	}
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
+		int[] delaysCopy=delays.clone();
+		
+		int compactedFrameIndex=0;
+		byte[] currentHead=null;
+		for(int i=0; i<frames.length; i++) {
+			if(currentHead==null) {
+				byte[] frame0=frames[i];
+				if(i+1==frames.length) {
+					frames[compactedFrameIndex]=frame0;
+					delaysCopy[compactedFrameIndex]=delays[i];
+					compactedFrameIndex++;
+				} else {
+					byte[] frame1=frames[i+1];
+					boolean equal=true;
+					for(int j=0; j<frame0.length; j++) {
+						if(frame0[j]!=frame1[j]) {
+							equal=false;
+							break;
+						}
+					}
+					if(equal) {
+						currentHead=frame0;
+						frames[compactedFrameIndex]=frame0;
+						delaysCopy[compactedFrameIndex]=delays[i]+delays[i+1];
+					} else {
+						frames[compactedFrameIndex]=frame0;
+						delaysCopy[compactedFrameIndex]=delays[i];
+						compactedFrameIndex++;
+					}
+				}
+			} else {
+				byte[] frame0=frames[i];
+				boolean equal=true;
+				for(int j=0; j<frame0.length; j++) {
+					if(frame0[j]!=currentHead[j]) {
+						equal=false;
+						break;
+					}
+				}
+				if(equal) {
+					delaysCopy[compactedFrameIndex]=delaysCopy[compactedFrameIndex]+delays[i];
+				} else {
+					currentHead=null;
+					compactedFrameIndex++;
+					i--;
+				}
+			}
+		}
+		if(currentHead!=null) compactedFrameIndex++;
+		
+		boolean b=compactedFrameIndex!=1;
+		if(compactedFrameIndex != frames.length) {
+			byte[][] newFrames=new byte[compactedFrameIndex][];
+			int[] newDelays=null;
+			if(b) newDelays=new int[compactedFrameIndex];
+			for(int i=0; i<compactedFrameIndex; i++) {
+				newFrames[i]=frames[i];
+				if(b) newDelays[i]=delaysCopy[i];
+			}
+			frames=newFrames;
+			delays=newDelays;
+		}
+		
 		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[frames.length];
 		for(int i=0; i<frames.length; i++) {
 			mapRenderers[i]=new BetterMapRenderer(frames[i]);
 		}
+		int[] delaysF=delays;
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				loc.getBlock().setType(Material.AIR);
 				
-				gifFrames.add(new BetterFrame(signUid, loc, direction, mapRenderers, startTime, delays));
+				gifFrames.add(new BetterFrame(signUid, loc, direction, mapRenderers, b?startTime:0, delaysF));
 			}
 		}.runTask(Main.getPlugin());
 	}

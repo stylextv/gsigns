@@ -12,6 +12,7 @@ public class Order {
 	
 	private String text;
 	private Color textColor=new Color(255,255,255);
+	private Color backgroundColor;
 	private BufferedImage background;
 	private GifImage backgroundGif;
 	private int backgroundBlur;
@@ -57,6 +58,12 @@ public class Order {
 	}
 	public void setTextColor(Color textColor) {
 		this.textColor = textColor;
+	}
+	public Color getBackgroundColor() {
+		return backgroundColor;
+	}
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
 	}
 	
 	public BufferedImage getBackground() {
