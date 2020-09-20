@@ -344,6 +344,7 @@ public class PlayerManager {
 													WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation*90), face);
 												}
 											}
+											System.gc();
 										}
 									}
 									

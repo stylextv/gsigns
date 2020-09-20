@@ -383,10 +383,10 @@ public class BetterFrame {
 						Location loc2=itemFrame.getLocation();
 						double dis=(loc1.getX()-loc2.getX())*(loc1.getX()-loc2.getX()) + (loc1.getZ()-loc2.getZ())*(loc1.getZ()-loc2.getZ());
 						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
+							sendContent(all);
 							if(!playersInRadius.contains(all)) {
 								playersInRadius.add(all);
 								
-								sendContent(all);
 				        		Object connection = TinyProtocol.getConnection.get(TinyProtocol.getPlayerHandle.invoke(all));
 						        sendPacket.invoke(connection, packet);
 							} else if(stillRefreshCooldown==1) {
@@ -412,8 +412,8 @@ public class BetterFrame {
 		Integer got=playersSentProgress.get(p);
 		if(got==null) got=0;
 		
-		int allowedToSend=1;
-		if(got!=views.length&&(views.length==1||(allowedToSend=ConnectionManager.canSend(p,views.length-got))!=0)) {
+		int allowedToSend;
+		if(got!=views.length&&(allowedToSend=ConnectionManager.canSend(p,views.length-got))!=0) {
 			playersSentProgress.put(p, got+allowedToSend);
 			int gotF=got;
 			int allowedToSendF=allowedToSend;
