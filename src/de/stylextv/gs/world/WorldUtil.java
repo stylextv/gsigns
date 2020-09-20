@@ -342,7 +342,7 @@ public class WorldUtil {
 		frames.add(new BetterFrame(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null));
 	}
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
-		int[] delaysCopy=delays.clone();
+		int[] delaysCopy=new int[delays.length];
 		
 		int compactedFrameIndex=0;
 		byte[] currentHead=null;
@@ -366,6 +366,7 @@ public class WorldUtil {
 						currentHead=frame0;
 						frames[compactedFrameIndex]=frame0;
 						delaysCopy[compactedFrameIndex]=delays[i]+delays[i+1];
+						i++;
 					} else {
 						frames[compactedFrameIndex]=frame0;
 						delaysCopy[compactedFrameIndex]=delays[i];
@@ -401,6 +402,7 @@ public class WorldUtil {
 				newFrames[i]=frames[i];
 				if(b) newDelays[i]=delaysCopy[i];
 			}
+			
 			frames=newFrames;
 			delays=newDelays;
 		}
