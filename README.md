@@ -2,7 +2,6 @@
 
 # 🚩 GSigns
 [![stars](https://img.shields.io/github/stars/StylexTV/GSigns.svg?color=ffdd00)](https://GitHub.com/StylexTV/GSigns/stargazers/)
-
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6)](https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade)
 ![Code size](https://img.shields.io/github/languages/code-size/StylexTV/GSigns.svg)
 ![GitHub repo size](https://img.shields.io/github/repo-size/StylexTV/GSigns.svg)
