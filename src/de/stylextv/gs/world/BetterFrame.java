@@ -143,7 +143,7 @@ public class BetterFrame {
 					short id=0;
 					try {
 						id=(short) view.getClass().getMethod("getId").invoke(view);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 					view.getRenderers().clear();
 					for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 					view.addRenderer(renderer);
@@ -160,7 +160,7 @@ public class BetterFrame {
 					short id=0;
 					try {
 						id=(short) view.getClass().getMethod("getId").invoke(view);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {ex.printStackTrace();}
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException ex) {}
 					view.getRenderers().clear();
 					for(MapRenderer r:view.getRenderers()) view.removeRenderer(r);
 					view.addRenderer(mapRenderers[i]);

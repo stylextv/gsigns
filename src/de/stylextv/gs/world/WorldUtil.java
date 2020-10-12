@@ -36,11 +36,11 @@ import de.stylextv.gs.util.UUIDHelper;
 public class WorldUtil {
 	
 	public static final int MCVERSION_1_8=0;
-	public static final int MCVERSION_1_12=4;
-	public static final int MCVERSION_1_13=5;
-	public static final int MCVERSION_1_14=6;
-	public static final int MCVERSION_1_15=7;
-	public static final int MCVERSION_1_16=8;
+	public static final int MCVERSION_1_12=1;
+	public static final int MCVERSION_1_13=2;
+	public static final int MCVERSION_1_14=3;
+	public static final int MCVERSION_1_15=4;
+	public static final int MCVERSION_1_16=5;
 	
 	private static int FILE_HEADER_LENGTH=45;
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
@@ -58,8 +58,13 @@ public class WorldUtil {
 	
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
-		mcVersion=Integer.valueOf(version.split("MC: 1\\.")[1].split("\\.")[0])-8;
-		if(mcVersion!=MCVERSION_1_8 && !(mcVersion>=MCVERSION_1_12&&mcVersion<=MCVERSION_1_16)) Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
+		if(version.contains("1.16")) mcVersion=MCVERSION_1_16;
+		else if(version.contains("1.15")) mcVersion=MCVERSION_1_15;
+		else if(version.contains("1.14")) mcVersion=MCVERSION_1_14;
+		else if(version.contains("1.13")) mcVersion=MCVERSION_1_13;
+		else if(version.contains("1.12")) mcVersion=MCVERSION_1_12;
+		else if(version.contains("1.8")) mcVersion=MCVERSION_1_8;
+		else Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
 		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
 		else enumUtil=new EnumUtil114();
 		

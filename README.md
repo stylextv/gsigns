@@ -1,8 +1,7 @@
 ![Cover Art](https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/socials/cover.png)
 
 # 🚩 GSigns
-[![HitCount](http://hits.dwyl.com/StylexTV/GSigns.svg)](http://hits.dwyl.com/StylexTV/GSigns)
-
+[![stars](https://img.shields.io/github/stars/StylexTV/GSigns.svg?color=ffdd00)](https://GitHub.com/StylexTV/GSigns/stargazers/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6)](https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade)
 ![Code size](https://img.shields.io/github/languages/code-size/StylexTV/GSigns.svg)
 ![GitHub repo size](https://img.shields.io/github/repo-size/StylexTV/GSigns.svg)
@@ -89,6 +88,11 @@ Here are some example codes:
 - {fnt-siz:120,txt:TEXT,bg-url:https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/hypixel.png}
 - {txt:Bedwars,sim-hue:0.94}
 ```
+
+
+## API
+
+If you are a developer and want to use GSigns inside your plugin, for example to automatically create a sign, you can find the GSigns-API [here](https://github.com/StylexTV/GSigns-API).
 
 
 ## Project Layout
