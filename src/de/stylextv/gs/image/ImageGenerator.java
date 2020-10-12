@@ -1,9 +1,11 @@
 package de.stylextv.gs.image;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -40,7 +42,10 @@ public class ImageGenerator {
 					int r=(int)Math.round(c.getRed()*d);
 					int g=(int)Math.round(c.getGreen()*d);
 					int b=(int)Math.round(c.getBlue()*d);
-					image.setRGB(x, y, new Color(r,g,b).getRGB());
+					int rgb = r;
+					rgb = (rgb << 8) + g;
+					rgb = (rgb << 8) + b;
+					image.setRGB(x, y, rgb);
 				}
 			}
 		} else if(order.getBackgroundColor()!=null) {
@@ -58,14 +63,20 @@ public class ImageGenerator {
 				float f=order.getBackgroundBrightness();
 				for(int x=0; x<backgroundImage.getWidth(); x++) {
 					for(int y=0; y<backgroundImage.getHeight(); y++) {
-						Color c=new Color(backgroundImage.getRGB(x, y));
-						int r=(int) (c.getRed()*f);
-						int g=(int) (c.getGreen()*f);
-						int b=(int) (c.getBlue()*f);
+						int rgb = backgroundImage.getRGB(x, y);
+						int red = (rgb >> 16) & 0xFF;
+						int green = (rgb >> 8) & 0xFF;
+						int blue = rgb & 0xFF;
+						int r=(int) (red*f);
+						int g=(int) (green*f);
+						int b=(int) (blue*f);
 						if(r>255)r=255;
 						if(g>255)g=255;
 						if(b>255)b=255;
-						backgroundImage.setRGB(x, y, new Color(r,g,b).getRGB());
+						rgb = red;
+						rgb = (rgb << 8) + green;
+						rgb = (rgb << 8) + blue;
+						backgroundImage.setRGB(x, y, rgb);
 					}
 				}
 			}
@@ -84,14 +95,20 @@ public class ImageGenerator {
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			drawText(image, imageGraphics, order);
 		}
+		if(order.getOutlineColor()!=null) {
+			drawOutline(image, imageGraphics, order.getOutlineColor(), order.getOutlineSize(), order.getOutlineStyle());
+		}
 		
 		if(order.shouldDither()) return ditherImage(image);
 		
 		byte[] data=new byte[image.getWidth()*image.getHeight()];
 		for(int y=0; y<image.getHeight(); y++) {
 			for(int x=0; x<image.getWidth(); x++) {
-				Color c=new Color(image.getRGB(x, y));
-				byte b=MapColorPalette.getColor(c.getRed(),c.getGreen(),c.getBlue());
+				int rgb=image.getRGB(x, y);
+				int red = (rgb >> 16) & 0xFF;
+				int green = (rgb >> 8) & 0xFF;
+				int blue = rgb & 0xFF;
+				byte b=MapColorPalette.getColor(red,green,blue);
 				data[y*image.getWidth()+x]=b;
 			}
 		}
@@ -115,7 +132,10 @@ public class ImageGenerator {
 					int r=(int)Math.round(c.getRed()*d);
 					int g=(int)Math.round(c.getGreen()*d);
 					int b=(int)Math.round(c.getBlue()*d);
-					image.setRGB(x, y, new Color(r,g,b).getRGB());
+					int rgb = r;
+					rgb = (rgb << 8) + g;
+					rgb = (rgb << 8) + b;
+					image.setRGB(x, y, rgb);
 				}
 			}
 		} else if(order.getBackgroundColor()!=null) {
@@ -133,14 +153,20 @@ public class ImageGenerator {
 				float f=order.getBackgroundBrightness();
 				for(int x=0; x<frame.getWidth(); x++) {
 					for(int y=0; y<frame.getHeight(); y++) {
-						Color c=new Color(frame.getRGB(x, y));
-						int r=(int) (c.getRed()*f);
-						int g=(int) (c.getGreen()*f);
-						int b=(int) (c.getBlue()*f);
+						int rgb = frame.getRGB(x, y);
+						int red = (rgb >> 16) & 0xFF;
+						int green = (rgb >> 8) & 0xFF;
+						int blue = rgb & 0xFF;
+						int r=(int) (red*f);
+						int g=(int) (green*f);
+						int b=(int) (blue*f);
 						if(r>255)r=255;
 						if(g>255)g=255;
 						if(b>255)b=255;
-						frame.setRGB(x, y, new Color(r,g,b).getRGB());
+						rgb = red;
+						rgb = (rgb << 8) + green;
+						rgb = (rgb << 8) + blue;
+						frame.setRGB(x, y, rgb);
 					}
 				}
 			}
@@ -159,14 +185,20 @@ public class ImageGenerator {
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			drawText(image, imageGraphics, order);
 		}
+		if(order.getOutlineColor()!=null) {
+			drawOutline(image, imageGraphics, order.getOutlineColor(), order.getOutlineSize(), order.getOutlineStyle());
+		}
 		
 		if(order.shouldDither()) return ditherImage(image);
 		
 		byte[] data=new byte[image.getWidth()*image.getHeight()];
 		for(int y=0; y<image.getHeight(); y++) {
 			for(int x=0; x<image.getWidth(); x++) {
-				Color c=new Color(image.getRGB(x, y));
-				byte b=MapColorPalette.getColor(c.getRed(),c.getGreen(),c.getBlue());
+				int rgb=image.getRGB(x, y);
+				int red = (rgb >> 16) & 0xFF;
+				int green = (rgb >> 8) & 0xFF;
+				int blue = rgb & 0xFF;
+				byte b=MapColorPalette.getColor(red,green,blue);
 				data[y*image.getWidth()+x]=b;
 			}
 		}
@@ -292,16 +324,30 @@ public class ImageGenerator {
 			return null;
 		}
 	}
+	private static void drawOutline(BufferedImage image, Graphics2D imageGraphics, Color c, float size, int style) {
+		Stroke stroke=imageGraphics.getStroke();
+		
+		imageGraphics.setColor(c);
+		if(style==0) imageGraphics.setStroke(new BasicStroke(size, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+		else if(style==1) imageGraphics.setStroke(new BasicStroke(size, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{0.75f*size}, 0));
+		else imageGraphics.setStroke(new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL, 0, new float[]{0f, 2f*size}, 0));
+		imageGraphics.drawRect(0, 0, image.getWidth(), image.getHeight());
+		
+		imageGraphics.setStroke(stroke);
+	}
 	
-	public static byte[] ditherImage(BufferedImage image) {
+	private static byte[] ditherImage(BufferedImage image) {
 		float[] pixels=new float[image.getWidth()*image.getHeight()*3];
 		for(int y=0; y<image.getHeight(); y++) {
 			for(int x=0; x<image.getWidth(); x++) {
-				Color c=new Color(image.getRGB(x, y));
+				int rgb=image.getRGB(x, y);
+				int red = (rgb >> 16) & 0xFF;
+				int green = (rgb >> 8) & 0xFF;
+				int blue = rgb & 0xFF;
 				int i=(y*image.getWidth()+x)*3;
-				pixels[i]=c.getRed()/255f;
-				pixels[i+1]=c.getGreen()/255f;
-				pixels[i+2]=c.getBlue()/255f;
+				pixels[i]=red/255f;
+				pixels[i+1]=green/255f;
+				pixels[i+2]=blue/255f;
 			}
 		}
 		byte[] data=new byte[image.getWidth()*image.getHeight()];

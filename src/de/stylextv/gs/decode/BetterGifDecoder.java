@@ -233,7 +233,8 @@ public final class BetterGifDecoder {
 					}
 					codes.add(prevValsAndK); // Previous indices + K
 				}
-			} catch (final ArrayIndexOutOfBoundsException e) {
+			} catch (final ArrayIndexOutOfBoundsException ex) {
+				ex.printStackTrace();
 			}
 			return out;
 		}
