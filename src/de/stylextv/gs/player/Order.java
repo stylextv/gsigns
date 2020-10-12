@@ -23,6 +23,9 @@ public class Order {
 	private Color abstractColor;
 	private double abstractSize=150;
 	private int abstractSeed=MathUtil.getRandom().nextInt(1000)+1;
+	private Color outlineColor;
+	private float outlineSize=12f;
+	private int outlineStyle;
 	
 	private String error;
 	private Location firstCorner;
@@ -134,6 +137,25 @@ public class Order {
 	}
 	public void setAbstractColor(Color abstractColor) {
 		this.abstractColor = abstractColor;
+	}
+	
+	public Color getOutlineColor() {
+		return outlineColor;
+	}
+	public void setOutlineColor(Color outlineColor) {
+		this.outlineColor = outlineColor;
+	}
+	public float getOutlineSize() {
+		return outlineSize;
+	}
+	public void setOutlineSize(float outlineSize) {
+		this.outlineSize = outlineSize;
+	}
+	public int getOutlineStyle() {
+		return outlineStyle;
+	}
+	public void setOutlineStyle(int outlineStyle) {
+		this.outlineStyle = outlineStyle;
 	}
 	
 }
