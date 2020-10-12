@@ -16,13 +16,10 @@ import java.util.concurrent.Callable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import de.stylextv.gs.api.GSignsAPI;
-import de.stylextv.gs.api.PublicGSignsAPI;
 import de.stylextv.gs.bstats.Metrics;
 import de.stylextv.gs.command.CommandGS;
 import de.stylextv.gs.command.CommandGSigns;
@@ -51,7 +48,6 @@ public class Main extends JavaPlugin {
 		WorldUtil.onEnable();
 		CommandHandler.create();
 		
-		enableAPI();
 		enableBStats();
 		checkAutoUpdater();
 	}
@@ -72,9 +68,6 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new EventPlayerInteract(), plugin);
 		pm.registerEvents(new EventPlayerJoinQuit(), plugin);
 		pm.registerEvents(new EventItemFrame(), plugin);
-	}
-	private void enableAPI() {
-		getServer().getServicesManager().register(GSignsAPI.class, new PublicGSignsAPI(), this, ServicePriority.Normal);
 	}
 	private void enableBStats() {
 		Metrics metrics = new Metrics(this);
@@ -110,7 +103,7 @@ public class Main extends JavaPlugin {
 						BufferedReader reader = new BufferedReader(new FileReader(f));
 						past=reader.readLine();
 						reader.close();
-					} catch (IOException ex) {ex.printStackTrace();}
+					} catch (IOException ex) {}
 					f.delete();
 					
 					final String pastF=past;
