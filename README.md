@@ -90,6 +90,11 @@ Here are some example codes:
 ```
 
 
+## API
+
+If you are a developer and want to use GSigns inside your plugin, for example to automatically create a sign, you can find the GSigns-API [here](https://github.com/StylexTV/GSigns-API).
+
+
 ## Project Layout
 
 Here you can view the current structuring of the project.
