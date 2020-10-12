@@ -120,6 +120,15 @@ public class CodeParser {
 						case "sim-siz":
 							order.setAbstractSize(Double.valueOf(value));
 							break;
+						case "outl-col":
+							order.setOutlineColor(Color.decode(value));
+							break;
+						case "outl-siz":
+							order.setOutlineSize(Float.valueOf(value));
+							break;
+						case "outl-sty":
+							order.setOutlineStyle(Integer.valueOf(value));
+							break;
 						default:
 							break;
 						}
