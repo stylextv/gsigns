@@ -81,6 +81,9 @@ fnt-sty | The font style that is used for text rendering [Integer; PLAIN, BOLD, 
 sim-hue | The hue of the color of the simplex noise [Float, 0-1]. Default: none -> no simplex noise. "sim-hue:rdm" results in a random hue.
 sim-seed | The seed used for the simplex noise texture [Integer]. Default: Random number from 1 to 1000.
 sim-siz | The size of the noise intervals [Double]. Default: 150.
+outl-col | The outline color in hexadecimal. Default: none (results in no outline).
+outl-siz | The size of the outline [Float]. Default: 12.
+outl-sty | The style of the outline [Integer]. Default: 0. Note: 0 = Solid, 1 = Dashed, 2 = Dotted.
 
 Here are some example codes:
 ```bash
