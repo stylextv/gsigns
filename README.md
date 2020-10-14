@@ -12,12 +12,10 @@ GSigns is a spigot plugin that allows the creation of item frames that hold imag
 
 ## Map Sending
 
-Instead of sending a giant packet that holds the entire map data each time the sign is updated, the map data is send once to player as he walks up to the sign. After that premade entity metadata packets for the item frames are send that tell the client which of the maps it received earlier needs to be displayed.
-The sending of the maps is also optimized as the images are not being rendered onto the map via MapCanvas#drawImage which would use the very slow MapPalette#matchColor function. Rather the r, g and b values will be pre converted into the corresponding byte colors which will then be put onto the map:
+Instead of sending a giant packet that holds the entire map data each time the sign is updated, the map data is send once to the player as he walks up to the sign. After that premade entity metadata packets for the item frames are send that tell the client which of the maps it received earlier needs to be displayed.
+The sending of the maps is also optimized as the images are not being rendered onto the map via MapCanvas#drawImage which would use the very slow MapPalette#matchColor function. Rather the r, g and b values will be pre converted into the corresponding byte colors which will then be put into the map packet:
 ```java
-for(int i=0; i<data.length; i++) {
-    canvas.setPixel(i%128, i/128, data[i]);
-}
+PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, new ArrayList<>(), bytes, 0, 0, 128, 128);
 ```
 
 ## GSIGN-Format
@@ -40,7 +38,6 @@ The direction the item frame is facing.
 ```
 
 After that the file will now be filled with the data of the map views. Each map view (or frame of a gif) will be stored in order, one after the other:
-1. The map id of the map is stored as `4` bytes.
 1. The delay is stored as `4` bytes. This is the amount of milliseconds between frames. If the item frame is a still image the value is 0.
 1. The pixel data will be stored as a byte array of size `16384`, as each frame has a width and height of 128.
 
