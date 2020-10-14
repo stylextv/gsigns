@@ -39,6 +39,7 @@ public class WorldUtil {
 	
 	public static final int MCVERSION_1_8=0;
 	public static final int MCVERSION_1_9=1;
+	public static final int MCVERSION_1_10=2;
 	public static final int MCVERSION_1_11=3;
 	public static final int MCVERSION_1_12=4;
 	public static final int MCVERSION_1_13=5;
@@ -65,7 +66,7 @@ public class WorldUtil {
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
 		mcVersion=Integer.valueOf(version.split("MC: 1\\.")[1].split("\\.")[0])-8;
-		if(mcVersion!=MCVERSION_1_8 && !(mcVersion>=MCVERSION_1_12&&mcVersion<=MCVERSION_1_16)) {
+		if(!(mcVersion>=MCVERSION_1_8&&mcVersion<=MCVERSION_1_16)) {
 			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
 		}
 		
@@ -462,13 +463,13 @@ public class WorldUtil {
 	public static void removeSign(UUID uid) {
 		for(BetterFrame frame:frames) {
 			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.getItemFrame().remove();
+				frame.removeItemFrame();
 				frames.remove(frame);
 			}
 		}
 		for(BetterFrame frame:savedGifFrames.keySet()) {
 			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.getItemFrame().remove();
+				frame.removeItemFrame();
 				savedGifFrames.get(frame).delete();
 				savedGifFrames.remove(frame);
 				gifFrames.remove(frame);
@@ -476,13 +477,13 @@ public class WorldUtil {
 		}
 		for(BetterFrame frame:gifFrames) {
 			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.getItemFrame().remove();
+				frame.removeItemFrame();
 				gifFrames.remove(frame);
 			}
 		}
 		for(BetterFrame frame:savedFrames.keySet()) {
 			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.getItemFrame().remove();
+				frame.removeItemFrame();
 				savedFrames.get(frame).delete();
 				savedFrames.remove(frame);
 			}

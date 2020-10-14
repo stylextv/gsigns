@@ -158,12 +158,30 @@ public class BetterFrame {
 		}
 		return false;
 	}
+	
 	private void refreshEntityId() {
-		for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
-			if(e.getUniqueId().equals(itemFrame.getUniqueId())) {
-				entityId = e.getEntityId();
-				break;
+		try {
+			for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
+				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
+					entityId = e.getEntityId();
+					itemFrame = (ItemFrame) e;
+					break;
+				}
 			}
+		} catch(Exception ex) {
+			// ignore craftbukkit exceptions
+		}
+	}
+	public void removeItemFrame() {
+		try {
+			for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
+				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
+					e.remove();
+					break;
+				}
+			}
+		} catch(Exception ex) {
+			// ignore craftbukkit exceptions
 		}
 	}
 	
@@ -302,9 +320,6 @@ public class BetterFrame {
 	
 	public boolean isDead() {
 		return itemFrame.isDead();
-	}
-	public ItemFrame getItemFrame() {
-		return itemFrame;
 	}
 	public int getEntityId() {
 		return entityId;
