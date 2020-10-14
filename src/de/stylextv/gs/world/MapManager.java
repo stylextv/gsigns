@@ -39,8 +39,8 @@ public class MapManager {
 				s=(short) e.getMap().getClass().getMethod("getId").invoke(e.getMap());
 			} catch(Exception ex) {ex.printStackTrace();}
 		} else s=(short)e.getMap().getId();
-		if(s > FORCED_OFFSET) {
-			if(!occupiedIds.contains(s)) occupiedIds.add(s);
+		if(s > FORCED_OFFSET && !occupiedIds.contains(s)) {
+			occupiedIds.add(s);
 		}
 	}
 	

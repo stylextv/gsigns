@@ -441,18 +441,19 @@ public class WorldUtil {
 		return uid;
 	}
 	public static BetterFrame getFrame(ItemFrame itemFrame) {
+		int entityId = itemFrame.getEntityId();
 		for(BetterFrame frame:frames) {
-			if(frame.getItemFrame().equals(itemFrame)) {
+			if(frame.getEntityId()==entityId) {
 				return frame;
 			}
 		}
 		for(BetterFrame frame:gifFrames) {
-			if(frame.getItemFrame().equals(itemFrame)) {
+			if(frame.getEntityId()==entityId) {
 				return frame;
 			}
 		}
 		for(BetterFrame frame:savedFrames.keySet()) {
-			if(frame.getItemFrame().equals(itemFrame)) {
+			if(frame.getEntityId()==entityId) {
 				return frame;
 			}
 		}
@@ -489,22 +490,22 @@ public class WorldUtil {
 	}
 	public static boolean isFrame(int entityId) {
 		for(BetterFrame frame:frames) {
-			if(frame.getItemFrame().getEntityId()==entityId) {
+			if(frame.getEntityId()==entityId) {
 				return true;
 			}
 		}
 		for(BetterFrame frame:savedGifFrames.keySet()) {
-			if(frame.getItemFrame().getEntityId()==entityId) {
+			if(frame.getEntityId()==entityId) {
 				return true;
 			}
 		}
 		for(BetterFrame frame:gifFrames) {
-			if(frame.getItemFrame().getEntityId()==entityId) {
+			if(frame.getEntityId()==entityId) {
 				return true;
 			}
 		}
 		for(BetterFrame frame:savedFrames.keySet()) {
-			if(frame.getItemFrame().getEntityId()==entityId) {
+			if(frame.getEntityId()==entityId) {
 				return true;
 			}
 		}

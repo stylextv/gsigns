@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -57,6 +58,7 @@ public class BetterFrame {
     private static Reflections.MethodInvoker setShort;
     
 	private ItemFrame itemFrame;
+	private int entityId;
 	private byte[][] images;
 	
 	private final ConcurrentHashMap<UUID, CopyOnWriteArrayList<Short>> playerMapIds = new ConcurrentHashMap<>();
@@ -93,6 +95,9 @@ public class BetterFrame {
 	
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
+		
+		refreshEntityId();
+		
 		if(images!=null) {
 			int prevFrame=currentItemIndex;
 			
@@ -153,6 +158,14 @@ public class BetterFrame {
 		}
 		return false;
 	}
+	private void refreshEntityId() {
+		for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
+			if(e.getUniqueId().equals(itemFrame.getUniqueId())) {
+				entityId = e.getEntityId();
+				break;
+			}
+		}
+	}
 	
 	public void removePlayer(Player p) {
 		playersSentProgress.remove(p);
@@ -210,10 +223,13 @@ public class BetterFrame {
 	}
 	@SuppressWarnings("deprecation")
 	private void showInFrame(Player p, int imageIndex) {
+		Integer got=playersSentProgress.get(p);
+		if(got==null) got=0;
 		CopyOnWriteArrayList<Short> playerIdList = playerMapIds.get(p.getUniqueId());
-		if(playerIdList != null && playerIdList.size() > imageIndex) {
+		
+		Object craftItemStack;
+		if(playerIdList != null && playerIdList.size() > imageIndex && got > imageIndex) {
 			short mapId = playerIdList.get(imageIndex);
-			Object craftItemStack;
 			if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_13) {
 				ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
 				craftItemStack = asNMSCopy.invoke(craftItemStackClass, itemStack);
@@ -224,61 +240,64 @@ public class BetterFrame {
 				ItemStack itemStack = new ItemStack(Material.MAP, 1, mapId);
 				craftItemStack = asNMSCopy.invoke(craftItemStackClass, itemStack);
 			}
-			
-			Object connection = TinyProtocol.getConnection.get(TinyProtocol.getPlayerHandle.invoke(p));
-			Object metaDataPacket = packetPlayOutEntityMetadataConstructor.invoke();
-			
-			packetPlayOutEntityMetadataFieldA.set(metaDataPacket, itemFrame.getEntityId());
-			
-			ArrayList<Object> list = new ArrayList<>();
-			
-			
-			if(WorldUtil.getMcVersion() <= WorldUtil.MCVERSION_1_8) {
-				if(watchableObjectConstructor == null) {
+		} else {
+			ItemStack itemStack = new ItemStack(Material.BARRIER);
+			craftItemStack = asNMSCopy.invoke(craftItemStackClass, itemStack);
+		}
+		
+		Object connection = TinyProtocol.getConnection.get(TinyProtocol.getPlayerHandle.invoke(p));
+		Object metaDataPacket = packetPlayOutEntityMetadataConstructor.invoke();
+		
+		packetPlayOutEntityMetadataFieldA.set(metaDataPacket, entityId);
+		
+		ArrayList<Object> list = new ArrayList<>();
+		
+		
+		if(WorldUtil.getMcVersion() <= WorldUtil.MCVERSION_1_8) {
+			if(watchableObjectConstructor == null) {
+				try {
+					watchableObjectConstructor = Reflections.getConstructor("{nms}.DataWatcher$WatchableObject", int.class, int.class, Object.class);
+				} catch(Exception ex) {
 					try {
-						watchableObjectConstructor = Reflections.getConstructor("{nms}.DataWatcher$WatchableObject", int.class, int.class, Object.class);
+						watchableObjectConstructor = Reflections.getConstructor("{nms}.WatchableObject", int.class, int.class, Object.class);
+					} catch(Exception ex2) {
+						ex2.printStackTrace();
+					}
+				}
+			}
+			list.add(watchableObjectConstructor.invoke(5, 8, craftItemStack));
+		} else {
+			Object dataWatcherObject;
+			if(dataWatcherObjectClass == null) dataWatcherObjectClass = Reflections.getUntypedClass("{nms}.DataWatcherObject");
+			if(entityItemFrameClass == null) entityItemFrameClass = Reflections.getUntypedClass("{nms}.EntityItemFrame");
+			if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_13) {
+				if(entityItemFrameItemField == null) {
+					try {
+						entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "ITEM", dataWatcherObjectClass);
 					} catch(Exception ex) {
-						try {
-							watchableObjectConstructor = Reflections.getConstructor("{nms}.WatchableObject", int.class, int.class, Object.class);
-						} catch(Exception ex2) {
-							ex2.printStackTrace();
-						}
+						entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "e", dataWatcherObjectClass);
 					}
 				}
-				list.add(watchableObjectConstructor.invoke(5, 8, craftItemStack));
 			} else {
-				Object dataWatcherObject;
-				if(dataWatcherObjectClass == null) dataWatcherObjectClass = Reflections.getUntypedClass("{nms}.DataWatcherObject");
-				if(entityItemFrameClass == null) entityItemFrameClass = Reflections.getUntypedClass("{nms}.EntityItemFrame");
-				if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_13) {
-					if(entityItemFrameItemField == null) {
-						try {
-							entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "ITEM", dataWatcherObjectClass);
-						} catch(Exception ex) {
-							entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "e", dataWatcherObjectClass);
-						}
-					}
-				} else {
-					if(entityItemFrameItemField == null) entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "c", dataWatcherObjectClass);
-				}
-				dataWatcherObject = entityItemFrameItemField.get(null);
-				
-				if(dataWatcherItemConstructor == null) dataWatcherItemConstructor = Reflections.getFirstConstructor("{nms}.DataWatcher$Item");
-				Object dataWatcherItem;
-				if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_11) {
-					dataWatcherItem = dataWatcherItemConstructor.invoke(dataWatcherObject, craftItemStack);
-				} else {
-					dataWatcherItem = dataWatcherItemConstructor.invoke(dataWatcherObject, com.google.common.base.Optional.fromNullable(craftItemStack));
-				}
-				
-				list.add(dataWatcherItem);
+				if(entityItemFrameItemField == null) entityItemFrameItemField = Reflections.getField(entityItemFrameClass, "c", dataWatcherObjectClass);
+			}
+			dataWatcherObject = entityItemFrameItemField.get(null);
+			
+			if(dataWatcherItemConstructor == null) dataWatcherItemConstructor = Reflections.getFirstConstructor("{nms}.DataWatcher$Item");
+			Object dataWatcherItem;
+			if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_11) {
+				dataWatcherItem = dataWatcherItemConstructor.invoke(dataWatcherObject, craftItemStack);
+			} else {
+				dataWatcherItem = dataWatcherItemConstructor.invoke(dataWatcherObject, com.google.common.base.Optional.fromNullable(craftItemStack));
 			}
 			
-			packetPlayOutEntityMetadataFieldB.set(metaDataPacket, list);
-			
-			
-			sendPacket.invoke(connection, metaDataPacket);
+			list.add(dataWatcherItem);
 		}
+		
+		packetPlayOutEntityMetadataFieldB.set(metaDataPacket, list);
+		
+		
+		sendPacket.invoke(connection, metaDataPacket);
 	}
 	
 	public boolean isDead() {
@@ -286,6 +305,9 @@ public class BetterFrame {
 	}
 	public ItemFrame getItemFrame() {
 		return itemFrame;
+	}
+	public int getEntityId() {
+		return entityId;
 	}
 	public BlockFace getFacing() {
 		return itemFrame.getFacing();
