@@ -415,7 +415,8 @@ public class PlayerManager {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
 				p.sendMessage(Variables.PREFIX+"§7Use §e/gs remove§7 to remove a sign.");
-				if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_8) p.playSound(p.getLocation(), "random.click", 0.5f,0.75f);
+				if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_8) p.playSound(p.getLocation(), "gui.button.press", 0.5f,0.75f);
+				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_10) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", 1,1);
 				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_12) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", SoundCategory.BLOCKS, 1,1);
 				else p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 1,1);
 			}
