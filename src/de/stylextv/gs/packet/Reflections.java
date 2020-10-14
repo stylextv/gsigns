@@ -9,11 +9,6 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * An utility class that simplifies reflection in Bukkit plugins.
- *
- * @author Kristian
- */
 public final class Reflections {
 	
     // Deduce the net.minecraft.server.v* package
@@ -249,6 +244,17 @@ public final class Reflections {
     public static ConstructorInvoker getConstructor(String className, Class<?>... params) {
         return getConstructor(getClass(className), params);
     }
+    
+    /**
+     * Search for the first publically and privately defined constructor of the given name.
+     *
+     * @param className - lookup name of the class, see {@link #getClass(String)}.
+     * @return An object that invokes this constructor.
+     * @throws IllegalStateException If we cannot find this method.
+     */
+    public static ConstructorInvoker getFirstConstructor(String className) {
+        return getFirstConstructor(getClass(className));
+    }
 
     /**
      * Search for the first publicly and privately defined constructor of the given name and parameter count.
@@ -274,6 +280,29 @@ public final class Reflections {
         }
 
         throw new IllegalStateException(String.format("Unable to find constructor for %s (%s).", clazz, Arrays.asList(params)));
+    }
+    
+    /**
+     * Search for the first publicly and privately defined constructor of the given name.
+     *
+     * @param clazz  - a class to start with.
+     * @return An object that invokes this constructor.
+     * @throws IllegalStateException If we cannot find this method.
+     */
+    public static ConstructorInvoker getFirstConstructor(Class<?> clazz) {
+        for (final Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            constructor.setAccessible(true);
+
+            return arguments -> {
+                try {
+                    return constructor.newInstance(arguments);
+                } catch (Exception e) {
+                    throw new RuntimeException("Cannot invoke constructor " + constructor, e);
+                }
+            };
+        }
+
+        throw new IllegalStateException(String.format("Unable to find constructor for %s.", clazz));
     }
 
     /**

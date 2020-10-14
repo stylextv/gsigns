@@ -11,25 +11,32 @@ import de.stylextv.gs.math.MathUtil;
 public class Order {
 	
 	private String text;
-	private Color textColor=new Color(255,255,255);
+	private Color textColor = new Color(255,255,255);
+	
 	private Color backgroundColor;
 	private BufferedImage background;
 	private GifImage backgroundGif;
 	private int backgroundBlur;
-	private float backgroundBrightness=1;
-	private boolean dither=true;
-	private int fontSize=72,fontStyle=0;
-	private String font="Raleway-Bold";
+	private float backgroundBrightness = 1;
+	
+	private boolean dither = true;
+	
+	private String font = "Raleway-Bold";
+	private int fontSize = 72;
+	private int fontStyle = 0;
+	
 	private Color abstractColor;
-	private double abstractSize=150;
-	private int abstractSeed=MathUtil.getRandom().nextInt(1000)+1;
+	private double abstractSize = 150;
+	private int abstractSeed = MathUtil.getRandom().nextInt(1000)+1;
+	
 	private Color outlineColor;
-	private float outlineSize=12f;
+	private float outlineSize = 12f;
 	private int outlineStyle;
 	
 	private String error;
 	private Location firstCorner;
 	private long lastSelect;
+	
 	public String getError() {
 		return error;
 	}
@@ -101,6 +108,12 @@ public class Order {
 		this.dither = dither;
 	}
 	
+	public String getFont() {
+		return font;
+	}
+	public void setFont(String font) {
+		this.font = font;
+	}
 	public int getFontSize() {
 		return fontSize;
 	}
@@ -112,12 +125,6 @@ public class Order {
 	}
 	public void setFontStyle(int fontStyle) {
 		this.fontStyle = fontStyle;
-	}
-	public String getFont() {
-		return font;
-	}
-	public void setFont(String font) {
-		this.font = font;
 	}
 	
 	public int getAbstractSeed() {

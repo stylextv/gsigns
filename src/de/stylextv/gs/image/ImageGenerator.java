@@ -22,9 +22,9 @@ public class ImageGenerator {
 	
 	private static HashMap<String, Font> cachedFonts=new HashMap<String, Font>();
 	
-	private static Color TEXT_SHADOWCOLOR=new Color(0,0,0,128+16);
+	private static Color TEXT_SHADOWCOLOR=new Color(0,0,0,144);
 	
-	public static byte[] generate(Order order, int imgWidth, int imgHeight) {
+	public static byte[] generate(Order order, int imgWidth, int imgHeight, boolean isGif, int gifFrame) {
 		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
 		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
 		RenderUtil.setRenderingHints(imageGraphics);
@@ -52,45 +52,10 @@ public class ImageGenerator {
 			imageGraphics.setColor(order.getBackgroundColor());
 			imageGraphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 		}
-		if(order.getBackground()!=null&&order.getBackgroundBrightness()>0) {
-			BufferedImage backgroundImage;
-			if(order.getBackgroundBlur()!=0) {
-				BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(order.getBackground(), null);
-				blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
-				backgroundImage=blurred;
-			} else backgroundImage=order.getBackground();
-			if(order.getBackgroundBrightness()!=1) {
-				float f=order.getBackgroundBrightness();
-				for(int x=0; x<backgroundImage.getWidth(); x++) {
-					for(int y=0; y<backgroundImage.getHeight(); y++) {
-						int rgb = backgroundImage.getRGB(x, y);
-						int red = (rgb >> 16) & 0xFF;
-						int green = (rgb >> 8) & 0xFF;
-						int blue = rgb & 0xFF;
-						int r=(int) (red*f);
-						int g=(int) (green*f);
-						int b=(int) (blue*f);
-						if(r>255)r=255;
-						if(g>255)g=255;
-						if(b>255)b=255;
-						rgb = red;
-						rgb = (rgb << 8) + green;
-						rgb = (rgb << 8) + blue;
-						backgroundImage.setRGB(x, y, rgb);
-					}
-				}
-			}
-			double bgRatio=(double)backgroundImage.getWidth()/backgroundImage.getHeight();
-			double imgRatio=(double)image.getWidth()/image.getHeight();
-			if(bgRatio>imgRatio) {
-				int width=(int) (((double)backgroundImage.getWidth()/backgroundImage.getHeight())*image.getHeight());
-				imageGraphics.drawImage(backgroundImage, image.getWidth()/2-width/2,0,width,image.getHeight(), null);
-			} else if(bgRatio<imgRatio) {
-				int height=(int) (((double)backgroundImage.getHeight()/backgroundImage.getWidth())*image.getWidth());
-				imageGraphics.drawImage(backgroundImage, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
-			} else {
-				imageGraphics.drawImage(backgroundImage, 0,0,image.getWidth(),image.getHeight(), null);
-			}
+		if(isGif) {
+			if(order.getBackgroundGif()!=null&&order.getBackgroundBrightness()>0) drawBackground(order.getBackgroundGif().getFrame(gifFrame), order, image, imageGraphics);
+		} else {
+			if(order.getBackground()!=null&&order.getBackgroundBrightness()>0) drawBackground(order.getBackground(), order, image, imageGraphics);
 		}
 		if(order.getText()!=null&&order.getTextColor()!=null) {
 			drawText(image, imageGraphics, order);
@@ -114,95 +79,45 @@ public class ImageGenerator {
 		}
 		return data;
 	}
-	public static byte[] generate(Order order, int imgWidth, int imgHeight, int gifFrame) {
-		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
-		Graphics2D imageGraphics=(Graphics2D) image.getGraphics();
-		RenderUtil.setRenderingHints(imageGraphics);
-		
-		if(order.getAbstractColor()!=null) {
-			double size=order.getAbstractSize();
-			int seed=order.getAbstractSeed();
-			Color c=order.getAbstractColor();
-			for(int x=0; x<image.getWidth(); x++) {
-				for(int y=0; y<image.getHeight(); y++) {
-					double d=(SimplexNoise.noise(x/size+seed, y/size+seed)+1)/2;
-					
-					d=d*0.7+0.3;
-					
-					int r=(int)Math.round(c.getRed()*d);
-					int g=(int)Math.round(c.getGreen()*d);
-					int b=(int)Math.round(c.getBlue()*d);
-					int rgb = r;
-					rgb = (rgb << 8) + g;
-					rgb = (rgb << 8) + b;
-					image.setRGB(x, y, rgb);
+	private static void drawBackground(BufferedImage drawImage, Order order, BufferedImage image, Graphics2D imageGraphics) {
+		BufferedImage backgroundImage;
+		if(order.getBackgroundBlur()!=0) {
+			BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(drawImage, null);
+			blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
+			backgroundImage=blurred;
+		} else backgroundImage=drawImage;
+		if(order.getBackgroundBrightness()!=1) {
+			float f=order.getBackgroundBrightness();
+			for(int x=0; x<backgroundImage.getWidth(); x++) {
+				for(int y=0; y<backgroundImage.getHeight(); y++) {
+					int rgb = backgroundImage.getRGB(x, y);
+					int red = (rgb >> 16) & 0xFF;
+					int green = (rgb >> 8) & 0xFF;
+					int blue = rgb & 0xFF;
+					int r=(int) (red*f);
+					int g=(int) (green*f);
+					int b=(int) (blue*f);
+					if(r>255)r=255;
+					if(g>255)g=255;
+					if(b>255)b=255;
+					rgb = red;
+					rgb = (rgb << 8) + green;
+					rgb = (rgb << 8) + blue;
+					backgroundImage.setRGB(x, y, rgb);
 				}
 			}
-		} else if(order.getBackgroundColor()!=null) {
-			imageGraphics.setColor(order.getBackgroundColor());
-			imageGraphics.fillRect(0, 0, image.getWidth(), image.getHeight());
 		}
-		if(order.getBackgroundGif()!=null&&order.getBackgroundBrightness()>0) {
-			BufferedImage frame=order.getBackgroundGif().getFrame(gifFrame);
-			if(order.getBackgroundBlur()!=0) {
-				BufferedImage blurred=getGaussianBlurFilter(order.getBackgroundBlur(), true).filter(frame, null);
-				blurred=getGaussianBlurFilter(order.getBackgroundBlur(), false).filter(blurred, null);
-				frame=blurred;
-			}
-			if(order.getBackgroundBrightness()!=1) {
-				float f=order.getBackgroundBrightness();
-				for(int x=0; x<frame.getWidth(); x++) {
-					for(int y=0; y<frame.getHeight(); y++) {
-						int rgb = frame.getRGB(x, y);
-						int red = (rgb >> 16) & 0xFF;
-						int green = (rgb >> 8) & 0xFF;
-						int blue = rgb & 0xFF;
-						int r=(int) (red*f);
-						int g=(int) (green*f);
-						int b=(int) (blue*f);
-						if(r>255)r=255;
-						if(g>255)g=255;
-						if(b>255)b=255;
-						rgb = red;
-						rgb = (rgb << 8) + green;
-						rgb = (rgb << 8) + blue;
-						frame.setRGB(x, y, rgb);
-					}
-				}
-			}
-			double bgRatio=(double)frame.getWidth()/frame.getHeight();
-			double imgRatio=(double)image.getWidth()/image.getHeight();
-			if(bgRatio>imgRatio) {
-				int width=(int) (((double)frame.getWidth()/frame.getHeight())*image.getHeight());
-				imageGraphics.drawImage(frame, image.getWidth()/2-width/2,0,width,image.getHeight(), null);
-			} else if(bgRatio<imgRatio) {
-				int height=(int) (((double)frame.getHeight()/frame.getWidth())*image.getWidth());
-				imageGraphics.drawImage(frame, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
-			} else {
-				imageGraphics.drawImage(frame, 0,0,image.getWidth(),image.getHeight(), null);
-			}
+		double bgRatio=(double)backgroundImage.getWidth()/backgroundImage.getHeight();
+		double imgRatio=(double)image.getWidth()/image.getHeight();
+		if(bgRatio>imgRatio) {
+			int width=(int) (((double)backgroundImage.getWidth()/backgroundImage.getHeight())*image.getHeight());
+			imageGraphics.drawImage(backgroundImage, image.getWidth()/2-width/2,0,width,image.getHeight(), null);
+		} else if(bgRatio<imgRatio) {
+			int height=(int) (((double)backgroundImage.getHeight()/backgroundImage.getWidth())*image.getWidth());
+			imageGraphics.drawImage(backgroundImage, 0,image.getHeight()/2-height/2,image.getWidth(),height, null);
+		} else {
+			imageGraphics.drawImage(backgroundImage, 0,0,image.getWidth(),image.getHeight(), null);
 		}
-		if(order.getText()!=null&&order.getTextColor()!=null) {
-			drawText(image, imageGraphics, order);
-		}
-		if(order.getOutlineColor()!=null) {
-			drawOutline(image, imageGraphics, order.getOutlineColor(), order.getOutlineSize(), order.getOutlineStyle());
-		}
-		
-		if(order.shouldDither()) return ditherImage(image);
-		
-		byte[] data=new byte[image.getWidth()*image.getHeight()];
-		for(int y=0; y<image.getHeight(); y++) {
-			for(int x=0; x<image.getWidth(); x++) {
-				int rgb=image.getRGB(x, y);
-				int red = (rgb >> 16) & 0xFF;
-				int green = (rgb >> 8) & 0xFF;
-				int blue = rgb & 0xFF;
-				byte b=MapColorPalette.getColor(red,green,blue);
-				data[y*image.getWidth()+x]=b;
-			}
-		}
-		return data;
 	}
 	private static void drawText(BufferedImage image, Graphics2D imageGraphics, Order order) {
 		BufferedImage textImage=new BufferedImage(image.getWidth()*2, image.getHeight()*2, BufferedImage.TYPE_INT_ARGB);
@@ -462,8 +377,7 @@ public class ImageGenerator {
 		for(int y=0; y<imgHeight; y++) {
 			for(int x=0; x<imgWidth; x++) {
 				double[] pt = {x, y};
-				AffineTransform.getRotateInstance(rad, centerX, centerY)
-				  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
+				AffineTransform.getRotateInstance(rad, centerX, centerY).transform(pt, 0, pt, 0, 1);
 				
 				int newX=(int)pt[0];
 				int newY=(int)pt[1];
