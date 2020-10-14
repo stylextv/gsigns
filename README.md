@@ -12,11 +12,7 @@ GSigns is a spigot plugin that allows the creation of item frames that hold imag
 
 ## Map Sending
 
-<<<<<<< HEAD
-Instead of sending a giant packet that holds the entire map data each time the sign is updated, the map data is send once to the player as he walks up to the sign. After that premade entity metadata packets for the item frames are send that tell the client which of the maps it received earlier needs to be displayed.
-=======
 Instead of sending a giant packet that holds the entire map data each time the sign is updated, the map data is send once to the player as he walks up to the sign. After that custom entity metadata packets for the item frames are send that tell the client which of the maps it received earlier needs to be displayed.
->>>>>>> 4a909bb53b6ee7b74f63ab5453e00836fa97f669
 The sending of the maps is also optimized as the images are not being rendered onto the map via MapCanvas#drawImage which would use the very slow MapPalette#matchColor function. Rather the r, g and b values will be pre converted into the corresponding byte colors which will then be put into the map packet:
 ```java
 PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, new ArrayList<>(), bytes, 0, 0, 128, 128);
