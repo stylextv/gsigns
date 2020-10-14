@@ -13,6 +13,7 @@ public class MathUtil {
         int i = (int) value;
         return value < (double) i ? i - 1 : i;
     }
+	
 	/**
      * Rounds the specified value to the amount of decimals specified
     *

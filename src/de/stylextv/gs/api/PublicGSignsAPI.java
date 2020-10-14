@@ -17,10 +17,15 @@ public class PublicGSignsAPI implements GSignsAPI {
 		
 		return PlayerManager.placeSign(order, corner1, corner2);
 	}
+	@Override
+	public UUID createSign(Order order, Location corner1, Location corner2) {
+		return PlayerManager.placeSign(order, corner1, corner2);
+	}
 	
 	@Override
 	public void removeSign(UUID uid) {
 		WorldUtil.removeSign(uid);
 	}
+	
 	
 }

@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,24 +20,26 @@ import java.util.zip.Inflater;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.map.MapView;
+import org.bukkit.event.server.MapInitializeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.packet.PacketListener;
 import de.stylextv.gs.player.ConnectionManager;
-import de.stylextv.gs.render.BetterMapRenderer;
 import de.stylextv.gs.util.UUIDHelper;
 
 public class WorldUtil {
 	
 	public static final int MCVERSION_1_8=0;
+	public static final int MCVERSION_1_9=1;
+	public static final int MCVERSION_1_11=3;
 	public static final int MCVERSION_1_12=4;
 	public static final int MCVERSION_1_13=5;
 	public static final int MCVERSION_1_14=6;
@@ -45,10 +49,10 @@ public class WorldUtil {
 	private static int FILE_HEADER_LENGTH=45;
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	
-	private static File signFolder=new File("plugins/GamemodeSigns/signs");
-	private static File customImagesFolder=new File("plugins/GamemodeSigns/images");
+	private static File signFolder=new File("plugins/GSigns/signs");
+	private static File customImagesFolder=new File("plugins/GSigns/images");
 	
-	private static EnumUtil enumUtil;
+	private static MapManager mapManager;
 	private static int mcVersion=MCVERSION_1_14;
 	
 	private static CopyOnWriteArrayList<BetterFrame> frames=new CopyOnWriteArrayList<BetterFrame>();
@@ -56,14 +60,19 @@ public class WorldUtil {
 	private static ConcurrentHashMap<BetterFrame, File> savedFrames=new ConcurrentHashMap<BetterFrame, File>();
 	private static ConcurrentHashMap<BetterFrame, File> savedGifFrames=new ConcurrentHashMap<BetterFrame, File>();
 	
+	private static boolean inGifUpdate;
+	
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
 		mcVersion=Integer.valueOf(version.split("MC: 1\\.")[1].split("\\.")[0])-8;
-		if(mcVersion!=MCVERSION_1_8 && !(mcVersion>=MCVERSION_1_12&&mcVersion<=MCVERSION_1_16)) Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
-		if(mcVersion<=MCVERSION_1_12) enumUtil=new EnumUtil18();
-		else enumUtil=new EnumUtil114();
+		if(mcVersion!=MCVERSION_1_8 && !(mcVersion>=MCVERSION_1_12&&mcVersion<=MCVERSION_1_16)) {
+			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
+		}
 		
 		customImagesFolder.mkdirs();
+		
+		mapManager = new MapManager();
+		mapManager.searchForVanillaMaps();
 		
 		PacketListener packetListener = new PacketListener();
 		packetListener.start();
@@ -79,7 +88,7 @@ public class WorldUtil {
 						if(name.endsWith(".gsign")) {
 							BetterFrame frame=loadFrame(f, currentTime);
 							
-							if(frame.getMapViews().length>1) {
+							if(frame.getImages().length>1) {
 								savedGifFrames.put(frame,f);
 								gifFrames.add(frame);
 							} else {
@@ -99,24 +108,25 @@ public class WorldUtil {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				ConnectionManager.update();
-				long currentTime=System.currentTimeMillis();
-				for(BetterFrame frame:gifFrames) {
-					if(frame.update(currentTime)) gifFrames.remove(frame);
+				if(!inGifUpdate) {
+					inGifUpdate=true;
+					
+					ConnectionManager.update();
+					long currentTime=System.currentTimeMillis();
+					for(BetterFrame frame:gifFrames) {
+						if(frame.update(currentTime)) gifFrames.remove(frame);
+					}
+					for(BetterFrame frame:savedFrames.keySet()) {
+						frame.update(0);
+					}
+					for(BetterFrame frame:frames) {
+						if(frame.update(0)) frames.remove(frame);
+					}
+					
+					inGifUpdate=false;
 				}
 			}
 		}.runTaskTimerAsynchronously(Main.getPlugin(), 0, 0);
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for(BetterFrame frame:savedFrames.keySet()) {
-					frame.update(0);
-				}
-				for(BetterFrame frame:frames) {
-					if(frame.update(0)) frames.remove(frame);
-				}
-			}
-		}.runTaskTimerAsynchronously(Main.getPlugin(), 0, 10);
 	}
 	public static void onDisable() {
 		signFolder.mkdirs();
@@ -200,29 +210,22 @@ public class WorldUtil {
 		}
 		
 		int allBytesLength=allBytes.length-FILE_HEADER_LENGTH;
-		int l=128*128+4*2;
+		int l=128*128+4;
 		int a=allBytesLength/l;
-		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[a];
-		int[] mapIds=new int[a];
+		byte[][] images=new byte[a][];
 		int[] delays=new int[a];
 		for(int i=0; i<a; i++) {
 			int index=i*l+FILE_HEADER_LENGTH;
-			int mapId=
+			delays[i]=
 					(0xff & allBytes[index  ]) << 24  |
 					(0xff & allBytes[index+1]) << 16  |
 					(0xff & allBytes[index+2]) << 8   |
 					(0xff & allBytes[index+3]) << 0;
-			delays[i]=
-					(0xff & allBytes[index+4]) << 24  |
-					(0xff & allBytes[index+5]) << 16  |
-					(0xff & allBytes[index+6]) << 8   |
-					(0xff & allBytes[index+7]) << 0;
-			mapIds[i]=mapId;
 			byte[] bytes=new byte[128*128];
 			for(int j=0; j<bytes.length; j++) {
-				bytes[j]=allBytes[index+j+8];
+				bytes[j]=allBytes[index+j+4];
 			}
-			mapRenderers[i]=new BetterMapRenderer(bytes);
+			images[i]=bytes;
 		}
 		
 		if(itemFrame==null) {
@@ -230,17 +233,17 @@ public class WorldUtil {
 			int facing=allBytes[44];
 			BlockFace dir=BlockFace.values()[facing];
 			
-			return new BetterFrame(signUid, mapIds, loc, dir, mapRenderers, currentTime, delays);
+			return new BetterFrame(signUid, loc, dir, images, currentTime, delays);
 		} else {
-			return new BetterFrame(signUid, mapIds, itemFrame, mapRenderers, currentTime, delays);
+			return new BetterFrame(signUid, itemFrame, images, currentTime, delays);
 		}
 	}
 	private static void saveFrame(BetterFrame frame) throws IOException {
-	    MapView[] views=frame.getMapViews();
+	    byte[][] images=frame.getImages();
 		Location loc=frame.getLocation();
 		
-		int l=128*128+4*2;
-		byte[] totalBytes=new byte[views.length*l+FILE_HEADER_LENGTH];
+		int l=128*128+4;
+		byte[] totalBytes=new byte[images.length*l+FILE_HEADER_LENGTH];
 		
 		byte[] worldUidBytes=UUIDHelper.getBytesFromUUID(loc.getWorld().getUID());
 		for(int i=0; i<worldUidBytes.length; i++) {
@@ -276,23 +279,17 @@ public class WorldUtil {
 		}
 		totalBytes[44]=(byte)facing;
 		
-    	for(int i=0; i<views.length; i++) {
+    	for(int i=0; i<images.length; i++) {
     		int index=i*l+FILE_HEADER_LENGTH;
     		
-    		MapView view=views[i];
-    		int id=enumUtil.getMapId(view);
+    		byte[] data=images[i];
     		int delay=frame.getDelay(i);
-    		totalBytes[index  ]=((byte)((id >> 24) & 0xff));
-    		totalBytes[index+1]=((byte)((id >> 16) & 0xff));
-    		totalBytes[index+2]=((byte)((id >> 8) & 0xff));
-    		totalBytes[index+3]=((byte)((id >> 0) & 0xff));
-    		totalBytes[index+4]=((byte)((delay >> 24) & 0xff));
-    		totalBytes[index+5]=((byte)((delay >> 16) & 0xff));
-    		totalBytes[index+6]=((byte)((delay >> 8) & 0xff));
-    		totalBytes[index+7]=((byte)((delay >> 0) & 0xff));
-    		byte[] bytes=((BetterMapRenderer)view.getRenderers().get(0)).getData();
-    		for(int j=0; j<bytes.length; j++) {
-    			totalBytes[index+8+j]=bytes[j];
+    		totalBytes[index  ]=((byte)((delay >> 24) & 0xff));
+    		totalBytes[index+1]=((byte)((delay >> 16) & 0xff));
+    		totalBytes[index+2]=((byte)((delay >> 8) & 0xff));
+    		totalBytes[index+3]=((byte)((delay >> 0) & 0xff));
+    		for(int j=0; j<data.length; j++) {
+    			totalBytes[index+4+j]=data[j];
     		}
     	}
     	
@@ -334,7 +331,7 @@ public class WorldUtil {
 	}
 	
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[] image, BlockFace direction) {
-		frames.add(new BetterFrame(signUid, loc, direction, new BetterMapRenderer[]{new BetterMapRenderer(image)}, 0, null));
+		frames.add(new BetterFrame(signUid, loc, direction, new byte[][]{image}, 0, null));
 	}
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
 		int[] delaysCopy=new int[delays.length];
@@ -402,17 +399,14 @@ public class WorldUtil {
 			delays=newDelays;
 		}
 		
-		BetterMapRenderer[] mapRenderers=new BetterMapRenderer[frames.length];
-		for(int i=0; i<frames.length; i++) {
-			mapRenderers[i]=new BetterMapRenderer(frames[i]);
-		}
 		int[] delaysF=delays;
+		byte[][] images=frames;
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				loc.getBlock().setType(Material.AIR);
 				
-				gifFrames.add(new BetterFrame(signUid, loc, direction, mapRenderers, b?startTime:0, delaysF));
+				gifFrames.add(new BetterFrame(signUid, loc, direction, images, b?startTime:0, delaysF));
 			}
 		}.runTask(Main.getPlugin());
 	}
@@ -517,6 +511,46 @@ public class WorldUtil {
 		return false;
 	}
 	
+	public static void onMapInitialize(MapInitializeEvent e) {
+		mapManager.onMapInitialize(e);
+	}
+	public static Set<Short> getOccupiedIdsFor(OfflinePlayer p) {
+		Set<Short> ids = new HashSet<>();
+		for(BetterFrame frame:frames) {
+			frame.getOccupiedIdsFor(p, ids);
+		}
+		for(BetterFrame frame:savedGifFrames.keySet()) {
+			frame.getOccupiedIdsFor(p, ids);
+		}
+		for(BetterFrame frame:gifFrames) {
+			frame.getOccupiedIdsFor(p, ids);
+		}
+		for(BetterFrame frame:savedFrames.keySet()) {
+			frame.getOccupiedIdsFor(p, ids);
+		}
+		return ids;
+	}
+	public static boolean isIdUsedBy(OfflinePlayer p, short id) {
+		if(id > MapManager.FORCED_OFFSET) {
+			for(BetterFrame frame:frames) {
+				if(frame.isIdUsedBy(p, id)) return true;
+			}
+			for(BetterFrame frame:savedGifFrames.keySet()) {
+				if(frame.isIdUsedBy(p, id)) return true;
+			}
+			for(BetterFrame frame:gifFrames) {
+				if(frame.isIdUsedBy(p, id)) return true;
+			}
+			for(BetterFrame frame:savedFrames.keySet()) {
+				if(frame.isIdUsedBy(p, id)) return true;
+			}
+		}
+		return false;
+	}
+	
+	public static MapManager getMapManager() {
+		return mapManager;
+	}
 	public static File getCustomImagesFolder() {
 		return customImagesFolder;
 	}
