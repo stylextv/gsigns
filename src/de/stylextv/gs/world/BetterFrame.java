@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -72,6 +71,7 @@ public class BetterFrame {
 	private int currentItemIndex=-1;
 	private int[] delays;
 	private int totalTime=0;
+	private long timeSinceLastRefresh=50;
 	
 	public BetterFrame(UUID signUid, Location loc, BlockFace dir, byte[][] images, long startTime, int[] delays) {
 		this.images=images;
@@ -97,7 +97,10 @@ public class BetterFrame {
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
 		
-		refreshEntityId();
+		if(timeSinceLastRefresh++ == 60) {
+			timeSinceLastRefresh=0;
+			refreshEntityId();
+		}
 		
 		if(images!=null) {
 			int prevFrame=currentItemIndex;
@@ -161,31 +164,39 @@ public class BetterFrame {
 	}
 	
 	private void refreshEntityId() {
-		try {
-			Chunk c=itemFrame.getWorld().getChunkAt(itemFrame.getLocation());
-			if(c.isLoaded()) for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
-				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
-					entityId = e.getEntityId();
-					itemFrame = (ItemFrame) e;
-					break;
+		World w=itemFrame.getWorld();
+		if(w != null && w.getPlayers().size() != 0) {
+			Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
+			for(Entity entity:list) {
+				if(entity instanceof ItemFrame) {
+					ItemFrame checkedFrame=(ItemFrame) entity;
+					if(checkedFrame.getFacing() == itemFrame.getFacing()) {
+						itemFrame = checkedFrame;
+						entityId = checkedFrame.getEntityId();
+						break;
+					}
 				}
 			}
-		} catch(Exception ex) {
-			// ignore craftbukkit exceptions
 		}
 	}
 	public void removeItemFrame() {
-		try {
-			Chunk c=itemFrame.getWorld().getChunkAt(itemFrame.getLocation());
-			if(!c.isLoaded()) c.load();
-			for(Entity e : c.getEntities()) {
-				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
-					e.remove();
-					break;
+		boolean found=false;
+		World w=itemFrame.getWorld();
+		if(w != null && w.getPlayers().size() != 0) {
+			Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
+			for(Entity entity:list) {
+				if(entity instanceof ItemFrame) {
+					ItemFrame checkedFrame=(ItemFrame) entity;
+					if(checkedFrame.getFacing() == itemFrame.getFacing()) {
+						checkedFrame.remove();
+						found=true;
+					}
 				}
 			}
-		} catch(Exception ex) {
-			// ignore craftbukkit exceptions
+		}
+		
+		if(!found) {
+			itemFrame.remove();
 		}
 	}
 	
@@ -326,6 +337,7 @@ public class BetterFrame {
 		return itemFrame.isDead();
 	}
 	public int getEntityId() {
+		refreshEntityId();
 		return entityId;
 	}
 	public BlockFace getFacing() {
