@@ -164,40 +164,50 @@ public class BetterFrame {
 	}
 	
 	private void refreshEntityId() {
-		World w=itemFrame.getWorld();
-		if(w != null && w.getPlayers().size() != 0) {
-			Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
-			for(Entity entity:list) {
-				if(entity instanceof ItemFrame) {
-					ItemFrame checkedFrame=(ItemFrame) entity;
-					if(checkedFrame.getFacing() == itemFrame.getFacing()) {
-						itemFrame = checkedFrame;
-						entityId = checkedFrame.getEntityId();
-						break;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				World w=itemFrame.getWorld();
+				if(w != null && w.getPlayers().size() != 0) {
+					Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
+					for(Entity entity:list) {
+						if(entity instanceof ItemFrame) {
+							ItemFrame checkedFrame=(ItemFrame) entity;
+							if(checkedFrame.getFacing() == itemFrame.getFacing()) {
+								itemFrame = checkedFrame;
+								entityId = checkedFrame.getEntityId();
+								break;
+							}
+						}
 					}
 				}
 			}
-		}
+		}.runTask(Main.getPlugin());
 	}
 	public void removeItemFrame() {
-		boolean found=false;
-		World w=itemFrame.getWorld();
-		if(w != null && w.getPlayers().size() != 0) {
-			Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
-			for(Entity entity:list) {
-				if(entity instanceof ItemFrame) {
-					ItemFrame checkedFrame=(ItemFrame) entity;
-					if(checkedFrame.getFacing() == itemFrame.getFacing()) {
-						checkedFrame.remove();
-						found=true;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				boolean found=false;
+				World w=itemFrame.getWorld();
+				if(w != null && w.getPlayers().size() != 0) {
+					Collection<Entity> list=w.getNearbyEntities(itemFrame.getLocation(), 0.1, 0.1, 0.1);
+					for(Entity entity:list) {
+						if(entity instanceof ItemFrame) {
+							ItemFrame checkedFrame=(ItemFrame) entity;
+							if(checkedFrame.getFacing() == itemFrame.getFacing()) {
+								checkedFrame.remove();
+								found=true;
+							}
+						}
 					}
 				}
+				
+				if(!found) {
+					itemFrame.remove();
+				}
 			}
-		}
-		
-		if(!found) {
-			itemFrame.remove();
-		}
+		}.runTask(Main.getPlugin());
 	}
 	
 	public void removePlayer(Player p) {
