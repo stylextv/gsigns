@@ -11,10 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.stylextv.gs.api.GSignsAPI;
 import de.stylextv.gs.api.PublicGSignsAPI;
-import de.stylextv.gs.command.CommandGS;
-import de.stylextv.gs.command.CommandGSigns;
-import de.stylextv.gs.command.CommandGamemodeSigns;
 import de.stylextv.gs.command.CommandHandler;
+import de.stylextv.gs.command.CommandListener;
 import de.stylextv.gs.command.MainTabCompleter;
 import de.stylextv.gs.event.EventItemFrame;
 import de.stylextv.gs.event.EventMap;
@@ -38,6 +36,7 @@ public class Main extends JavaPlugin {
 		register();
 		
 		WorldUtil.onEnable();
+		Variables.loadScheme();
 		CommandHandler.create();
 		
 		enableAPI();
@@ -50,11 +49,11 @@ public class Main extends JavaPlugin {
 		Variables.VERSION=plugin.getDescription().getVersion();
 		
 		MainTabCompleter tabCompleter=new MainTabCompleter();
-		getCommand("gs").setExecutor(new CommandGS());
+		getCommand("gs").setExecutor(new CommandListener("gs"));
 		getCommand("gs").setTabCompleter(tabCompleter);
-		getCommand("gsigns").setExecutor(new CommandGSigns());
+		getCommand("gsigns").setExecutor(new CommandListener("gsigns"));
 		getCommand("gsigns").setTabCompleter(tabCompleter);
-		getCommand("gamemodesigns").setExecutor(new CommandGamemodeSigns());
+		getCommand("gamemodesigns").setExecutor(new CommandListener("gamemodesigns"));
 		getCommand("gamemodesigns").setTabCompleter(tabCompleter);
 		
 		PluginManager pm=Bukkit.getPluginManager();

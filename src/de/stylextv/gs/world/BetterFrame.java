@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -161,7 +162,8 @@ public class BetterFrame {
 	
 	private void refreshEntityId() {
 		try {
-			for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
+			Chunk c=itemFrame.getWorld().getChunkAt(itemFrame.getLocation());
+			if(c.isLoaded()) for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
 				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
 					entityId = e.getEntityId();
 					itemFrame = (ItemFrame) e;
@@ -174,7 +176,9 @@ public class BetterFrame {
 	}
 	public void removeItemFrame() {
 		try {
-			for(Entity e : itemFrame.getWorld().getChunkAt(itemFrame.getLocation()).getEntities()) {
+			Chunk c=itemFrame.getWorld().getChunkAt(itemFrame.getLocation());
+			if(!c.isLoaded()) c.load();
+			for(Entity e : c.getEntities()) {
 				if(e!=null && e.getUniqueId()!=null && e.getUniqueId().equals(itemFrame.getUniqueId())) {
 					e.remove();
 					break;

@@ -58,6 +58,7 @@ import java.util.List;
  *
  */
 public final class BetterGifDecoder {
+	
 	static final class BitReader {
 		private int bitPos; // Next bit to read
 		private int numBits; // Number of bits to read

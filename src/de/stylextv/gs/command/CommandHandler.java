@@ -77,16 +77,16 @@ public class CommandHandler {
 							}
 							
 							if(length==0) {
-								p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
-								p.sendMessage("                       §aFiles");
+								p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
+								p.sendMessage("                       "+Variables.COLOR1+"Files");
 								p.sendMessage("");
-								p.sendMessage("§8- §aPage 1 §8>");
+								p.sendMessage("§8- "+Variables.COLOR1+"Page 1 §8>");
 								p.sendMessage("    §8- §7§oFolder is empty =(");
 								for(int i=0; i<11; i++) p.sendMessage("");
 								sendPageArrows(p, page, pages);
 								p.sendMessage("§e*§7: Newly added");
 								p.sendMessage("");
-								p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
+								p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 							} else {
 								if(oldFiles==null) {
 									oldFiles=new CopyOnWriteArrayList<String>();
@@ -104,10 +104,10 @@ public class CommandHandler {
 								
 								int j=page*11+10;
 								if(j>=length) j=length-1;
-								p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
-								p.sendMessage("                       §aFiles");
+								p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
+								p.sendMessage("                       "+Variables.COLOR1+"Files");
 								p.sendMessage("");
-								p.sendMessage("§8- §aPage "+(page+1)+" §8>");
+								p.sendMessage("§8- "+Variables.COLOR1+"Page "+(page+1)+" §8>");
 								for(int i=0; i<11; i++) {
 									int index=i+page*11;
 									if(index<=j) {
@@ -123,7 +123,7 @@ public class CommandHandler {
 								sendPageArrows(p, page, pages);
 								p.sendMessage("§e*§7: Newly added");
 								p.sendMessage("");
-								p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
+								p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 							}
 						} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs listfiles [Page]");
 					} else sendNoPermission(p);
@@ -217,7 +217,7 @@ public class CommandHandler {
 		p.spigot().sendMessage(comp);
 	}
 	private static TextComponent getPageArrow(int page, boolean dir, String cmd) {
-	    return createClickableComponent(dir ? "§d§l"+UI_TEXT_ARROW_LEFT : "§d§l"+UI_TEXT_ARROW_RIGHT, dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
+	    return createClickableComponent(dir ? "§b§l"+UI_TEXT_ARROW_LEFT : "§b§l"+UI_TEXT_ARROW_RIGHT, dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
 	}
 	private static TextComponent getPageArrow(boolean dir) {
 		TextComponent comp=new TextComponent(dir ? "§8§l"+UI_TEXT_ARROW_LEFT : "§8§l"+UI_TEXT_ARROW_RIGHT);
@@ -233,36 +233,37 @@ public class CommandHandler {
 		p.sendMessage(Variables.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
 	}
 	private static void sendHelp(Player p) {
-		p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
-		p.sendMessage("                     §a"+Variables.NAME);
+		p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
+		p.sendMessage("                     "+Variables.COLOR1+Variables.NAME);
 		p.sendMessage("");
-		p.sendMessage("§8- §a/gs create (Code) §8> §7Create sign§e*");
-		p.sendMessage("§8- §a/gs remove §8> §7Remove sign§e*");
-		p.sendMessage("§8- §a/gs cancel §8> §7Cancel placement§e*");
-		p.sendMessage("§8- §a/gs listfiles [Page] §8> §7Lists your images§e*");
-		p.sendMessage("§8- §a/gs update §8> §7Update plugin§e*");
-		p.sendMessage("§8- §a/gs help §8> §7Show help");
-		p.sendMessage("§8- §a/gs info §8> §7Show plugin information");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs create (Code) §8> §7Create sign§e*");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs remove §8> §7Remove sign§e*");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs cancel §8> §7Cancel placement§e*");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs listfiles [Page] §8> §7Lists your images§e*");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs update §8> §7Update plugin§e*");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs help §8> §7Show help");
+		p.sendMessage("§8- "+Variables.COLOR1+"/gs info §8> §7Show plugin information");
 		p.sendMessage("");
-		p.sendMessage("§7(): §aRequired§7, []: §aOptional");
+		p.sendMessage("§7(): "+Variables.COLOR1+"Required§7, []: "+Variables.COLOR1+"Optional");
 		p.sendMessage("§e*§7: Needs extra permission to be executed");
 		p.sendMessage("");
-		p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
+		p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 	}
 	private static void sendInfo(Player p) {
-		p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
-		p.sendMessage("                   §aInformation");
+		p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
+		p.sendMessage("                   "+Variables.COLOR1+"Information");
 		p.sendMessage("");
 		p.sendMessage("§7§oThis server uses the free and open");
 		p.sendMessage("§7§o source plugin §e"+Variables.NAME+"§7§o to put images and");
 		p.sendMessage("§7§o gifs into item frames!");
 		p.sendMessage("");
-		p.sendMessage("§8- §7Developed by §8> §d"+Variables.AUTHOR);
-		p.sendMessage("§8- §7Installed version §8> §d"+Variables.VERSION);
+		p.sendMessage("§8- §7Developed by §8> §b"+Variables.AUTHOR);
+		p.sendMessage("§8- §7Installed version §8> §b"+Variables.VERSION);
 		p.sendMessage("");
-		p.sendMessage("§2§m#§a§m"+UI_TEXT_LINE+"§2§m#");
+		p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static TextComponent createClickableComponent(String baseText, String hoverText, String clickText, ClickEvent.Action clickAction) {
 		if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_11) {
 			TextComponent comp=new TextComponent(baseText);
