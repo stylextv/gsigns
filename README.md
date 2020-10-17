@@ -12,8 +12,7 @@ GSigns is a spigot plugin that allows the creation of item frames that hold imag
 
 ## Map Sending
 
-Instead of sending a giant packet that holds the entire map data each time the sign is updated, the map data is send once to the player as he walks up to the sign. After that custom entity metadata packets for the item frames are send that tell the client which of the maps it received earlier needs to be displayed.
-The sending of the maps is also optimized as the images are not being rendered onto the map via MapCanvas#drawImage which would use the very slow MapPalette#matchColor function. Rather the r, g and b values will be pre converted into the corresponding byte colors which will then be put into the map packet:
+Instead of sending a huge packet containing all the map data every time the sign is updated, the map data is sent once to the player as he approaches the sign. Custom entity metadata packets are then sent for the item frames, telling the client which of the previously received maps must be displayed. Sending the maps is also optimized because the images are not rendered to the map via MapCanvas#drawImage, which would use the very slow MapPalette#matchColor function. Instead, the r, g and b values are pre-converted to the corresponding byte colors, which are then transferred to the map packet:
 ```java
 PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, new ArrayList<>(), bytes, 0, 0, 128, 128);
 ```
@@ -21,7 +20,7 @@ PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, ne
 ## GSIGN-Format
 
 When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
-First a file is created with the smallest number that is not in use (starting at 0) as the name. Then a header consisting of `45` bytes is put at the beginning of the file:
+First a file with the smallest unused number (starting with 0) as a name is created. Then a header consisting of `45` bytes is placed at the beginning of the file:
 ```bash
 # 🌎 WORLD_UUID (16 bytes)
 The UUID of the world.
@@ -37,17 +36,17 @@ The x-, y-, and z-coordinate.
 The direction the item frame is facing.
 ```
 
-After that the file will now be filled with the data of the map views. Each map view (or frame of a gif) will be stored in order, one after the other:
-1. The delay is stored as `4` bytes. This is the amount of milliseconds between frames. If the item frame is a still image the value is 0.
-1. The pixel data will be stored as a byte array of size `16384`, as each frame has a width and height of 128.
+Afterwards the file is filled with the data of the images. Each image (or frame in a gif) is saved in sequence:
+1. the delay is stored as `4` bytes. This is the number of milliseconds between frames. If the map is a still image, the value is 0.
+1. the pixel data is stored as a byte array of length `16384`, since each frame has a width and height of 128.
 
-When each mapview has been stored the entire map data will be compressed using the Deflater to reduce file size:
+When each image has been stored the entire file data will be compressed using the Deflater to reduce file size:
 ```java
 Deflater compressor = new Deflater();
 compressor.setLevel(Deflater.BEST_SPEED);
 ```
 
-GSIGN-files in the "signs" folder that do not follow this format will be deleted upon loading for being outdated or corrupted.
+.GSIGN files in the "signs" folder that do not conform to this format are deleted on loading because they are outdated or damaged.
 
 
 ## Sign Coding
@@ -56,7 +55,7 @@ Each code is structured like this:
 ```bash
 {ARGUMENT1:VALUE1,ARGUMENT2:VALUE2,ARGUMENT3:VALUE3, ...}
 ```
-It is important that their is no space between two arguments.
+It is important, that there is no space between two arguments.
 If you want to use spaces or the character `,` inside values put the value in quotes like this: `txt:"Text"`
 If you want to use a `"` inside the quote use: `\"`
 For `\` use: `\\`
@@ -97,7 +96,7 @@ If you are a developer and want to use GSigns inside your plugin, for example to
 
 ## Project Layout
 
-Here you can view the current structuring of the project.
+Here you can see the current structure of the project.
 
 ```bash
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
