@@ -100,9 +100,9 @@ public class CodeParser {
 			break;
 		case "bg-img":
 			if(value.endsWith(".gif")) {
-				GifImage gif=BetterGifDecoder.read(new FileInputStream(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
+				GifImage gif=BetterGifDecoder.read(new FileInputStream(new File(WorldUtil.getLocalImagesFolder().getPath()+"/"+value)));
 				order.setBackgroundGif(gif);
-			} else order.setBackground(ImageIO.read(new File(WorldUtil.getCustomImagesFolder().getPath()+"/"+value)));
+			} else order.setBackground(ImageIO.read(new File(WorldUtil.getLocalImagesFolder().getPath()+"/"+value)));
 			break;
 		case "bg-blur":
 			order.setBackgroundBlur(Integer.valueOf(value));

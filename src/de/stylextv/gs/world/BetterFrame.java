@@ -1,5 +1,6 @@
 package de.stylextv.gs.world;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,6 +62,8 @@ public class BetterFrame {
 	private int entityId;
 	private byte[][] images;
 	
+	private File file;
+	
 	private final ConcurrentHashMap<UUID, CopyOnWriteArrayList<Short>> playerMapIds = new ConcurrentHashMap<>();
 	private HashMap<Player, Integer> playersSentProgress=new HashMap<Player, Integer>();
 	private ArrayList<Player> playersInRadius=new ArrayList<Player>();
@@ -83,6 +86,7 @@ public class BetterFrame {
 		World w=loc.getWorld();
 		itemFrame=(ItemFrame) w.spawnEntity(loc, EntityType.ITEM_FRAME);
 		itemFrame.setFacingDirection(dir);
+		refreshEntityId();
 	}
 	public BetterFrame(UUID signUid, ItemFrame frame, byte[][] images, long startTime, int[] delays) {
 		this.images=images;
@@ -92,6 +96,7 @@ public class BetterFrame {
 		if(delays!=null) for(int i:delays) totalTime+=i;
 		
 		this.itemFrame=frame;
+		refreshEntityId();
 	}
 	
 	public boolean update(long currentTime) {
@@ -392,6 +397,17 @@ public class BetterFrame {
 	}
 	public byte[][] getImages() {
 		return images;
+	}
+	
+	public void deleteFile() {
+		if(file != null) file.delete();
+	}
+	
+	public File getFile() {
+		return file;
+	}
+	public void setFile(File file) {
+		this.file = file;
 	}
 	
 }

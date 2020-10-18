@@ -37,7 +37,7 @@ public class PacketListener {
         int packetEntityId = (int) entityIdField.get(packet);
         boolean attack = interactTypeField.get(packet).toString().equals("ATTACK");
         
-        return !(!attack&&WorldUtil.isFrame(packetEntityId));
+        return attack || !WorldUtil.isFrame(packetEntityId);
     }
     private boolean handlePacketOut(Player p, Object packet) {
     	if(packetPlayOutMapClazz.isInstance(packet)) {

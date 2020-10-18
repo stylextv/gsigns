@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -20,9 +19,9 @@ import de.stylextv.gs.player.Order;
 
 public class ImageGenerator {
 	
-	private static HashMap<String, Font> cachedFonts=new HashMap<String, Font>();
+	private static final HashMap<String, Font> CACHED_FONTS = new HashMap<String, Font>();
 	
-	private static Color TEXT_SHADOWCOLOR=new Color(0,0,0,144);
+	private static final Color TEXT_SHADOWCOLOR = new Color(0,0,0,144);
 	
 	public static byte[] generate(Order order, int imgWidth, int imgHeight, boolean isGif, int gifFrame) {
 		BufferedImage image=new BufferedImage(128*imgWidth, 128*imgHeight, BufferedImage.TYPE_INT_RGB);
@@ -202,7 +201,7 @@ public class ImageGenerator {
 	}
 	private static Font getFont(String name) {
 		if(name==null) return null;
-		Font got=cachedFonts.get(name);
+		Font got=CACHED_FONTS.get(name);
 		if(got!=null) return got;
 		else {
 			String family;
@@ -215,7 +214,7 @@ public class ImageGenerator {
 			    URL u = new URL(url);
 			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
 			    ge.registerFont(font);
-			    cachedFonts.put(name, font);
+			    CACHED_FONTS.put(name, font);
 			    return font;
 			} catch (Exception ex) {}
 			try {
@@ -224,7 +223,7 @@ public class ImageGenerator {
 			    URL u = new URL(url);
 			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
 			    ge.registerFont(font);
-			    cachedFonts.put(name, font);
+			    CACHED_FONTS.put(name, font);
 			    return font;
 			} catch (Exception ex) {}
 			try {
@@ -233,7 +232,7 @@ public class ImageGenerator {
 			    URL u = new URL(url);
 			    Font font=Font.createFont(Font.TRUETYPE_FONT, u.openStream());
 			    ge.registerFont(font);
-			    cachedFonts.put(name, font);
+			    CACHED_FONTS.put(name, font);
 			    return font;
 			} catch (Exception ex) {}
 			return null;
@@ -367,20 +366,29 @@ public class ImageGenerator {
         return new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
     }
 	
-	public static byte[] rotateImage(byte[] image, int imgWidth,int imgHeight, int angle) {
+	public static byte[] rotateImage(byte[] image, int imgWidth, int imgHeight, int angle) {
+		if(angle==0) return image;
+		if(angle==3) angle=1;
+		else if(angle==1) angle=3;
+		
 		byte[] rotated=new byte[image.length];
 		
-		double rad=Math.toRadians(-angle);
-		
-		double centerX=(imgWidth-1)/2.0;
-		double centerY=(imgHeight-1)/2.0;
 		for(int y=0; y<imgHeight; y++) {
 			for(int x=0; x<imgWidth; x++) {
-				double[] pt = {x, y};
-				AffineTransform.getRotateInstance(rad, centerX, centerY).transform(pt, 0, pt, 0, 1);
 				
-				int newX=(int)pt[0];
-				int newY=(int)pt[1];
+				int newX=0;
+				int newY=0;
+				if(angle==1) {
+					newX=(imgHeight-1)-y;
+					newY=x;
+				} else if(angle==2) {
+					newX=(imgWidth-1)-x;
+					newY=(imgHeight-1)-y;
+				} else if(angle==3) {
+					newX=y;
+					newY=(imgWidth-1)-x;
+				}
+				
 				rotated[y*imgWidth+x]=image[newY*imgWidth+newX];
 			}
 		}

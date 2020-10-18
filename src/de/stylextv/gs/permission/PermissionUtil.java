@@ -16,6 +16,7 @@ public class PermissionUtil {
 	public static boolean hasUpdatePermission(Player p) {
 		return hasStarPermission(p)||p.hasPermission("gsigns.update");
 	}
+	
 	private static boolean hasStarPermission(Player p) {
 		return p.hasPermission("gsigns.*");
 	}

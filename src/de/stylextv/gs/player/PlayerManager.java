@@ -2,6 +2,7 @@ package de.stylextv.gs.player;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,6 +12,8 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -68,7 +71,18 @@ public class PlayerManager {
 	}
 	
 	public static void onPlayerInteract(PlayerInteractEvent e) {
-		if(e.getAction()==Action.LEFT_CLICK_BLOCK||e.getAction()==Action.RIGHT_CLICK_BLOCK) {
+		if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
+			Block b=e.getClickedBlock();
+			BlockFace face=e.getBlockFace();
+			BetterFrame frame=WorldUtil.getFrame(b.getRelative(face).getLocation());
+			if(frame != null) {
+				e.setCancelled(true);
+				onFrameBreak(e.getPlayer(), frame);
+				return;
+			}
+		}
+		
+		if(e.getAction()==Action.LEFT_CLICK_BLOCK || e.getAction()==Action.RIGHT_CLICK_BLOCK) {
 			Block b=e.getClickedBlock();
 			Player p=e.getPlayer();
 			Order order=playerTasks.get(p);
@@ -111,6 +125,7 @@ public class PlayerManager {
 			
 			boolean placed=false;
 			boolean validFound=false;
+			boolean itemFramesDetected=false;
 			for(Direction dir:directions) {
 				boolean valid=true;
 				if(dir.getX()!=0) {
@@ -129,6 +144,16 @@ public class PlayerManager {
 								if(!block.getType().isSolid()) {
 									save=false;
 									break;
+								} else {
+									Collection<Entity> list=top.getWorld().getNearbyEntities(new Location(top.getWorld(), x+dir.getX()*0.5+0.5, y+dir.getY()*0.5+0.5, z+dir.getZ()*0.5+0.5), 0.1, 0.1, 0.1);
+									for(Entity entity:list) {
+										if(entity instanceof ItemFrame) {
+											save=false;
+											itemFramesDetected=true;
+											break;
+										}
+									}
+									if(!save) break;
 								}
 							}
 							if(!save) break;
@@ -333,7 +358,7 @@ public class PlayerManager {
 												}
 												byte[][] individualFrames=new byte[amount][];
 												for(int i=0; i<amount; i++) {
-													individualFrames[i]=ImageGenerator.rotateImage(ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation*90);
+													individualFrames[i]=ImageGenerator.rotateImage(ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation);
 												}
 												WorldUtil.spawnItemFrame(signUid, loc, individualFrames,delays,startTime, face);
 											}
@@ -366,7 +391,7 @@ public class PlayerManager {
 										} else if(imgRotation==3) {
 											imgX=(imgWidth-1)-imgX;
 										}
-										WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation*90), face);
+										WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation), face);
 									}
 								}
 								System.gc();
@@ -388,7 +413,9 @@ public class PlayerManager {
 				if(isApi) throw new InvalidParameterException("No valid location found.");
 				
 				if(!validFound) p.sendMessage(Variables.PREFIX+"This is not a §cvalid§7 position for a sign.");
-				else p.sendMessage(Variables.PREFIX+"There must be §csolid §7blocks to hang a sign.");
+				else if(itemFramesDetected) {
+					p.sendMessage(Variables.PREFIX+"There are, already existing, §citem frames §7in the way.");
+				} else p.sendMessage(Variables.PREFIX+"There must be §csolid §7blocks to hang a sign.");
 			}
 		} else {
 			if(isApi) throw new InvalidParameterException("The two corners have to be in the same world.");

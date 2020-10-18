@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -47,21 +46,18 @@ public class WorldUtil {
 	public static final int MCVERSION_1_15=7;
 	public static final int MCVERSION_1_16=8;
 	
-	private static int FILE_HEADER_LENGTH=45;
-	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
+	private static final int FILE_HEADER_LENGTH=45;
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	
-	private static File signFolder=new File("plugins/GSigns/signs");
-	private static File customImagesFolder=new File("plugins/GSigns/images");
+	private static final File SIGN_FOLDER = new File("plugins/GSigns/signs");
+	private static final File LOCAL_IMAGES_FOLDER = new File("plugins/GSigns/images");
 	
 	private static MapManager mapManager;
 	private static int mcVersion=MCVERSION_1_14;
 	
 	private static CopyOnWriteArrayList<BetterFrame> frames=new CopyOnWriteArrayList<BetterFrame>();
-	private static CopyOnWriteArrayList<BetterFrame> gifFrames=new CopyOnWriteArrayList<BetterFrame>();
-	private static ConcurrentHashMap<BetterFrame, File> savedFrames=new ConcurrentHashMap<BetterFrame, File>();
-	private static ConcurrentHashMap<BetterFrame, File> savedGifFrames=new ConcurrentHashMap<BetterFrame, File>();
 	
-	private static boolean inGifUpdate;
+	private static boolean inFramesUpdate;
 	
 	public static void onEnable() {
 		String version=Bukkit.getServer().getVersion();
@@ -70,7 +66,7 @@ public class WorldUtil {
 			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
 		}
 		
-		customImagesFolder.mkdirs();
+		LOCAL_IMAGES_FOLDER.mkdirs();
 		
 		mapManager = new MapManager();
 		mapManager.searchForVanillaMaps();
@@ -83,18 +79,14 @@ public class WorldUtil {
 			public void run() {
 				long currentTime=System.currentTimeMillis();
 				int loaded=0;
-				if(signFolder.exists()) for(File f:signFolder.listFiles()) {
+				if(SIGN_FOLDER.exists()) for(File f:SIGN_FOLDER.listFiles()) {
 					try {
 						String name=f.getName();
 						if(name.endsWith(".gsign")) {
 							BetterFrame frame=loadFrame(f, currentTime);
+							frame.setFile(f);
 							
-							if(frame.getImages().length>1) {
-								savedGifFrames.put(frame,f);
-								gifFrames.add(frame);
-							} else {
-								savedFrames.put(frame,f);
-							}
+							frames.add(frame);
 						}
 						loaded++;
 					} catch(Exception ex) {
@@ -109,47 +101,30 @@ public class WorldUtil {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				if(!inGifUpdate) {
-					inGifUpdate=true;
+				if(!inFramesUpdate) {
+					inFramesUpdate=true;
 					
 					ConnectionManager.update();
 					long currentTime=System.currentTimeMillis();
-					for(BetterFrame frame:gifFrames) {
-						if(frame.update(currentTime)) gifFrames.remove(frame);
-					}
-					for(BetterFrame frame:savedFrames.keySet()) {
-						frame.update(0);
-					}
 					for(BetterFrame frame:frames) {
-						if(frame.update(0)) frames.remove(frame);
+						if(frame.update(currentTime)) {
+							frame.deleteFile();
+							frames.remove(frame);
+						}
 					}
 					
-					inGifUpdate=false;
+					inFramesUpdate=false;
 				}
 			}
 		}.runTaskTimerAsynchronously(Main.getPlugin(), 0, 0);
 	}
 	public static void onDisable() {
-		signFolder.mkdirs();
-		for(BetterFrame frame:savedFrames.keySet()) {
-			if(frame.isDead()) {
-				savedFrames.get(frame).delete();
-			}
-		}
-		for(BetterFrame frame:savedGifFrames.keySet()) {
-			gifFrames.remove(frame);
-			if(frame.isDead()) {
-				savedGifFrames.get(frame).delete();
-			}
-		}
+		SIGN_FOLDER.mkdirs();
 		try {
 			for(BetterFrame frame:frames) {
 				if(!frame.isDead()) {
-					saveFrame(frame);
-				}
-			}
-			for(BetterFrame frame:gifFrames) {
-				saveFrame(frame);
+					if(frame.getFile() == null) saveFrame(frame);
+				} else frame.deleteFile();
 			}
 		} catch(Exception ex) {
 			ex.printStackTrace();
@@ -305,10 +280,10 @@ public class WorldUtil {
 		// It is not necessary that the compressed data will be smaller than
 		// the uncompressed data.
 		int number=0;
-		while(new File(signFolder.getPath()+"/"+number+".gsign").exists()) {
+		while(new File(SIGN_FOLDER.getPath()+"/"+number+".gsign").exists()) {
 			number++;
 		}
-		FileOutputStream fos = new FileOutputStream(signFolder.getPath()+"/"+number+".gsign");
+		FileOutputStream fos = new FileOutputStream(SIGN_FOLDER.getPath()+"/"+number+".gsign");
 		
 		// Compress the data
 		byte[] buf = new byte[totalBytes.length];
@@ -323,31 +298,25 @@ public class WorldUtil {
 		for(BetterFrame frame:frames) {
 			frame.removePlayer(p);
 		}
-		for(BetterFrame frame:savedFrames.keySet()) {
-			frame.removePlayer(p);
-		}
-		for(BetterFrame frame:gifFrames) {
-			frame.removePlayer(p);
-		}
 	}
 	
 	public static void spawnItemFrame(UUID signUid, Location loc, byte[] image, BlockFace direction) {
 		frames.add(new BetterFrame(signUid, loc, direction, new byte[][]{image}, 0, null));
 	}
-	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] frames, int[] delays, long startTime, BlockFace direction) {
+	public static void spawnItemFrame(UUID signUid, Location loc, byte[][] images, int[] delays, long startTime, BlockFace direction) {
 		int[] delaysCopy=new int[delays.length];
 		
 		int compactedFrameIndex=0;
 		byte[] currentHead=null;
-		for(int i=0; i<frames.length; i++) {
+		for(int i=0; i<images.length; i++) {
 			if(currentHead==null) {
-				byte[] frame0=frames[i];
-				if(i+1==frames.length) {
-					frames[compactedFrameIndex]=frame0;
+				byte[] frame0=images[i];
+				if(i+1==images.length) {
+					images[compactedFrameIndex]=frame0;
 					delaysCopy[compactedFrameIndex]=delays[i];
 					compactedFrameIndex++;
 				} else {
-					byte[] frame1=frames[i+1];
+					byte[] frame1=images[i+1];
 					boolean equal=true;
 					for(int j=0; j<frame0.length; j++) {
 						if(frame0[j]!=frame1[j]) {
@@ -357,17 +326,17 @@ public class WorldUtil {
 					}
 					if(equal) {
 						currentHead=frame0;
-						frames[compactedFrameIndex]=frame0;
+						images[compactedFrameIndex]=frame0;
 						delaysCopy[compactedFrameIndex]=delays[i]+delays[i+1];
 						i++;
 					} else {
-						frames[compactedFrameIndex]=frame0;
+						images[compactedFrameIndex]=frame0;
 						delaysCopy[compactedFrameIndex]=delays[i];
 						compactedFrameIndex++;
 					}
 				}
 			} else {
-				byte[] frame0=frames[i];
+				byte[] frame0=images[i];
 				boolean equal=true;
 				for(int j=0; j<frame0.length; j++) {
 					if(frame0[j]!=currentHead[j]) {
@@ -387,27 +356,27 @@ public class WorldUtil {
 		if(currentHead!=null) compactedFrameIndex++;
 		
 		boolean b=compactedFrameIndex!=1;
-		if(compactedFrameIndex != frames.length) {
+		if(compactedFrameIndex != images.length) {
 			byte[][] newFrames=new byte[compactedFrameIndex][];
 			int[] newDelays=null;
 			if(b) newDelays=new int[compactedFrameIndex];
 			for(int i=0; i<compactedFrameIndex; i++) {
-				newFrames[i]=frames[i];
+				newFrames[i]=images[i];
 				if(b) newDelays[i]=delaysCopy[i];
 			}
 			
-			frames=newFrames;
+			images=newFrames;
 			delays=newDelays;
 		}
 		
 		int[] delaysF=delays;
-		byte[][] images=frames;
+		byte[][] imagesF=images;
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				loc.getBlock().setType(Material.AIR);
 				
-				gifFrames.add(new BetterFrame(signUid, loc, direction, images, b?startTime:0, delaysF));
+				frames.add(new BetterFrame(signUid, loc, direction, imagesF, b?startTime:0, delaysF));
 			}
 		}.runTask(Main.getPlugin());
 	}
@@ -417,18 +386,6 @@ public class WorldUtil {
 		while(true) {
 			boolean exists=false;
 			for(BetterFrame frame:frames) {
-				if(frame.getSignUid().compareTo(uid)==0) {
-					exists=true;
-					break;
-				}
-			}
-			if(!exists) for(BetterFrame frame:gifFrames) {
-				if(frame.getSignUid().compareTo(uid)==0) {
-					exists=true;
-					break;
-				}
-			}
-			if(!exists) for(BetterFrame frame:savedFrames.keySet()) {
 				if(frame.getSignUid().compareTo(uid)==0) {
 					exists=true;
 					break;
@@ -448,13 +405,12 @@ public class WorldUtil {
 				return frame;
 			}
 		}
-		for(BetterFrame frame:gifFrames) {
-			if(frame.getEntityId()==entityId) {
-				return frame;
-			}
-		}
-		for(BetterFrame frame:savedFrames.keySet()) {
-			if(frame.getEntityId()==entityId) {
+		return null;
+	}
+	public static BetterFrame getFrame(Location loc) {
+		for(BetterFrame frame:frames) {
+			Location check=frame.getLocation();
+			if(check.getWorld().equals(loc.getWorld()) && check.getBlockX()==loc.getBlockX() && check.getBlockY()==loc.getBlockY() && check.getBlockZ()==loc.getBlockZ()) {
 				return frame;
 			}
 		}
@@ -464,48 +420,13 @@ public class WorldUtil {
 		for(BetterFrame frame:frames) {
 			if(frame.getSignUid().compareTo(uid)==0) {
 				frame.removeItemFrame();
+				frame.deleteFile();
 				frames.remove(frame);
-			}
-		}
-		for(BetterFrame frame:savedGifFrames.keySet()) {
-			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.removeItemFrame();
-				savedGifFrames.get(frame).delete();
-				savedGifFrames.remove(frame);
-				gifFrames.remove(frame);
-			}
-		}
-		for(BetterFrame frame:gifFrames) {
-			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.removeItemFrame();
-				gifFrames.remove(frame);
-			}
-		}
-		for(BetterFrame frame:savedFrames.keySet()) {
-			if(frame.getSignUid().compareTo(uid)==0) {
-				frame.removeItemFrame();
-				savedFrames.get(frame).delete();
-				savedFrames.remove(frame);
 			}
 		}
 	}
 	public static boolean isFrame(int entityId) {
 		for(BetterFrame frame:frames) {
-			if(frame.getEntityId()==entityId) {
-				return true;
-			}
-		}
-		for(BetterFrame frame:savedGifFrames.keySet()) {
-			if(frame.getEntityId()==entityId) {
-				return true;
-			}
-		}
-		for(BetterFrame frame:gifFrames) {
-			if(frame.getEntityId()==entityId) {
-				return true;
-			}
-		}
-		for(BetterFrame frame:savedFrames.keySet()) {
 			if(frame.getEntityId()==entityId) {
 				return true;
 			}
@@ -521,29 +442,11 @@ public class WorldUtil {
 		for(BetterFrame frame:frames) {
 			frame.getOccupiedIdsFor(p, ids);
 		}
-		for(BetterFrame frame:savedGifFrames.keySet()) {
-			frame.getOccupiedIdsFor(p, ids);
-		}
-		for(BetterFrame frame:gifFrames) {
-			frame.getOccupiedIdsFor(p, ids);
-		}
-		for(BetterFrame frame:savedFrames.keySet()) {
-			frame.getOccupiedIdsFor(p, ids);
-		}
 		return ids;
 	}
 	public static boolean isIdUsedBy(OfflinePlayer p, short id) {
 		if(id > MapManager.FORCED_OFFSET) {
 			for(BetterFrame frame:frames) {
-				if(frame.isIdUsedBy(p, id)) return true;
-			}
-			for(BetterFrame frame:savedGifFrames.keySet()) {
-				if(frame.isIdUsedBy(p, id)) return true;
-			}
-			for(BetterFrame frame:gifFrames) {
-				if(frame.isIdUsedBy(p, id)) return true;
-			}
-			for(BetterFrame frame:savedFrames.keySet()) {
 				if(frame.isIdUsedBy(p, id)) return true;
 			}
 		}
@@ -553,13 +456,11 @@ public class WorldUtil {
 	public static MapManager getMapManager() {
 		return mapManager;
 	}
-	public static File getCustomImagesFolder() {
-		return customImagesFolder;
+	public static File getLocalImagesFolder() {
+		return LOCAL_IMAGES_FOLDER;
 	}
 	public static int getTotalAmountOfFrames() {
-		File[] files=signFolder.listFiles();
-		if(files==null) return 0;
-		return files.length;
+		return frames.size();
 	}
 	public static int getMcVersion() {
 		return mcVersion;
