@@ -14,10 +14,12 @@ import de.stylextv.gs.api.PublicGSignsAPI;
 import de.stylextv.gs.command.CommandHandler;
 import de.stylextv.gs.command.CommandListener;
 import de.stylextv.gs.command.MainTabCompleter;
+import de.stylextv.gs.event.EventGui;
 import de.stylextv.gs.event.EventItemFrame;
 import de.stylextv.gs.event.EventMap;
 import de.stylextv.gs.event.EventPlayerInteract;
 import de.stylextv.gs.event.EventPlayerJoinQuit;
+import de.stylextv.gs.gui.GuiManager;
 import de.stylextv.gs.service.AutoUpdater;
 import de.stylextv.gs.service.Metrics;
 import de.stylextv.gs.world.WorldUtil;
@@ -61,6 +63,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new EventPlayerJoinQuit(), plugin);
 		pm.registerEvents(new EventItemFrame(), plugin);
 		pm.registerEvents(new EventMap(), plugin);
+		pm.registerEvents(new EventGui(), plugin);
 	}
 	private void enableAPI() {
 		getServer().getServicesManager().register(GSignsAPI.class, new PublicGSignsAPI(), this, ServicePriority.Normal);
@@ -81,6 +84,7 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		GuiManager.onDisable();
 		WorldUtil.onDisable();
 		autoUpdater.startAutoUpdater();
 	}

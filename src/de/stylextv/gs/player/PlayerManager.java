@@ -21,11 +21,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
+import de.stylextv.gs.gui.GuiManager;
 import de.stylextv.gs.image.ImageGenerator;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
 import de.stylextv.gs.world.BetterFrame;
+import de.stylextv.gs.world.BetterSign;
 import de.stylextv.gs.world.Direction;
 import de.stylextv.gs.world.WorldUtil;
 
@@ -45,7 +47,7 @@ public class PlayerManager {
 	
 	public static void startPlacingPhase(Player p, Order order) {
 		playerTasks.put(p, order);
-		p.sendMessage(Variables.PREFIX+"Your sign was created §asuccessfully§7. Please click one of the §ecorners§7 of the frame.");
+		p.sendMessage(Variables.PREFIX+"Your sign was §acreated§7 successfully. Please click one of the §ecorners§7 of the frame.");
 	}
 	public static void cancelPlacingPhase(Player p) {
 		Order o=playerTasks.remove(p);
@@ -63,6 +65,7 @@ public class PlayerManager {
 	
 	public static void onPlayerQuit(PlayerQuitEvent e) {
 		Player p=e.getPlayer();
+		GuiManager.removePlayer(p);
 		WorldUtil.removeAllDrewEntries(p);
 		ConnectionManager.removePlayer(p);
 		
@@ -74,7 +77,7 @@ public class PlayerManager {
 		if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
 			Block b=e.getClickedBlock();
 			BlockFace face=e.getBlockFace();
-			BetterFrame frame=WorldUtil.getFrame(b.getRelative(face).getLocation());
+			BetterFrame frame=WorldUtil.getFrame(b.getRelative(face).getLocation(), face);
 			if(frame != null) {
 				e.setCancelled(true);
 				onFrameBreak(e.getPlayer(), frame);
@@ -160,7 +163,7 @@ public class PlayerManager {
 						}
 					}
 					if(save) {
-						UUID signUid=WorldUtil.randomSignUid();
+						BetterSign sign=WorldUtil.createSign();
 						if(dir.getX()!=0) {
 							int minZ;
 							int maxZ;
@@ -174,6 +177,7 @@ public class PlayerManager {
 							}
 							int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 							int imgWidth=maxZ-minZ+1;
+							sign.setSize(imgWidth, imgHeight);
 							
 							if(order.getBackgroundGif()!=null) {
 								new BukkitRunnable() {
@@ -199,9 +203,10 @@ public class PlayerManager {
 												for(int i=0; i<amount; i++) {
 													individualFrames[i]=ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128);
 												}
-												WorldUtil.spawnItemFrame(signUid, loc, individualFrames,delays,startTime, face);
+												WorldUtil.spawnItemFrame(sign, loc, individualFrames,delays,startTime, face);
 											}
 										}
+										WorldUtil.registerSign(sign);
 										System.gc();
 										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 									}
@@ -217,9 +222,10 @@ public class PlayerManager {
 										int imgX;
 										if(dir.getX()==-1) imgX=maxZ-z;
 										else imgX=z-minZ;
-										WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
+										WorldUtil.spawnItemFrame(sign, loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
 									}
 								}
+								WorldUtil.registerSign(sign);
 							}
 						} else if(dir.getZ()!=0) {
 							int minX;
@@ -234,6 +240,7 @@ public class PlayerManager {
 							}
 							int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 							int imgWidth=maxX-minX+1;
+							sign.setSize(imgWidth, imgHeight);
 							
 							if(order.getBackgroundGif()!=null) {
 								new BukkitRunnable() {
@@ -259,9 +266,10 @@ public class PlayerManager {
 												for(int i=0; i<amount; i++) {
 													individualFrames[i]=ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128);
 												}
-												WorldUtil.spawnItemFrame(signUid, loc, individualFrames,delays,startTime, face);
+												WorldUtil.spawnItemFrame(sign, loc, individualFrames,delays,startTime, face);
 											}
 										}
+										WorldUtil.registerSign(sign);
 										System.gc();
 										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 									}
@@ -277,9 +285,10 @@ public class PlayerManager {
 										int imgX;
 										if(dir.getZ()==-1) imgX=x-minX;
 										else imgX=maxX-x;
-										WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
+										WorldUtil.spawnItemFrame(sign, loc, ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), face);
 									}
 								}
+								WorldUtil.registerSign(sign);
 							}
 						} else {
 							if(WorldUtil.getMcVersion()<WorldUtil.MCVERSION_1_13) {
@@ -321,6 +330,7 @@ public class PlayerManager {
 							}
 							final int imgWidth=w;
 							final int imgHeight=h;
+							sign.setSize(imgWidth, imgHeight);
 							final int imgRotation=rot%4;
 							
 							if(order.getBackgroundGif()!=null) {
@@ -360,9 +370,10 @@ public class PlayerManager {
 												for(int i=0; i<amount; i++) {
 													individualFrames[i]=ImageGenerator.rotateImage(ImageGenerator.getSubimage(frames[i],imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation);
 												}
-												WorldUtil.spawnItemFrame(signUid, loc, individualFrames,delays,startTime, face);
+												WorldUtil.spawnItemFrame(sign, loc, individualFrames,delays,startTime, face);
 											}
 										}
+										WorldUtil.registerSign(sign);
 										System.gc();
 										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 									}
@@ -391,10 +402,10 @@ public class PlayerManager {
 										} else if(imgRotation==3) {
 											imgX=(imgWidth-1)-imgX;
 										}
-										WorldUtil.spawnItemFrame(signUid, loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation), face);
+										WorldUtil.spawnItemFrame(sign, loc, ImageGenerator.rotateImage(ImageGenerator.getSubimage(image,imgWidth, imgX*128, imgY*128, 128, 128), 128,128, imgRotation), face);
 									}
 								}
-								System.gc();
+								WorldUtil.registerSign(sign);
 							}
 						}
 						
@@ -404,7 +415,7 @@ public class PlayerManager {
 							else p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
 							playerTasks.remove(p);
 						}
-						uid = signUid;
+						uid = sign.getUid();
 						break;
 					}
 				}
@@ -432,7 +443,7 @@ public class PlayerManager {
 		if(playersInRemove.remove(p)) {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
-				WorldUtil.removeSign(frame.getSignUid());
+				WorldUtil.removeSign(frame.getSign());
 				p.sendMessage(Variables.PREFIX+"§7The sign has been §aremoved§7.");
 			} else {
 				p.sendMessage(Variables.PREFIX+"§7You no longer have the §cpermission§7 to remove signs.");

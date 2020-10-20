@@ -16,6 +16,15 @@ public class PermissionUtil {
 	public static boolean hasUpdatePermission(Player p) {
 		return hasStarPermission(p)||p.hasPermission("gsigns.update");
 	}
+	public static boolean hasGuiPermission(Player p) {
+		return hasStarPermission(p)||p.hasPermission("gsigns.gui");
+	}
+	public static boolean hasPausePermission(Player p) {
+		return hasStarPermission(p)||p.hasPermission("gsigns.pause");
+	}
+	public static boolean hasTeleportPermission(Player p) {
+		return hasStarPermission(p)||p.hasPermission("gsigns.teleport");
+	}
 	
 	private static boolean hasStarPermission(Player p) {
 		return p.hasPermission("gsigns.*");

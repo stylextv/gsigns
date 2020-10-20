@@ -10,13 +10,13 @@ import org.bukkit.map.MapView;
 
 public class MapManager {
 	
-	public static int FORCED_OFFSET = 10000;
+	public static int FORCED_OFFSET = 12000;
 	
 	private final Set<Short> occupiedIds = new HashSet<>();
 	
 	@SuppressWarnings("deprecation")
 	public void searchForVanillaMaps() {
-		for(short s = 0; s < Short.MAX_VALUE; s++) {
+		for(short s = (short) (FORCED_OFFSET+1); s < Short.MAX_VALUE; s++) {
 			try {
 				MapView view = null;
 				if(WorldUtil.getMcVersion() <= WorldUtil.MCVERSION_1_12) {

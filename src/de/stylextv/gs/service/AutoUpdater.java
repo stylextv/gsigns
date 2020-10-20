@@ -2,15 +2,18 @@ package de.stylextv.gs.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.zip.Inflater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,12 +36,33 @@ public class AutoUpdater {
 	
 	public void startAutoUpdater() {
 		if(updateRequest!=null) try {
-			URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+updateRequest+".jar");
-			ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+			URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+updateRequest+".dat");
 			
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		    try {
+		        byte[] chunk = new byte[4096];
+		        int bytesRead;
+		        InputStream stream = url.openStream();
+		        
+		        while ((bytesRead = stream.read(chunk)) > 0) {
+		            outputStream.write(chunk, 0, bytesRead);
+		        }
+		        
+		    } catch (IOException ex) {
+		        ex.printStackTrace();
+		    }
+		    byte[] bytes = outputStream.toByteArray();
+		    
+		    Inflater inflater = new Inflater();
+			inflater.setInput(bytes);
 			FileOutputStream fos = new FileOutputStream(plugin.getPluginFile());
-			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+			byte[] buffer = new byte[bytes.length*2];
+			while(!inflater.finished()) {
+				int count = inflater.inflate(buffer);
+				fos.write(buffer, 0, count);
+			}
 			fos.close();
+			inflater.end();
 			
 			BufferedWriter writer = new BufferedWriter(new FileWriter("plugins/GSigns/au-result"));
 			writer.write(Variables.VERSION);
@@ -83,7 +107,7 @@ public class AutoUpdater {
 						int i=currentVersion+future;
 						try {
 							String fileUrl=i/10+"."+i%10;
-							URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
+							URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".dat");
 							ReadableByteChannel rbc = Channels.newChannel(url.openStream());
 							rbc.close();
 							found=fileUrl;
@@ -144,7 +168,7 @@ public class AutoUpdater {
 							int i=currentVersion+future;
 							try {
 								String fileUrl=i/10+"."+i%10;
-								URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".jar");
+								URL url = new URL("https://github.com/StylexTV/GSigns/raw/master/version/"+fileUrl+".dat");
 								ReadableByteChannel rbc = Channels.newChannel(url.openStream());
 								rbc.close();
 								found=fileUrl;

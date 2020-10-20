@@ -1,6 +1,5 @@
 package de.stylextv.gs.world;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -62,23 +61,24 @@ public class BetterFrame {
 	private int entityId;
 	private byte[][] images;
 	
-	private File file;
-	
 	private final ConcurrentHashMap<UUID, CopyOnWriteArrayList<Short>> playerMapIds = new ConcurrentHashMap<>();
 	private HashMap<Player, Integer> playersSentProgress=new HashMap<Player, Integer>();
 	private ArrayList<Player> playersInRadius=new ArrayList<Player>();
 	private int stillRefreshTimer;
 	
-	private UUID signUid;
+	private BetterSign sign;
 	private long startTime;
 	private int currentItemIndex=-1;
 	private int[] delays;
 	private int totalTime=0;
 	private long timeSinceLastRefresh=50;
 	
-	public BetterFrame(UUID signUid, Location loc, BlockFace dir, byte[][] images, long startTime, int[] delays) {
+	private boolean paused;
+	private long pausedOn;
+	
+	public BetterFrame(BetterSign sign, Location loc, BlockFace dir, byte[][] images, long startTime, int[] delays) {
 		this.images=images;
-		this.signUid=signUid;
+		this.sign=sign;
 		this.startTime=startTime;
 		this.delays=delays;
 		if(delays!=null) for(int i:delays) totalTime+=i;
@@ -88,9 +88,9 @@ public class BetterFrame {
 		itemFrame.setFacingDirection(dir);
 		refreshEntityId();
 	}
-	public BetterFrame(UUID signUid, ItemFrame frame, byte[][] images, long startTime, int[] delays) {
+	public BetterFrame(BetterSign sign, ItemFrame frame, byte[][] images, long startTime, int[] delays) {
 		this.images=images;
-		this.signUid=signUid;
+		this.sign=sign;
 		this.startTime=startTime;
 		this.delays=delays;
 		if(delays!=null) for(int i:delays) totalTime+=i;
@@ -99,6 +99,18 @@ public class BetterFrame {
 		refreshEntityId();
 	}
 	
+	public void play(long currentTime) {
+		if(paused) {
+			paused=false;
+			startTime=currentTime-pausedOn;
+		}
+	}
+	public void pause(long currentTime) {
+		if(!paused) {
+			paused=true;
+			pausedOn=(currentTime-startTime)%totalTime;
+		}
+	}
 	public boolean update(long currentTime) {
 		if(itemFrame.isDead()) return true;
 		
@@ -112,19 +124,21 @@ public class BetterFrame {
 			
 			int a=images.length;
 			if(a>1) {
-				int msIntoGif=(int) ((currentTime-startTime)%totalTime);
-				int j=0;
-				for(int i=0; i<delays.length; i++) {
-					int delay=delays[i];
-					if(msIntoGif<j+delay) {
-						currentItemIndex=i;
-						break;
+				if(!paused) {
+					int msIntoGif=(int) ((currentTime-startTime)%totalTime);
+					int j=0;
+					for(int i=0; i<delays.length; i++) {
+						int delay=delays[i];
+						if(msIntoGif<j+delay) {
+							currentItemIndex=i;
+							break;
+						}
+						j+=delay;
 					}
-					j+=delay;
 				}
 			} else currentItemIndex=0;
 			
-			if(currentItemIndex!=prevFrame) {
+			if(currentItemIndex!=prevFrame && !paused) {
 				
 				for(Player all:Bukkit.getOnlinePlayers()) {
 					if(all.getWorld()==itemFrame.getWorld()) {
@@ -138,7 +152,7 @@ public class BetterFrame {
 					} else removePlayer(all);
 				}
 				
-			} else if(a==1) {
+			} else if(a==1 || paused) {
 				
 				stillRefreshTimer--;
 				if(stillRefreshTimer<=0) stillRefreshTimer=60;
@@ -153,9 +167,9 @@ public class BetterFrame {
 							if(!playersInRadius.contains(all)) {
 								playersInRadius.add(all);
 								
-								showInFrame(all, 0);
+								showInFrame(all, currentItemIndex);
 							} else if(stillRefreshTimer == 1) {
-								showInFrame(all, 0);
+								showInFrame(all, currentItemIndex);
 							}
 						} else {
 							playersInRadius.remove(all);
@@ -362,8 +376,8 @@ public class BetterFrame {
 		return itemFrame.getLocation();
 	}
 	
-	public UUID getSignUid() {
-		return signUid;
+	public BetterSign getSign() {
+		return sign;
 	}
 	public int getCurrentItemIndex() {
 		return currentItemIndex;
@@ -374,6 +388,12 @@ public class BetterFrame {
 	public int getDelay(int index) {
 		if(delays==null) return 0;
 		return delays[index];
+	}
+	public boolean isGif() {
+		return images.length != 1;
+	}
+	public boolean isPaused() {
+		return paused;
 	}
 	
 	public void getOccupiedIdsFor(OfflinePlayer p, Set<Short> set) {
@@ -397,17 +417,6 @@ public class BetterFrame {
 	}
 	public byte[][] getImages() {
 		return images;
-	}
-	
-	public void deleteFile() {
-		if(file != null) file.delete();
-	}
-	
-	public File getFile() {
-		return file;
-	}
-	public void setFile(File file) {
-		this.file = file;
 	}
 	
 }
