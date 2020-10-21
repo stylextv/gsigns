@@ -12,35 +12,47 @@ GSigns is a spigot plugin that allows the creation of item frames that hold imag
 
 ## Map Sending
 
-Instead of sending a huge packet containing all the map data every time the sign is updated, the map data is sent once to the player as he approaches the sign. Custom entity metadata packets are then sent for the item frames, telling the client which of the previously received maps must be displayed. Sending the maps is also optimized because the images are not rendered to the map via MapCanvas#drawImage, which would use the very slow MapPalette#matchColor function. Instead, the r, g and b values are pre-converted to the corresponding byte colors, which are then transferred to the map packet:
+Instead of sending a **huge packet** containing all the map data **every time** the sign is updated, the map data is sent once to the player as he approaches the sign. Custom entity metadata packets are then sent for the item frames, telling the client which of the previously received maps must be displayed. Sending the maps is also optimized because the images are not rendered to the map via `MapCanvas#drawImage`, which would use the very slow `MapPalette#matchColor` function. Instead, the r, g and b values are pre-converted to the corresponding byte colors, which are then transferred to the map packet:
 ```java
 PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, new ArrayList<>(), bytes, 0, 0, 128, 128);
 ```
 
 ## GSIGN-Format
 
-When saving a single item frame to a file, for example when the server gets restarted, a special format is used.
+When saving a whole sign to a single file, for example when the server gets restarted, a special format is used.
 First a file with the smallest unused number (starting with 0) as a name is created. Then a header consisting of `45` bytes is placed at the beginning of the file:
 ```bash
+# 📎 SIGN_UUID (16 bytes)
+The UUID of the sign. Every sign has a different UUID.
+This is used e.g. when teleporting to a sign with a given UUID as command argument.
+
 # 🌎 WORLD_UUID (16 bytes)
 The UUID of the world.
 
-# 📎 SIGN_UUID (16 bytes)
-The UUID of the sign. Item frames, that belong together, have the same UUID.
-This is used when deleting a whole sign at once.
+# 🧭 FACING (1 byte)
+The direction the item frames are facing.
 
+# 📄 AMOUNT OF ITEM FRAMES (4 bytes)
+The number of item frames that make up this sign.
+
+# 📏 WIDTH & HEIGHT (2 * 4 bytes)
+The width and height of the sign in item frames.
+```
+
+Afterwards the file is filled with the item frames of the sign and their images. Every item frame has a `16` bytes long header that is put at the beginning of the chunk in the file that is reserved for this particular item frame:
+```bash
 # 📍 X,Y,Z (3 * 4 bytes)
 The x-, y-, and z-coordinate.
 
-# 🧭 FACING (1 byte)
-The direction the item frame is facing.
+# 📄 AMOUNT OF IMAGES (4 bytes)
+The number of images that make up this item frame.
 ```
 
-Afterwards the file is filled with the data of the images. Each image (or frame in a gif) is saved in sequence:
+The actual data of the images are placed at the end of the chunk. Each image (or each frame in a gif) is saved in sequence:
 1. the delay is stored as `4` bytes. This is the number of milliseconds between frames. If the map is a still image, the value is 0.
 1. the pixel data is stored as a byte array of length `16384`, since each frame has a width and height of 128.
 
-When each image has been stored the entire file data will be compressed using the Deflater to reduce file size:
+When each item frame and its data has been stored the entire file data will be compressed using the Deflater to reduce file size:
 ```java
 Deflater compressor = new Deflater();
 compressor.setLevel(Deflater.BEST_SPEED);
