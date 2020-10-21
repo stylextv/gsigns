@@ -24,7 +24,7 @@ First a file with the smallest unused number (starting with 0) as a name is crea
 ```bash
 # 📎 SIGN_UUID (16 bytes)
 The UUID of the sign. Every sign has a different UUID.
-This is used e.g. when teleporting to a sign with a given UUID as command argument.,
+This is used e.g. when teleporting to a sign with a given UUID as command argument.
 
 # 🌎 WORLD_UUID (16 bytes)
 The UUID of the world.
