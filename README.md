@@ -13,6 +13,9 @@
   <a href="https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade">
     <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6"/>
   </a>
+  <a href="https://stylextv.gitbook.io/gsigns" alt="Docs (gitbook)">
+    <img src="https://img.shields.io/badge/docs-gitbook-brightgreen"/>
+  </a>
   <a>
     <img alt="Code size" src="https://img.shields.io/github/languages/code-size/StylexTV/GSigns.svg"/>
   </a>
@@ -21,9 +24,6 @@
   </a>
   <a>
     <img alt="Lines of Code" src="https://tokei.rs/b1/github/StylexTV/GSigns?category=code"/>
-  </a>
-  <a href="https://stylextv.gitbook.io/gsigns" alt="Docs (gitbook)">
-    <img src="https://img.shields.io/badge/docs-gitbook-brightgreen"/>
   </a>
 </p>
 
