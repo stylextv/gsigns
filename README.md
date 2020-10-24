@@ -22,6 +22,9 @@
   <a>
     <img alt="Lines of Code" src="https://tokei.rs/b1/github/StylexTV/GSigns?category=code"/>
   </a>
+  <a href="https://stylextv.gitbook.io/gsigns" alt="Docs (gitbook)">
+    <img src="https://img.shields.io/badge/docs-gitbook-brightgreen"/>
+  </a>
 </p>
 
 ## What is it?
