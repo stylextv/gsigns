@@ -1,0 +1,5 @@
+java:
+  # The `index` step extracts information from the files in the codebase.
+  index:
+    # Specify the Java version required to build the project.
+    java_version: 1.8
