@@ -1,5 +1,7 @@
 <h1 align="center">
-  ![Cover Art](https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/socials/cover.png)
+  <br>
+  <img src="https://raw.githubusercontent.com/StylexTV/GSigns/master/showcase/socials/cover.png">
+  <br>
 </h1>
 
 <h4 align="center">🚩 Source code of the GSigns spigot plugin, made with love in Java.</h4>
