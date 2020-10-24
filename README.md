@@ -24,18 +24,17 @@
   </a>
 </p>
 
+## What is it?
 GSigns is a spigot plugin that allows the creation of item frames that hold images and gifs.
 > The spigotmc page, including a download link, can be found [here](https://www.spigotmc.org/resources/g-signs-a-unique-map-signs-plugin-for-lobbies.85017/).
 
 ## Map Sending
-
 Instead of sending a **huge packet** containing all the map data **every time** the sign is updated, the map data is sent once to the player as he approaches the sign. Custom entity metadata packets are then sent for the item frames, telling the client which of the previously received maps must be displayed. Sending the maps is also optimized because the images are not rendered to the map via `MapCanvas#drawImage`, which would use the very slow `MapPalette#matchColor` function. Instead, the r, g and b values are pre-converted to the corresponding byte colors, which are then transferred to the map packet:
 ```java
 PacketPlayOutMap packet = new PacketPlayOutMap(mapId, (byte) 0, false, false, new ArrayList<>(), bytes, 0, 0, 128, 128);
 ```
 
 ## GSIGN-Format
-
 When saving a whole sign to a single file, for example when the server gets restarted, a special format is used.
 First a file with the smallest unused number (starting with 0) as a name is created. Then a header consisting of `45` bytes is placed at the beginning of the file:
 ```bash
@@ -77,9 +76,7 @@ compressor.setLevel(Deflater.BEST_SPEED);
 
 .GSIGN files in the "signs" folder that do not conform to this format are deleted on loading because they are outdated or damaged.
 
-
 ## Sign Coding
-
 Each code is structured like this:
 ```bash
 {ARGUMENT1:VALUE1,ARGUMENT2:VALUE2,ARGUMENT3:VALUE3, ...}
@@ -117,14 +114,10 @@ Here are some example codes:
 - {txt:Bedwars,sim-hue:0.94}
 ```
 
-
 ## API
-
 If you are a developer and want to use GSigns inside your plugin, for example to automatically create a sign, you can find the GSigns-API [here](https://github.com/StylexTV/GSigns-API).
 
-
 ## Project Layout
-
 Here you can see the current structure of the project.
 
 ```bash
