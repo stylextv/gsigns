@@ -10,10 +10,18 @@
   <a href="https://GitHub.com/StylexTV/GSigns/stargazers/">
     <img alt="stars" src="https://img.shields.io/github/stars/StylexTV/GSigns.svg?color=ffdd00"/>
   </a>
-  [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6)](https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade)
-  ![Code size](https://img.shields.io/github/languages/code-size/StylexTV/GSigns.svg)
-  ![GitHub repo size](https://img.shields.io/github/repo-size/StylexTV/GSigns.svg)
-  ![Lines of Code](https://tokei.rs/b1/github/StylexTV/GSigns?category=code)
+  <a href="https://www.codacy.com/manual/noluck942/GSigns?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StylexTV/GSigns&amp;utm_campaign=Badge_Grade">
+    <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/a33dbb19ff17460d896a7864fececab6"/>
+  </a>
+  <a>
+    <img alt="Code size" src="https://img.shields.io/github/languages/code-size/StylexTV/GSigns.svg"/>
+  </a>
+  <a>
+    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/StylexTV/GSigns.svg"/>
+  </a>
+  <a>
+    <img alt="Lines of Code" src="https://tokei.rs/b1/github/StylexTV/GSigns?category=code"/>
+  </a>
 </p>
 
 GSigns is a spigot plugin that allows the creation of item frames that hold images and gifs.
