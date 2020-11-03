@@ -89,8 +89,8 @@ Here you can see the current structure of the project.
 ├─ 📂 showcase/       # ✨ Showcase (eg. for spigot)
 ├─ 📂 src/            # 🌟 Source Files
 │  ├─ 📂 assets/          # ✒️ Plugin Assets
-│  │  └─ 📂 color_tables  # 📦 Color Tables
-│  ├─ 📂 de/stylextv/gs   # ✉️ Source Code
+│  │  └─ 📂 color_tables/ # 📦 Color Tables
+│  ├─ 📂 de/stylextv/gs/  # ✉️ Source Code
 │  └─ 📄 plugin.yml       # 📌 Plugin-YML
 ├─ 📂 version/        # 📬 Versions (used by the auto-updater)
 └─ 📃 readme.md       # 📖 Read Me!
