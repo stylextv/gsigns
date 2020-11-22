@@ -90,6 +90,7 @@ Here you can see the current structure of the project.
 ├─ 📂 src/            # 🌟 Source Files
 │  ├─ 📂 assets/          # ✒️ Plugin Assets
 │  │  └─ 📂 color_tables/ # 📦 Color Tables
+│  │  └─ 📂 languages/    # 📦 Language Files
 │  ├─ 📂 de/stylextv/gs/  # ✉️ Source Code
 │  └─ 📄 plugin.yml       # 📌 Plugin-YML
 ├─ 📂 version/        # 📬 Versions (used by the auto-updater)
