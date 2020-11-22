@@ -20,6 +20,8 @@ public class GuiManager {
 	private static HashMap<Integer, MainMenu> mainMenuPages1 = new HashMap<Integer, MainMenu>();
 	private static HashMap<Integer, MainMenu> mainMenuPages2 = new HashMap<Integer, MainMenu>();
 	private static HashMap<BetterSign, SignMenu> signMenues = new HashMap<BetterSign, SignMenu>();
+	private static SettingsMenu settingsMenu;
+	private static ConfigMenu configMenu;
 	
 	private static ConcurrentHashMap<Player, Menu> openedMenues = new ConcurrentHashMap<Player, Menu>();
 	
@@ -58,9 +60,40 @@ public class GuiManager {
 			openedMenues.put(p, menu);
 		}
 	}
+	public static void openSettingsMenu(Player p, MainMenu mainMenu) {
+		if(settingsMenu == null) {
+			settingsMenu = new SettingsMenu();
+			settingsMenu.create();
+		}
+		
+		settingsMenu.openFor(p, mainMenu);
+		openedMenues.put(p, settingsMenu);
+	}
+	public static void openConfigMenu(Player p, MainMenu mainMenu) {
+		if(configMenu == null) {
+			configMenu = new ConfigMenu();
+			configMenu.create();
+		}
+		
+		configMenu.openFor(p, mainMenu);
+		openedMenues.put(p, configMenu);
+	}
 	public static void openMainGui(Player p, MainMenu menu) {
 		menu.openForViewer(p);
 		openedMenues.put(p, menu);
+	}
+	
+	public static void updateTranslations() {
+		if(settingsMenu != null) updateTranslations(settingsMenu);
+		if(configMenu != null) updateTranslations(configMenu);
+		for(MainMenu menu : mainMenuPages0.values()) updateTranslations(menu);
+		for(MainMenu menu : mainMenuPages1.values()) updateTranslations(menu);
+		for(MainMenu menu : mainMenuPages2.values()) updateTranslations(menu);
+		for(SignMenu menu : signMenues.values()) updateTranslations(menu);
+	}
+	private static void updateTranslations(Menu menu) {
+		menu.fillConstants();
+		menu.updateDynamicContent();
 	}
 	
 	public static String getDefaultTitle() {
@@ -177,6 +210,9 @@ public class GuiManager {
 	}
 	public static void removePlayer(Player p) {
 		openedMenues.remove(p);
+	}
+	public static ConfigMenu getConfigMenu() {
+		return configMenu;
 	}
 	
 }

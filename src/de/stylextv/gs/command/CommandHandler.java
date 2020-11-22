@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.stylextv.gs.gui.GuiManager;
+import de.stylextv.gs.lang.LanguageManager;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
@@ -42,7 +43,7 @@ public class CommandHandler {
 		}
 		
 		if(WorldUtil.getMcVersion()<WorldUtil.MCVERSION_1_13) {
-			UI_TEXT_LINE="---------------------------------";
+			UI_TEXT_LINE = "---------------------------------";
 			UI_TEXT_ARROW_LEFT="◀";
 			UI_TEXT_ARROW_RIGHT="▶";
 		} else {
@@ -81,7 +82,7 @@ public class CommandHandler {
 						if(hasPermGui) {
 							if(args.length==1) {
 								GuiManager.openMainGui(p, 0, 0);
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs gui");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.gui"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("remove")) {
 						if(hasPermRemove) {
@@ -91,12 +92,12 @@ public class CommandHandler {
 								try {
 									UUID uid=UUID.fromString(args[1]);
 									if(WorldUtil.removeSign(uid)) {
-										p.sendMessage(Variables.PREFIX+"§7The sign was §aremoved §7successfully.");
-									} else p.sendMessage(Variables.PREFIX+"§7Could not find a sign with the UUID: §c"+args[1]+"§7.");
+										p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.remove.success"));
+									} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nosign", args[1]));
 								} catch(IllegalArgumentException ex) {
-									p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cUUID§7.");
+									p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novaliduuid"));
 								}
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs remove [UUID]");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.remove"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("tp")) {
 						if(hasPermTp) {
@@ -106,12 +107,12 @@ public class CommandHandler {
 									BetterSign sign = WorldUtil.getSign(uid);
 									if(sign!=null) {
 										sign.teleport(p);
-										p.sendMessage(Variables.PREFIX+"§7You have been §ateleported §7successfully.");
-									} else p.sendMessage(Variables.PREFIX+"§7Could not find a sign with the UUID: §c"+args[1]+"§7.");
+										p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.tp.success"));
+									} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nosign", args[1]));
 								} catch(IllegalArgumentException ex) {
-									p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cUUID§7.");
+									p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novaliduuid"));
 								}
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs tp (UUID)");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.tp"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("play")) {
 						if(hasPermPause) {
@@ -120,17 +121,17 @@ public class CommandHandler {
 									UUID uid=UUID.fromString(args[1]);
 									BetterSign sign = WorldUtil.getSign(uid);
 									if(sign!=null) {
-										if(!sign.isGif()) p.sendMessage(Variables.PREFIX+"§7This sign does not contain a §cGIF§7.");
-										else if(!sign.isPaused()) p.sendMessage(Variables.PREFIX+"§7The sign is already §cplaying§7.");
+										if(!sign.isGif()) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nogif"));
+										else if(!sign.isPaused()) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.play.error.alreadyplaying"));
 										else {
 											sign.play();
-											p.sendMessage(Variables.PREFIX+"§7The sign is §aplaying §7now.");
+											p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.play.success"));
 										}
-									} else p.sendMessage(Variables.PREFIX+"§7Could not find a sign with the UUID: §c"+args[1]+"§7.");
+									} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nosign", args[1]));
 								} catch(IllegalArgumentException ex) {
-									p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cUUID§7.");
+									p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novaliduuid"));
 								}
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs play (UUID)");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.play"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("pause")) {
 						if(hasPermPause) {
@@ -139,28 +140,28 @@ public class CommandHandler {
 									UUID uid=UUID.fromString(args[1]);
 									BetterSign sign = WorldUtil.getSign(uid);
 									if(sign!=null) {
-										if(!sign.isGif()) p.sendMessage(Variables.PREFIX+"§7This sign does not contain a §cGIF§7.");
-										else if(sign.isPaused()) p.sendMessage(Variables.PREFIX+"§7The sign is already §cpaused§7.");
+										if(!sign.isGif()) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nogif"));
+										else if(sign.isPaused()) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.pause.error.alreadypaused"));
 										else {
 											sign.pause();
-											p.sendMessage(Variables.PREFIX+"§7The sign has now §astopped §7playing.");
+											p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.pause.success"));
 										}
-									} else p.sendMessage(Variables.PREFIX+"§7Could not find a sign with the UUID: §c"+args[1]+"§7.");
+									} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.nosign", args[1]));
 								} catch(IllegalArgumentException ex) {
-									p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cUUID§7.");
+									p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novaliduuid"));
 								}
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs pause (UUID)");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.pause"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("update")) {
 						if(hasPermUpdate) {
 							if(args.length==1) {
 								Main.getPlugin().runAutoUpdater(p);
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs update");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.update"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("create")) {
 						if(hasPermCreate) {
 							if(args.length==1) {
-								sendCreateSuggestion(p);
+								p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.create"));
 							} else {
 								handleCreateCommand(p, args);
 							}
@@ -169,7 +170,7 @@ public class CommandHandler {
 						if(hasPermCreate) {
 							if(args.length==1) {
 								PlayerManager.cancelPlacingPhase(p);
-							} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs cancel");
+							} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.cancel"));
 						} else sendNoPermission(p);
 					} else if(subCommand.equalsIgnoreCase("help")) {
 						sendHelp(p);
@@ -182,7 +183,7 @@ public class CommandHandler {
 				sendNoPermission(p);
 			}
 			
-		} else sender.sendMessage(Variables.PREFIX_CONSOLE+"§7This command is for §cplayers§r only.");
+		} else sender.sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.command.error.noplayer"));
 		return false;
 	}
 	
@@ -192,7 +193,7 @@ public class CommandHandler {
 			if(args.length==2) try {
 				page=Integer.valueOf(args[1])-1;
 			} catch(NumberFormatException ex) {
-				p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cpage number§7.");
+				p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novalidpage"));
 				return;
 			}
 			String[] files=WorldUtil.getLocalImagesFolder().list();
@@ -207,13 +208,13 @@ public class CommandHandler {
 			
 			if(length==0) {
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
-				p.sendMessage("                       "+Variables.COLOR1+"Files");
+				p.sendMessage(Variables.COLOR1+LanguageManager.parseMsg("trans.command.listfiles.title"));
 				p.sendMessage(" ");
-				p.sendMessage("§8- "+Variables.COLOR1+"Page 1 §8>");
-				p.sendMessage("    §8- §7§oFolder is empty =(");
+				p.sendMessage("§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.list.page", 1+"")+" §8>");
+				p.sendMessage("    §8- §7§o"+LanguageManager.parseMsg("trans.command.listfiles.error.nofiles"));
 				for(int i=0; i<11; i++) p.sendMessage(" ");
 				sendPageArrows(p, page, pages, "listfiles");
-				p.sendMessage("§e*§7: Newly added");
+				p.sendMessage(LanguageManager.parseMsg("trans.command.listfiles.newlyadded"));
 				p.sendMessage(" ");
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 			} else {
@@ -234,9 +235,9 @@ public class CommandHandler {
 				int j=page*11+10;
 				if(j>=length) j=length-1;
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
-				p.sendMessage("                       "+Variables.COLOR1+"Files");
+				p.sendMessage(Variables.COLOR1+LanguageManager.parseMsg("trans.command.listfiles.title"));
 				p.sendMessage(" ");
-				p.sendMessage("§8- "+Variables.COLOR1+"Page "+(page+1)+" §8>");
+				p.sendMessage("§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.list.page", (page+1)+"")+" §8>");
 				for(int i=0; i<11; i++) {
 					int index=i+page*11;
 					if(index<=j) {
@@ -250,11 +251,11 @@ public class CommandHandler {
 				}
 				p.sendMessage(" ");
 				sendPageArrows(p, page, pages, "listfiles");
-				p.sendMessage("§e*§7: Newly added");
+				p.sendMessage(LanguageManager.parseMsg("trans.command.listfiles.newlyadded"));
 				p.sendMessage(" ");
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 			}
-		} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs listfiles [Page]");
+		} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.listfiles"));
 	}
 	private static void handleListSignsCommand(Player p, String[] args) {
 		if(args.length<=2) {
@@ -262,7 +263,7 @@ public class CommandHandler {
 			if(args.length==2) try {
 				page=Integer.valueOf(args[1])-1;
 			} catch(NumberFormatException ex) {
-				p.sendMessage(Variables.PREFIX+"§7Please enter a valid §cpage number§7.");
+				p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.novalidpage"));
 				return;
 			}
 			CopyOnWriteArrayList<BetterSign> signs=WorldUtil.getSigns();
@@ -276,10 +277,10 @@ public class CommandHandler {
 			
 			if(length==0) {
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
-				p.sendMessage("                       "+Variables.COLOR1+"Signs");
+				p.sendMessage(Variables.COLOR1+LanguageManager.parseMsg("trans.command.listsigns.title"));
 				p.sendMessage(" ");
-				p.sendMessage("§8- "+Variables.COLOR1+"Page 1 §8>");
-				p.sendMessage("    §8- §7§oNo signs created yet =(");
+				p.sendMessage("§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.list.page", 1+"")+" §8>");
+				p.sendMessage("    §8- §7§o"+LanguageManager.parseMsg("trans.command.listsigns.error.nosigns"));
 				for(int i=0; i<12; i++) p.sendMessage(" ");
 				sendPageArrows(p, page, pages, "listsigns");
 				p.sendMessage(" ");
@@ -288,9 +289,9 @@ public class CommandHandler {
 				int j=page*12+11;
 				if(j>=length) j=length-1;
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
-				p.sendMessage("                       "+Variables.COLOR1+"Signs");
+				p.sendMessage(Variables.COLOR1+LanguageManager.parseMsg("trans.command.listsigns.title"));
 				p.sendMessage(" ");
-				p.sendMessage("§8- "+Variables.COLOR1+"Page "+(page+1)+" §8>");
+				p.sendMessage("§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.list.page", (page+1)+"")+" §8>");
 				for(int i=0; i<12; i++) {
 					int index=i+page*12;
 					if(index<=j) {
@@ -302,7 +303,7 @@ public class CommandHandler {
 				p.sendMessage(" ");
 				p.sendMessage(Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#");
 			}
-		} else p.sendMessage(Variables.PREFIX+"§7Use §c/gs listsigns [Page]");
+		} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.listsigns"));
 	}
 	private static void handleCreateCommand(Player p, String[] args) {
 		new BukkitRunnable() {
@@ -316,25 +317,26 @@ public class CommandHandler {
 				Order order=CodeParser.parseCode(code);
 				if(order!=null) {
 					if(order.getError()!=null) {
-						p.sendMessage(Variables.PREFIX+"§7The following value could not be parsed: §c"+order.getError());
+						p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.create.error.novalidvalue", order.getError()));
 					} else {
 						PlayerManager.startPlacingPhase(p, order);
 					}
-				} else p.sendMessage(Variables.PREFIX+"§7The §ccode§7 you provided could not be parsed.");
+				} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.create.error.novalidcode"));
 				
 			}
 		}.runTaskAsynchronously(Main.getPlugin());
 	}
 	
 	private static void sendFile(Player p, String file, boolean isNew) {
-		TextComponent comp=new TextComponent("    ");
 		String displayName=file;
 		int j=isNew ? 1 : 0;
 		if(displayName.length()>30-j) displayName=displayName.substring(0, 27-j)+"...";
-		comp.addExtra(
-				createClickableComponent("§8- §7"+displayName, "§7Click here to get a §ecommand§7 for this file.", "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
-		);
+		TextComponent comp=new TextComponent("    §8- §7"+displayName);
 		if(isNew) comp.addExtra(new TextComponent("§e*"));
+		comp.addExtra(new TextComponent(" "));
+		comp.addExtra(
+				createClickableComponent("§b[§b§l→§b]", LanguageManager.parseMsg("trans.command.hover.filecommand"), "/gs create {bg-img:"+file+"}", ClickEvent.Action.SUGGEST_COMMAND)
+		);
 		p.spigot().sendMessage(comp);
 	}
 	private static void sendSign(Player p, BetterSign sign) {
@@ -345,23 +347,23 @@ public class CommandHandler {
 		if(displayName.length()>32-j) displayName=displayName.substring(0, 29-j)+"...";
 		TextComponent comp=new TextComponent("    §8- §7"+displayName+" ");
 		comp.addExtra(
-				createClickableComponent("§b[§b§l↓§b]", "§7Click here to §eteleport§7 to this sign.", "/gs tp "+uuid, ClickEvent.Action.RUN_COMMAND)
+				createClickableComponent("§b[§b§l↓§b]", LanguageManager.parseMsg("trans.command.hover.teleport"), "/gs tp "+uuid, ClickEvent.Action.RUN_COMMAND)
 		);
 		comp.addExtra(TEXTCOMP_SPACE);
 		if(playButton) {
 			if(sign.isPaused()) {
 				comp.addExtra(
-						createClickableComponent("§e[§e⏵§e]", "§7Click here to §eplay§7 this sign.", "/gs play "+uuid, ClickEvent.Action.RUN_COMMAND)
+						createClickableComponent("§e[§e⏵§e]", LanguageManager.parseMsg("trans.command.hover.play"), "/gs play "+uuid, ClickEvent.Action.RUN_COMMAND)
 				);
 			} else {
 				comp.addExtra(
-						createClickableComponent("§e[§e⏸§e]", "§7Click here to §epause§7 this sign.", "/gs pause "+uuid, ClickEvent.Action.RUN_COMMAND)
+						createClickableComponent("§e[§e⏸§e]", LanguageManager.parseMsg("trans.command.hover.pause"), "/gs pause "+uuid, ClickEvent.Action.RUN_COMMAND)
 				);
 			}
 			comp.addExtra(TEXTCOMP_SPACE);
 		}
 		comp.addExtra(
-				createClickableComponent("§c[§c§l❌§c]", "§7Click here to §eremove§7 this sign.", "/gs remove "+uuid, ClickEvent.Action.SUGGEST_COMMAND)
+				createClickableComponent("§c[§c§l❌§c]", LanguageManager.parseMsg("trans.command.hover.remove"), "/gs remove "+uuid, ClickEvent.Action.SUGGEST_COMMAND)
 		);
 		p.spigot().sendMessage(comp);
 	}
@@ -375,56 +377,53 @@ public class CommandHandler {
 		else comp.addExtra(getPageArrow(false));
 		comp.addExtra(line);
 		comp.addExtra(
-				createClickableComponent("§eRefresh", "§7Click here to refresh the §ecurrent§7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND)
+				createClickableComponent("§e"+LanguageManager.parseMsg("trans.command.list.refresh"), LanguageManager.parseMsg("trans.command.hover.refresh"), "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND)
 		);
 		p.spigot().sendMessage(comp);
 	}
 	
 	private static void sendHelpSuggestion(Player p) {
-		p.sendMessage(Variables.PREFIX+"§7Use §e/gs help§7 to get a list of commands.");
-	}
-	private static void sendCreateSuggestion(Player p) {
-		p.sendMessage(Variables.PREFIX+"§7Use §c/gs create (Code)");
+		p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.use.help"));
 	}
 	public static void sendNoPermission(Player p) {
-		p.sendMessage(Variables.PREFIX+"§7You don't have the right §cpermission§7 to do that.");
+		p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.error.noperm"));
 	}
 	private static void sendHelp(Player p) {
 		p.sendMessage(
 				Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#"+"§r\n"+
-				"                     "+Variables.COLOR1+Variables.NAME+"§r\n \n"+
-				"§8- "+Variables.COLOR1+"/gs create (Code) §8> §7Create a sign§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs remove [UUID] §8> §7Remove a sign§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs cancel §8> §7Cancel placement§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs listfiles [Page] §8> §7Lists your images§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs listsigns [Page] §8> §7Lists your signs§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs gui §8> §7Open gui§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs tp (UUID) §8> §7Teleport to a sign§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs play (UUID) §8> §7Play a sign§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs pause (UUID) §8> §7Pause a sign§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs update §8> §7Update plugin§e*"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs help §8> §7Show help"+"§r\n"+
-				"§8- "+Variables.COLOR1+"/gs info §8> §7Show plugin information"+"§r\n \n"+
-				"§7(): "+Variables.COLOR1+"Required§7, []: "+Variables.COLOR1+"Optional"+"§r\n"+
-				"§e*§7: Needs extra permission to be executed"+"§r\n \n"+
+				"                      "+Variables.COLOR1+Variables.NAME+"§r\n \n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line1")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line2")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line3")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line4")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line5")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line6")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line7")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line8")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line9")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line10")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line11")+"§r\n"+
+				"§8- "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.line12")+"§r\n \n"+
+				"§7(): "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.required")+"§7, []: "+Variables.COLOR1+LanguageManager.parseMsg("trans.command.help.optional")+"§r\n"+
+				LanguageManager.parseMsg("trans.command.help.needsperm")+"§r\n \n"+
 				Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#"
 		);
 	}
 	private static void sendInfo(Player p) {
 		p.sendMessage(
 				Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#"+"§r\n"+
-				"                   "+Variables.COLOR1+"Information"+"§r\n \n"+
-				"§7§oYou are using the open source plugin"+"§r\n"+
-				"§7§o §e"+Variables.NAME+"§7§o to put images and gifs into"+"§r\n"+
-				"§7§o item frames!"+"§r\n \n"+
-				"§8- §7Developed by §8> §b"+Variables.AUTHOR+"§r\n"+
-				"§8- §7Installed version §8> §b"+Variables.VERSION+"§r\n \n"+
+				Variables.COLOR1+LanguageManager.parseMsg("trans.command.info.title")+"§r\n \n"+
+				LanguageManager.parseMsg("trans.command.info.line1")+"§r\n"+
+				LanguageManager.parseMsg("trans.command.info.line2", Variables.NAME)+"§r\n"+
+				LanguageManager.parseMsg("trans.command.info.line3")+"§r\n \n"+
+				LanguageManager.parseMsg("trans.command.info.line4", Variables.AUTHOR)+"§r\n"+
+				LanguageManager.parseMsg("trans.command.info.line5", Variables.VERSION)+"§r\n \n"+
 				Variables.COLOR2+"§m#"+Variables.COLOR1+"§m"+UI_TEXT_LINE+Variables.COLOR2+"§m#"
 		);
 	}
 	
 	private static TextComponent getPageArrow(int page, boolean dir, String cmd) {
-	    return createClickableComponent(dir ? "§b§l"+UI_TEXT_ARROW_LEFT : "§b§l"+UI_TEXT_ARROW_RIGHT, dir ? "§7Click here to view the §eprevious§7 page." : "§7Click here to view the §enext§7 page.", "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
+	    return createClickableComponent(dir ? "§b§l"+UI_TEXT_ARROW_LEFT : "§b§l"+UI_TEXT_ARROW_RIGHT, dir ? LanguageManager.parseMsg("trans.command.hover.previous") : LanguageManager.parseMsg("trans.command.hover.next"), "/gs "+cmd+" "+(page+1), ClickEvent.Action.RUN_COMMAND);
 	}
 	private static TextComponent getPageArrow(boolean dir) {
 		TextComponent comp=new TextComponent(dir ? "§8§l"+UI_TEXT_ARROW_LEFT : "§8§l"+UI_TEXT_ARROW_RIGHT);

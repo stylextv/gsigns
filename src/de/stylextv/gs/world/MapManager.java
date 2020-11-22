@@ -8,15 +8,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.server.MapInitializeEvent;
 import org.bukkit.map.MapView;
 
+import de.stylextv.gs.config.ConfigManager;
+
 public class MapManager {
-	
-	public static int FORCED_OFFSET = 12000;
 	
 	private final Set<Short> occupiedIds = new HashSet<>();
 	
 	@SuppressWarnings("deprecation")
 	public void searchForVanillaMaps() {
-		for(short s = (short) (FORCED_OFFSET+1); s < Short.MAX_VALUE; s++) {
+		for(short s = (short) (ConfigManager.VALUE_RESERVED_VANILLA_MAPS.getMin()*1000+1); s < Short.MAX_VALUE; s++) {
 			try {
 				MapView view = null;
 				if(WorldUtil.getMcVersion() <= WorldUtil.MCVERSION_1_12) {
@@ -39,7 +39,7 @@ public class MapManager {
 				s=(short) e.getMap().getClass().getMethod("getId").invoke(e.getMap());
 			} catch(Exception ex) {ex.printStackTrace();}
 		} else s=(short)e.getMap().getId();
-		if(s > FORCED_OFFSET && !occupiedIds.contains(s)) {
+		if(s > ConfigManager.VALUE_RESERVED_VANILLA_MAPS.getMin()*1000 && !occupiedIds.contains(s)) {
 			occupiedIds.add(s);
 		}
 	}
@@ -48,7 +48,7 @@ public class MapManager {
 		Set<Short> occupied = WorldUtil.getOccupiedIdsFor(p);
 		occupied.addAll(occupiedIds);
 		
-		int largest = FORCED_OFFSET;
+		int largest = ConfigManager.VALUE_RESERVED_VANILLA_MAPS.getValue()*1000;
 		for(Short s : occupied) {
 			if (s > largest) { largest = s; }
 		}

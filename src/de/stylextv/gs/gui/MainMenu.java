@@ -66,12 +66,13 @@ public class MainMenu extends Menu {
 	public void fillConstants() {
 		for(int x=0; x<9; x++) {
 			setItem(x, 0, ItemUtil.BLANK);
-			if(x!=1 && x!=4 && x!=7) setItem(x, getLastY(), ItemUtil.BLANK);
+			if(x!=1 && x!=3 && x!=5 && x!=7) setItem(x, getLastY(), ItemUtil.BLANK);
 		}
 		if(page > 0) setItem(1, getLastY(), ItemUtil.HEAD_LEFT);
 		else setItem(1, getLastY(), ItemUtil.BLANK);
 		
-		setItem(4, getLastY(), ItemUtil.SORTED_BY[sortingType]);
+		setItem(3, getLastY(), ItemUtil.SORTED_BY[sortingType]);
+		setItem(5, getLastY(), ItemUtil.SETTINGS);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -95,7 +96,7 @@ public class MainMenu extends Menu {
 					if(i<signs.size()) {
 						BetterSign sign=signs.get(i);
 						displayedSigns[j]=sign;
-						item=ItemUtil.createItemStack(sign, sortingType);
+						item=ItemUtil.createSignItemStack(sign, sortingType);
 					} else {
 						displayedSigns[j]=null;
 						item=ItemUtil.EMPTY;
@@ -122,10 +123,17 @@ public class MainMenu extends Menu {
 			e.setCancelled(true);
 			
 			int slot=e.getSlot();
-			if(slot==getLastY()*9+4) {
+			if(slot==getLastY()*9+3) {
 				if(PermissionUtil.hasGuiPermission(p)) {
 					playClickSound(p, true);
 					GuiManager.openMainGui(p, page, (sortingType+1)%3);
+				} else {
+					kickPlayerForNoPerm(p);
+				}
+			} else if(slot==getLastY()*9+5) {
+				if(PermissionUtil.hasGuiPermission(p) && (PermissionUtil.hasConfigPermission(p) || PermissionUtil.hasRemovePermission(p) || PermissionUtil.hasUpdatePermission(p))) {
+					playClickSound(p, true);
+					GuiManager.openSettingsMenu(p, this);
 				} else {
 					kickPlayerForNoPerm(p);
 				}

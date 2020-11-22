@@ -25,6 +25,9 @@ public class PermissionUtil {
 	public static boolean hasTeleportPermission(Player p) {
 		return hasStarPermission(p)||p.hasPermission("gsigns.teleport");
 	}
+	public static boolean hasConfigPermission(Player p) {
+		return hasStarPermission(p)||p.hasPermission("gsigns.config");
+	}
 	
 	private static boolean hasStarPermission(Player p) {
 		return p.hasPermission("gsigns.*");

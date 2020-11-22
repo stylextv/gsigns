@@ -1,0 +1,234 @@
+trans.command.suggestion.create: (Code)
+trans.command.suggestion.list: [Seite]
+trans.command.suggestion.remove: [UUID]
+trans.command.suggestion.uuid: (UUID)
+
+trans.command.use.gui: §7Verwenden Sie §c/gs gui
+trans.command.use.remove: §7Verwenden Sie §c/gs remove [UUID]
+trans.command.use.tp: §7Verwenden Sie §c/gs tp (UUID)
+trans.command.use.play: §7Verwenden Sie §c/gs play (UUID)
+trans.command.use.pause: §7Verwenden Sie §c/gs pause (UUID)
+trans.command.use.update: §7Verwenden Sie §c/gs update
+trans.command.use.create: §7Verwenden Sie §c/gs create (Code)
+trans.command.use.cancel: §7Verwenden Sie §c/gs cancel
+trans.command.use.listfiles: §7Verwenden Sie §c/gs listfiles [Seite]
+trans.command.use.listsigns: §7Verwendung von §c/gs listsigns [Seite]
+trans.command.use.help: §7Verwenden Sie §e/gs help§7, um eine Liste der Befehle zu erhalten.
+
+trans.command.error.noplayer: §rDieser Befehl ist nur für §cSpieler§r gedacht.
+trans.command.error.noperm: §7Sie haben nicht die richtige §cBerechtigung§7 dafür.
+trans.command.error.nosign: §7Konnte kein Schild mit der UUID finden: §c%0%§7.
+trans.command.error.novaliduuid: §7Bitte geben Sie eine gültige §cUUID§7 ein.
+trans.command.error.nogif: §7Dieses Schild enthält kein §cGIF§7.
+trans.command.error.novalidpage: §7Bitte geben Sie eine gültige §cSeitenzahl§7 ein.
+
+trans.command.hover.next: §7Klicken Sie hier, um die §enächste§7 Seite anzuzeigen.
+trans.command.hover.previous: §7Klicken Sie hier, um die §evorherige§7 Seite anzuzeigen.
+trans.command.hover.filecommand: §7Klicken Sie hier, um einen §eBefehl§7 für diese Datei zu erhalten.
+trans.command.hover.teleport: §7Klicken Sie hier, um zu diesem Schild zu §eteleportieren§7.
+trans.command.hover.play: §7Klicken Sie hier, um dieses Schild §eabzuspielen§7.
+trans.command.hover.pause: §7Klicken Sie hier, um dieses Schild §eanzuhalten§7.
+trans.command.hover.remove: §7Klicken Sie hier, um dieses Schild zu §eentfernen§7.
+trans.command.hover.refresh: §7Klicken Sie hier, um die §eaktuelle§7 Seite zu aktualisieren.
+
+trans.command.remove.success: §7Das Schild wurde erfolgreich §aentfernt§7.
+
+trans.command.tp.success: §7Sie wurden erfolgreich §ateleportiert§7.
+
+trans.command.play.success: §7Das Schild wird jetzt §aabgespielt§7.
+trans.command.play.error.alreadyplaying: §7Das Schild wird bereits §cabgespielt§7.
+
+trans.command.pause.success: §7Das Schild hat jetzt §caufgehört§7 zu spielen.
+trans.command.pause.error.alreadypaused: §7Das Schild wurde bereits §cangehalten§7.
+
+trans.command.listfiles.title:                      Dateien
+trans.command.listfiles.newlyadded: §e*§7: Neu hinzugefügt
+trans.command.listfiles.error.nofiles: Ordner ist leer =(
+
+trans.command.listsigns.title:                      Schilder
+trans.command.listsigns.error.nosigns: Noch keine Schilder erstellt =(
+
+trans.command.list.page: Seite %0%
+trans.command.list.refresh: Neu laden
+
+trans.command.create.error.novalidcode: §7Der von Ihnen bereitgestellte §cCode§7 konnte nicht gelesen werden.
+trans.command.create.error.novalidvalue: §7Der folgende Wert konnte nicht gelesen werden: §c%0%
+
+trans.command.info.title:                   Informationen
+trans.command.info.line1: §7§oSie verwenden das Open-Source-Plugin
+trans.command.info.line2: §7§o §e%0%§7§o, um Bilder und Gifs in Rahmen
+trans.command.info.line3: §7§o einzufügen!
+trans.command.info.line4: §8- §7Entwickelt von §8> §b%0%
+trans.command.info.line5: §8- §7Installierte Version §8> §b%0%
+
+trans.command.help.needsperm: §e*§7: Benötigt zusätzliche Erlaubnis
+trans.command.help.required: Erforderlich
+trans.command.help.optional: Optional
+trans.command.help.line1: /gs create (Code) §8> §7Schild erstellen§e*
+trans.command.help.line2: /gs remove [UUID] §8> §7Schild entfernen§e*
+trans.command.help.line3: /gs cancel §8> §7Platzierung abbrechen§e*
+trans.command.help.line4: /gs listfiles [Seite] §8> §7Listet Bilder§e*
+trans.command.help.line5: /gs listsigns [Seite] §8> §7Listet Schilder§e*
+trans.command.help.line6: /gs gui §8> §7Menü öffnen§e*
+trans.command.help.line7: /gs tp (UUID) §8> §7Zum Schild teleportieren§e*
+trans.command.help.line8: /gs play (UUID) §8> §7Schild abspielen§e*
+trans.command.help.line9: /gs pause (UUID) §8> §7Schild pausieren§e*
+trans.command.help.line10: /gs update §8> §7Plugin aktualisieren§e*
+trans.command.help.line11: /gs help §8> §7Hilfe anzeigen
+trans.command.help.line12: /gs info §8> §7Plugin-Informationen anzeigen
+
+trans.config.name.distance: Betrachtungsabstand
+trans.config.name.transmissionrate: Karten-Übertragungsrate
+trans.config.name.reservedmaps: Reservierte Vanilla-Karten
+trans.config.name.language: Sprache
+
+trans.config.desc.distance1: Die maximale Entfernung, in
+trans.config.desc.distance2: Blöcken, aus der die Schilder
+trans.config.desc.distance3: sichtbar sind.
+trans.config.desc.transmissionrate1: Die maximale Anzahl von Karten, die einem
+trans.config.desc.transmissionrate2: einzelnen Spieler pro 3 Ticks zugesandt
+trans.config.desc.transmissionrate3: werden.
+trans.config.desc.reservedmaps1: Die Anzahl der Karten-IDs (in
+trans.config.desc.reservedmaps2: Tausenden), die für das
+trans.config.desc.reservedmaps3: Vanilla-Gameplay aufbewahrt
+trans.config.desc.reservedmaps4: und daher von diesem Plugin nicht
+trans.config.desc.reservedmaps5: verwendet werden.
+trans.config.desc.language1: Die Sprache, in der das
+trans.config.desc.language2: Plugin Nachrichten
+trans.config.desc.language3: und andere Texte anzeigt.
+
+trans.config.range: Bereich: %0% - %1%
+trans.config.options: Optionen: %0%
+trans.config.type: Typ: %0%
+trans.config.currentvalue: Aktueller Wert: §b%0%
+
+trans.create.firstcorner: Ihr Schild wurde erfolgreich §aerstellt§7. Bitte klicken Sie auf eine der §cEcken§7 des Rahmens.
+trans.create.secondcorner: Die erste Ecke wurde §agesetzt§7. Klicken Sie nun bitte auf die §egegenüberliegende§7 Ecke.
+trans.create.cancel: Der Platzierungsvorgang wurde §cabgebrochen§7.
+trans.create.success: Ihr Schild wurde erfolgreich §aplatziert§7.
+trans.create.wait: Bitte §ewarten§7 Sie, bis das Schild platziert wurde. Dies kann etwas dauern...
+trans.create.error.noprocess: Sie befinden sich derzeit nicht in einem §cPlatzierungsprozess§7.
+trans.create.error.wrongversion: Rahmen können nur auf dem §cBoden/§7der §cDecke§7 platziert werden, wenn Sie die Minecraft Version §c1.13§7 oder höher verwenden.
+trans.create.error.wrongworld: Die beiden Ecken müssen in der gleichen §cWelt§7 liegen.
+trans.create.error.novalidpos: Dies ist keine §cgültige§7 Position für ein Schild.
+trans.create.error.itemframes: Es sind, bereits vorhandene, §cRahmen§7 im Weg.
+trans.create.error.nosolid: Es müssen §cfeste§7 Blöcke vorhanden sein, um ein Schild aufzuhängen.
+
+trans.remove.use: §7Verwenden Sie §e/gs remove§7, um ein Schild zu entfernen.
+trans.remove.success: §7Das Schild wurde §aentfernt§7.
+trans.remove.punch: §aSchlagen§7 Sie ein Schild, um es zu entfernen, oder verwenden Sie §e/gs remove§7 erneut, um den Vorgang abzubrechen.
+trans.remove.cancel: §7Der Entfernungsprozess wurde §cabgebrochen§7.
+trans.remove.error.noperm: §7Sie haben nicht mehr die §cBerechtigung§7 zum Entfernen von Schildern.
+
+trans.console.load: Erfolgreiches Laden von §%0%§r Schildern in %1%s.
+trans.console.error.wrongversion1: Die von Ihnen verwendete Server-Version (§c%0%§r) wird von diesem Plugin nicht unterstützt!
+trans.console.error.wrongversion2: Möglicherweise werden Sie auf einige Probleme stoßen!
+trans.console.error.delete: Alte/beschädigte Datei gelöscht: §c%0%
+
+trans.autoupdate.begin: §7Auf neue Updates prüfen...
+trans.autoupdate.result.noupdate: §7Das Plugin ist auf dem neuesten Stand! Sie verwenden die §aneueste§7 Version von %0%.
+trans.autoupdate.result.found1: §7Es wurde ein neues Update §agefunden§7. Version: %0%
+trans.autoupdate.result.found2: §7Das Update wird installiert, wenn der Server §egeschlossen
+trans.autoupdate.result.found3: §7oder §eneu gestartet§7 wird.
+trans.autoupdate.error.noconnection: §7Es konnte keine Verbindung mit dem Server hergestellt werden. Stellen Sie sicher, dass Sie mit dem §cInternet§7 verbunden sind.
+trans.autoupdate.error.unknown: §7Bei der Suche nach neuen Updates ist ein §cFehler§7 aufgetreten!
+trans.autoupdate.error.alreadyfound1: §7Es §ewurde bereits§7 ein neues Update gefunden. Version: %0%
+trans.autoupdate.error.alreadyfound2: §7Das Update wird installiert, wenn der Server §egeschlossen§7 oder §eneu gestartet§7 wird.
+trans.autoupdate.error.alreadysearching: §eJemand anderes§7 sucht bereits nach einem Update.
+
+trans.autoupdate.console.found1: Es wurde ein §aneues Update§r gefunden. Version: %0%
+trans.autoupdate.console.found2: Geben Sie §e/gs update§7 in Ihren Ingame-Chat ein, um das Update zu installieren.
+trans.autoupdate.console.installed1: Ein neues Update wurde §ainstalliert§r. Version: %0% -> %1%
+trans.autoupdate.console.installed2: Alle Änderungen können hier gefunden werden:
+trans.autoupdate.console.error.unknown: Bei der Suche nach neuen Updates ist ein §cFehler§r aufgetreten:
+
+trans.menu.sign.remove: §7Das Schild wurde erfolgreich §aentfernt§7.
+trans.menu.sign.uuid: §7UUID: §b%0%
+trans.menu.sign.world: §7Welt: §e%0%
+trans.menu.sign.size: §7Größe: §e%0%
+trans.menu.sign.desc1: §7Klicken Sie hier, um das Menü für dieses
+trans.menu.sign.desc2: §7Schild zu öffnen.
+
+trans.menu.settings.removeall.success.one: §a%0%§7 Schild wurde erfolgreich entfernt.
+trans.menu.settings.removeall.success.multiple: §a%0%§7 Schilder wurden erfolgreich entfernt.
+trans.menu.settings.removeall.error.nosigns: §7Es gibt §ckeine Schilder§7, die entfernt werden können.
+
+trans.item.plusminus.desc1: §b§oLinksklick§7: §e%0%1
+trans.item.plusminus.desc2: §b§oUmschalt§7 + §b§oLinksklick§7: §e%0%5
+trans.item.minus.name: §e§lMinus
+trans.item.minus.desc1: §7Klicken Sie hier, um vom
+trans.item.minus.desc2: §7aktuellen Wert zu entfernen.
+trans.item.plus.name: §e§lPlus
+trans.item.plus.desc1: §7Klicken Sie hier, um den
+trans.item.plus.desc2: §7aktuellen Wert zu erhöhen.
+trans.item.optionleft.name: §e§lVorherige
+trans.item.optionleft.desc1: §7Klicken Sie hier, um die
+trans.item.optionleft.desc2: §7vorherige Option auszuwählen.
+trans.item.optionright.name: §e§lNächste
+trans.item.optionright.desc1: §7Klicken Sie hier, um die nächste
+trans.item.optionright.desc2: §7Option auszuwählen.
+
+trans.item.play.name: §7Status: §b§lPausiert
+trans.item.play.desc1: §7Klicken Sie hier, um dieses
+trans.item.play.desc2: §7Schild abzuspielen.
+
+trans.item.pause.name: §7Status: §b§lSpielt
+trans.item.pause.desc1: §7Klicken Sie hier, um dieses
+trans.item.pause.desc2: §7Schild anzuhalten.
+
+trans.item.left.name: §e§lLinks
+trans.item.left.desc1: §7Klicken Sie hier, um 1 Seite
+trans.item.left.desc2: §7nach links zu gehen.
+
+trans.item.right.name: §e§lRechts
+trans.item.right.desc1: §7Klicken Sie hier, um 1 Seite
+trans.item.right.desc2: §7nach rechts zu gehen.
+
+trans.item.back.name: §e§lZurück
+trans.item.back.desc1: §7Klicken Sie hier, um zum vorherigen
+trans.item.back.desc2: §7Menü zu gelangen.
+
+trans.item.restoreconfig.name: §b§lStandard wiederherstellen
+trans.item.restoreconfig.desc1: §7Klicken Sie hier, um die Standardkonfiguration
+trans.item.restoreconfig.desc2: §7wiederherzustellen.
+
+trans.item.update.name: §b§lPlugin aktualisieren
+trans.item.update.desc1: §7Klicken Sie hier, um das Plugin
+trans.item.update.desc2: §7automatisch auf die neueste
+trans.item.update.desc3: §7Version zu aktualisieren, ohne das
+trans.item.update.desc4: §7In-Game-Menü zu verlassen.
+
+trans.item.config.name: §5§lKonfigurieren
+trans.item.config.desc1: §7Klicken Sie hier, um die Konfiguration
+trans.item.config.desc2: §7im Spiel zu bearbeiten.
+
+trans.item.removeall.name: §c§lAlle Schilder entfernen
+trans.item.removeall.desc1: §7Klicken Sie hier, um §e§njedes§7 Schild
+trans.item.removeall.desc2: §7zu entfernen.
+
+trans.item.remove.name: §c§lEntfernen
+trans.item.remove.desc1: §7Klicken Sie hier, um dieses Schild
+trans.item.remove.desc2: §7zu entfernen.
+
+trans.item.teleport.name: §e§lTeleportieren
+trans.item.teleport.desc1: §7Klicken Sie hier, um sich zu diesem
+trans.item.teleport.desc2: §7Schild zu teleportieren.
+
+trans.item.settings.name: §c§lEinstellungen
+trans.item.settings.desc1: §7Klicken Sie hier, um die
+trans.item.settings.desc2: §7Einstellungen zu öffnen.
+
+trans.item.sorting1.name: §7Sortiert nach: §b§lTypen
+trans.item.sorting1.desc1: §7Die Schilder sind nach ihrem Typ
+trans.item.sorting1.desc2: §7(GIF/Bild) sortiert. Klicken Sie
+trans.item.sorting1.desc3: §7hier, um nach Welten zu sortieren.
+
+trans.item.sorting2.name: §7Sortiert nach: §b§lWelten
+trans.item.sorting2.desc1: §7Die Schilder sind nach ihrer Welt sortiert
+trans.item.sorting2.desc2: §7(Welttyp und Name). Klicken Sie hier,
+trans.item.sorting2.desc3: §7um nach Größen zu sortieren.
+
+trans.item.sorting3.name: §7Sortiert nach: §b§lGrößen
+trans.item.sorting3.desc1: §7Die Schilder sind nach ihrer Größe
+trans.item.sorting3.desc2: §7sortiert (Größte -> Kleinste). Klicken
+trans.item.sorting3.desc3: §7Sie hier, um nach Typen zu sortieren.

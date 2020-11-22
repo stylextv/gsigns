@@ -19,7 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.server.MapInitializeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.stylextv.gs.config.ConfigManager;
 import de.stylextv.gs.gui.GuiManager;
+import de.stylextv.gs.lang.LanguageManager;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.packet.PacketListener;
@@ -53,7 +55,8 @@ public class WorldUtil {
 		String version=Bukkit.getServer().getVersion();
 		mcVersion=Integer.valueOf(version.split("MC: 1\\.")[1].split("\\.")[0])-8;
 		if(!(mcVersion>=MCVERSION_1_8&&mcVersion<=MCVERSION_1_16)) {
-			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"The server-version (§c"+version+"§r) you are running is not supported by this plugin!");
+			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.console.error.wrongversion1", version));
+			Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.console.error.wrongversion2"));
 		}
 		
 		LOCAL_IMAGES_FOLDER.mkdirs();
@@ -81,12 +84,12 @@ public class WorldUtil {
 						}
 						loaded++;
 					} catch(Exception ex) {
-						Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Deleted old/corrupted file: §c"+f.getName());
+						Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.console.error.delete", f.getName()));
 						ex.printStackTrace();
 						f.delete();
 					}
 				}
-				Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"Succesfully loaded §"+(loaded == 0 ? "e" : "a")+loaded+"§r signs in "+DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)+"s.");
+				Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.console.load", (loaded == 0 ? "e" : "a")+loaded, DECIMAL_FORMAT.format((System.currentTimeMillis()-currentTime)/1000.0)));
 			}
 		}.runTaskLater(Main.getPlugin(), 2);
 		new BukkitRunnable() {
@@ -276,6 +279,18 @@ public class WorldUtil {
 		GuiManager.onSignsListChange();
 		GuiManager.removeSignMenu(sign);
 	}
+	public static int removeAllSigns() {
+		int amount = 0;
+		for(BetterSign sign:signs) {
+			sign.removeItemFrames();
+			sign.deleteFile();
+			signs.remove(sign);
+			GuiManager.onSignsListChange();
+			GuiManager.removeSignMenu(sign);
+			amount++;
+		}
+		return amount;
+	}
 	public static boolean isFrame(int entityId) {
 		for(BetterSign sign:signs) {
 			if(sign.isFrame(entityId)) return true;
@@ -294,7 +309,7 @@ public class WorldUtil {
 		return ids;
 	}
 	public static boolean isIdUsedBy(OfflinePlayer p, short id) {
-		if(id > MapManager.FORCED_OFFSET) {
+		if(id > ConfigManager.VALUE_RESERVED_VANILLA_MAPS.getMin()*1000) {
 			for(BetterSign sign:signs) {
 				if(sign.isIdUsedBy(p, id)) return true;
 			}

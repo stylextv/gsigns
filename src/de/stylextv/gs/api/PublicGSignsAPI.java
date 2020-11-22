@@ -27,5 +27,4 @@ public class PublicGSignsAPI implements GSignsAPI {
 		WorldUtil.removeSign(uid);
 	}
 	
-	
 }

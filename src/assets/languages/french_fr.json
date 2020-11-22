@@ -1,0 +1,234 @@
+trans.command.suggestion.create: (Code)
+trans.command.suggestion.list: [Page]
+trans.command.suggestion.remove: [UUID]
+trans.command.suggestion.uuid: (UUID)
+
+trans.command.use.gui: §7Utiliser §c/gs gui
+trans.command.use.remove: §7Utiliser §c/gs remove [UUID]
+trans.command.use.tp: §7Utiliser §c/gs tp (UUID)
+trans.command.use.play: §7Utiliser §c/gs play (UUID)
+trans.command.use.pause: §7Utiliser §c/gs pause (UUID)
+trans.command.use.update: §7Utiliser §c/gs update
+trans.command.use.create: §7Utiliser §c/gs create (Code)
+trans.command.use.cancel: §7Utiliser §c/gs cancel
+trans.command.use.listfiles: §7Utiliser §c/gs listfiles [Page]
+trans.command.use.listsigns: §7Utiliser §c/gs listsigns [Page]
+trans.command.use.help: §7Utilisez §e/gs help§7 pour obtenir une liste de commandes.
+
+trans.command.error.noplayer: §rCette commande est réservée aux §cjoueurs§r.
+trans.command.error.noperm: §7Vous n'avez pas la bonne §cautorisation§7 pour le faire.
+trans.command.error.nosign: §7Impossible de trouver un signe avec l'UUID: §c%0%§7.
+trans.command.error.novaliduuid: §7Veuillez entrer un §cUUID§7 valide.
+trans.command.error.nogif: §7Ce signe ne contient pas de §cGIF§7.
+trans.command.error.novalidpage: §7Veuillez entrer un §cnuméro de page§7 valide.
+
+trans.command.hover.next: §7Cliquez ici pour voir la page §esuivante§7.
+trans.command.hover.previous: §7Cliquez ici pour voir la page §eprécédente§7.
+trans.command.hover.filecommand: §7Cliquez ici pour obtenir une §ecommande§7 pour ce fichier.
+trans.command.hover.teleport: §7Cliquez ici pour vous §etéléporter§7 à ce signe.
+trans.command.hover.play: §7Cliquez ici pour §ejouer§7 ce signe.
+trans.command.hover.pause: §7Cliquez ici pour mettre ce signe en §epause§7.
+trans.command.hover.remove: §7Cliquez ici pour §esupprimer§7 ce signe.
+trans.command.hover.refresh: §7Cliquez ici pour rafraîchir la page §eactuelle§7.
+
+trans.command.remove.success: §7Le signe a été §asupprimé§7 avec succès.
+
+trans.command.tp.success: §7Vous avez été §atéléporté§7 avec succès.
+
+trans.command.play.success: §7Le signe est en train de §ajouer§7.
+trans.command.play.error.alreadyplaying: §7Le signe est déjà en train de §cjouer§7.
+
+trans.command.pause.success: §7Le signe a maintenant §acessé§7 de jouer.
+trans.command.pause.error.alreadypaused: §7Le signe est déjà en §cpause§7.
+
+trans.command.listfiles.title:                      Fichiers
+trans.command.listfiles.newlyadded: §e*§7: Nouvellement ajouté
+trans.command.listfiles.error.nofiles: Le dossier est vide =(
+
+trans.command.listsigns.title:                       Signes
+trans.command.listsigns.error.nosigns: Aucun signe n'a encore été créé =(
+
+trans.command.list.page: Page %0%
+trans.command.list.refresh: Rafraîchir
+
+trans.command.create.error.novalidcode: Le code que vous avez fourni n'a pas pu être analysé.
+trans.command.create.error.novalidvalue: La valeur suivante n'a pas pu être analysée: %0%
+
+trans.command.info.title:                   Informations
+trans.command.info.line1: §7§oVous utilisez le plugin open source
+trans.command.info.line2: §7§o §e%0%§7§o pourmettre des images et des gifs dans les
+trans.command.info.line3: §7§o cadres d'objets!
+trans.command.info.line4: §8- §7Développé par §8> §b%0%
+trans.command.info.line5: §8- §7Version installée §8> §b%0%
+
+trans.command.help.needsperm: §e*§7: Nécessite une autorisation
+trans.command.help.required: Obligatoire
+trans.command.help.optional: Facultatif
+trans.command.help.line1: /gs create (Code) §8> §7Créer le signe§e*
+trans.command.help.line2: /gs remove [UUID] §8> §7Supprimer le signe§e*
+trans.command.help.line3: /gs cancel §8> §7Annuler le placement§e*
+trans.command.help.line4: /gs listfiles [Page] §8> §7Liste des images§e*
+trans.command.help.line5: /gs listsigns [Page] §8> §7Liste des signes§e*
+trans.command.help.line6: /gs gui §8> §7Ouvrir le menu§e*
+trans.command.help.line7: /gs tp (UUID) §8> §7Téléport à signer§e*
+trans.command.help.line8: /gs play (UUID) §8> §7Jouer un signe§e*
+trans.command.help.line9: /gs pause (UUID) §8> §7Pause d'un signe§e*
+trans.command.help.line10: /gs update §8> §7Mise à jour du plugin§e*
+trans.command.help.line11: /gs help §8> §7Montrer de l'aide
+trans.command.help.line12: /gs info §8> §7Informations sur les plugins
+
+trans.config.name.distance: Distance de visionnement
+trans.config.name.transmissionrate: Taux de transmission des cartes
+trans.config.name.reservedmaps: Cartes réservées à la vanille
+trans.config.name.language: Langue
+
+trans.config.desc.distance1: La distance maximale, en blocs,
+trans.config.desc.distance2: à partir de laquelle les
+trans.config.desc.distance3: signes sont visibles.
+trans.config.desc.transmissionrate1: Le nombre maximum de cartes
+trans.config.desc.transmissionrate2: envoyées à un seul joueur par
+trans.config.desc.transmissionrate3: 3 tics.
+trans.config.desc.reservedmaps1: Le nombre d'ID de carte (en
+trans.config.desc.reservedmaps2: milliers) qui sont conservés
+trans.config.desc.reservedmaps3: pour le jeu vanille et qui
+trans.config.desc.reservedmaps4: ne sont donc pas utilisés par
+trans.config.desc.reservedmaps5: ce plugin.
+trans.config.desc.language1: La langue dans laquelle le
+trans.config.desc.language2: plugin affichera les
+trans.config.desc.language3: messages et autres textes.
+
+trans.config.range: gamme: %0% - %1%
+trans.config.options: options: %0%
+trans.config.type: type: %0%
+trans.config.currentvalue: Valeur actuelle: §b%0%
+
+trans.create.firstcorner: Votre signe a été §acréé§7 avec succès. Veuillez cliquer sur l'un des §ecoins§7 du cadre.
+trans.create.secondcorner: Le premier coin a été §aplacé§7. Veuillez maintenant cliquer sur le coin §eopposé§7.
+trans.create.cancel: Le processus de placement a été §cannulé§7.
+trans.create.success: Votre signe a été §aplacé§7 avec succès.
+trans.create.wait: Veuillez §epatienter§7 jusqu'à ce que le panneau ait été placé. Cela peut prendre un peu de temps...
+trans.create.error.noprocess: Vous n'êtes actuellement pas dans un §cprocessus§7 de placement.
+trans.create.error.wrongversion: Les cadres d'objets ne peuvent être placés sur le §csol/plafond§7 que si vous utilisez la version §c1.13§7 ou supérieure de Minecraft.
+trans.create.error.wrongworld: Les deux coins doivent être dans le même §cmonde§7.
+trans.create.error.novalidpos: Ce n'est pas une position §cvalable§7 pour un panneau.
+trans.create.error.itemframes: Il existe déjà des §ccadres d'objets§7 dans le chemin.
+trans.create.error.nosolid: Il doit y avoir des blocs §csolides§7 pour accrocher un panneau.
+
+trans.remove.use: Utilisez §e/gs remove§7 pour supprimer un signe.
+trans.remove.success: §7Le panneau a été §aenlevé§7.
+trans.remove.punch: §aPoinçonnez§7 un signe pour l'enlever ou utilisez à nouveau §e/gs remove§7 pour annuler le processus.
+trans.remove.cancel: Le processus de retrait a été §cannulé§7.
+trans.remove.error.noperm: §7Vous n'avez plus la §cpermission§7 d'enlever les panneaux.
+
+trans.console.load: Chargement réussi de §%0%§r panneaux en %1%s.
+trans.console.error.wrongversion1: La version du serveur que vous utilisez (§c%0%§r) n'est pas supportée par ce plugin!
+trans.console.error.wrongversion2: Vous pouvez rencontrer des problèmes!
+trans.console.error.delete: Fichier ancien/corrompu effacé: §c%0%
+
+trans.autoupdate.begin: §7Vérifier les nouvelles mises à jour...
+trans.autoupdate.result.noupdate: §7Le plugin est à jour! Vous utilisez la §adernière§7 version de %0%.
+trans.autoupdate.result.found1: §7Une nouvelle mise à jour a été §atrouvée§7. Version: %0%
+trans.autoupdate.result.found2: §7La mise à jour est installée lorsque le serveur est
+trans.autoupdate.result.found3: §efermé§7 ou §eredémarré§7.
+trans.autoupdate.error.noconnection: §7Impossible de se connecter au serveur. Vérifiez que vous êtes bien connecté à §cInternet§7.
+trans.autoupdate.error.unknown: §7Une §cexception§7 s'est produite lors de la vérification des nouvelles mises à jour !
+trans.autoupdate.error.alreadyfound1: §7Une nouvelle mise à jour a §edéjà§7 été trouvée. Version: %0%
+trans.autoupdate.error.alreadyfound2: §7La mise à jour est installée lorsque le serveur est §efermé§7 ou §eredémarré§7.
+trans.autoupdate.error.alreadysearching: §eUne autre personne§7 est déjà en train de vérifier une mise à jour.
+
+trans.autoupdate.console.found1: Une nouvelle §amise à jour§r a été trouvée. Version: %0%
+trans.autoupdate.console.found2: Entrez §e/gs update§r dans votre chat en jeu pour installer la mise à jour.
+trans.autoupdate.console.installed1: Une nouvelle mise à jour a été §ainstallée§7. Version: %0% -> %1%
+trans.autoupdate.console.installed2: Le journal des modifications se trouve ici:
+trans.autoupdate.console.error.unknown: Une §cexception§r s'est produite lors de la vérification des nouvelles mises à jour:
+
+trans.menu.sign.remove: §7Le signe a été §asupprimé§7 avec succès.
+trans.menu.sign.uuid: §7UUID: §b%0%
+trans.menu.sign.world: §7Monde: §e%0%
+trans.menu.sign.size: §7Taille: §e%0%
+trans.menu.sign.desc1: §7Cliquez ici pour ouvrir le menu
+trans.menu.sign.desc2: §7de ce panneau.
+
+trans.menu.settings.removeall.success.one: §7A réussi à supprimer §a%0%§7 signe.
+trans.menu.settings.removeall.success.multiple: §7A réussi à supprimer §a%0%§7 signes.
+trans.menu.settings.removeall.error.nosigns: §cAucun signe§7 ne peut être supprimé.
+
+trans.item.plusminus.desc1: §7Clic §b§ogauche§7: §e%0%1
+trans.item.plusminus.desc2: §b§oShift§7 + clic §b§ogauche§7: §e%0%5
+trans.item.minus.name: §e§lMoins
+trans.item.minus.desc1: §7Cliquez ici pour supprimer
+trans.item.minus.desc2: §7de la valeur actuelle.
+trans.item.plus.name: §e§lPlus
+trans.item.plus.desc1: §7Cliquez ici pour ajouter
+trans.item.plus.desc2: §7à la valeur actuelle.
+trans.item.optionleft.name: §e§lPrécédent
+trans.item.optionleft.desc1: §7Cliquez ici pour sélectionner
+trans.item.optionleft.desc2: §7l'option précédente.
+trans.item.optionright.name: §e§lSuivant
+trans.item.optionright.desc1: §7Cliquez ici pour sélectionner
+trans.item.optionright.desc2: §7l'option suivante.
+
+trans.item.play.name: §7État: §b§lEn pause
+trans.item.play.desc1: §7Cliquez ici pour jouer
+trans.item.play.desc2: §7ce signe.
+
+trans.item.pause.name: §7État: §b§lJouer
+trans.item.pause.desc1: §7Cliquez ici pour mettre ce
+trans.item.pause.desc2: §7signe en pause.
+
+trans.item.left.name: §e§lA gauche
+trans.item.left.desc1: §7Cliquez ici pour aller 1
+trans.item.left.desc2: §7page à gauche.
+
+trans.item.right.name: §e§lA droite
+trans.item.right.desc1: §7Cliquez ici pour aller à 1 page
+trans.item.right.desc2: §7sur la droite.
+
+trans.item.back.name: §e§lRetour
+trans.item.back.desc1: §7Cliquez ici pour aller au
+trans.item.back.desc2: §7menu précédent.
+
+trans.item.restoreconfig.name: §b§lRétablir la valeur par défaut
+trans.item.restoreconfig.desc1: §7Cliquez ici pour restaurer la
+trans.item.restoreconfig.desc2: §7configuration par défaut.
+
+trans.item.update.name: §b§lMise à jour du plugin
+trans.item.update.desc1: §7Cliquez ici pour mettre
+trans.item.update.desc2: §7automatiquement à jour le
+trans.item.update.desc3: §7plugin à la dernière version sans
+trans.item.update.desc4: §7quitter le menu du jeu.
+
+trans.item.config.name: §5§lConfig
+trans.item.config.desc1: §7Cliquez ici pour modifier la
+trans.item.config.desc2: §7configuration dans le jeu.
+
+trans.item.removeall.name: §c§lSupprimer tous les signes
+trans.item.removeall.desc1: §7Cliquez ici pour supprimer
+trans.item.removeall.desc2: §e§ntous§7 les signes.
+
+trans.item.remove.name: §c§lSupprimer
+trans.item.remove.desc1: §7Cliquez ici pour supprimer
+trans.item.remove.desc2: §7ce signe.
+
+trans.item.teleport.name: §e§lTéléport
+trans.item.teleport.desc1: §7Cliquez ici pour vous téléporter
+trans.item.teleport.desc2: §7à ce signe.
+
+trans.item.settings.name: §c§lParamètres
+trans.item.settings.desc1: §7Cliquez ici pour ouvrir
+trans.item.settings.desc2: §7les paramètres.
+
+trans.item.sorting1.name: §7Triés par: §b§lTypes
+trans.item.sorting1.desc1: §7Les signes sont triés par type
+trans.item.sorting1.desc2: §7(GIF/image).
+trans.item.sorting1.desc3: §7Cliquez ici pour trier par mondes.
+
+trans.item.sorting2.name: §7Triés par: §b§lMondes
+trans.item.sorting2.desc1: §7Les signes sont triés par leur
+trans.item.sorting2.desc2: §7monde (Type de monde et nom).
+trans.item.sorting2.desc3: §7Cliquez ici pour trier par taille.
+
+trans.item.sorting3.name: §7Triés par: §b§lTailles
+trans.item.sorting3.desc1: §7Les panneaux sont triés par taille
+trans.item.sorting3.desc2: §7(plus grand -> plus petit).
+trans.item.sorting3.desc3: §7Cliquez ici pour trier par types.

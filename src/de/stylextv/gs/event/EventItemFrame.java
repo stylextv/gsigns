@@ -23,7 +23,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameBreak(HangingBreakEvent e) {
 		if(e.getEntity() instanceof ItemFrame) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			ItemFrame itemFrame = (ItemFrame) e.getEntity();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				e.setCancelled(true);
 			}
@@ -32,7 +33,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameBreak(HangingBreakByEntityEvent e) {
 		if(e.getRemover() instanceof Player && e.getEntity() instanceof ItemFrame && e.getCause()==RemoveCause.ENTITY) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			ItemFrame itemFrame = (ItemFrame) e.getEntity();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				Player p=(Player) e.getRemover();
 				PlayerManager.onFrameBreak(p,frame);
@@ -43,7 +45,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameInteract(PlayerInteractEntityEvent e) {
 		if(e.getRightClicked() instanceof ItemFrame) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getRightClicked());
+			ItemFrame itemFrame = (ItemFrame) e.getRightClicked();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				e.setCancelled(true);
 			}
@@ -52,7 +55,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameInteract(PlayerInteractAtEntityEvent e) {
 		if(e.getRightClicked() instanceof ItemFrame) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getRightClicked());
+			ItemFrame itemFrame = (ItemFrame) e.getRightClicked();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				e.setCancelled(true);
 			}
@@ -61,7 +65,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameInteract(HangingPlaceEvent e) {
 		if(e.getEntity().getType()==EntityType.ITEM_FRAME) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			ItemFrame itemFrame = (ItemFrame) e.getEntity();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				e.setCancelled(true);
 			}
@@ -71,7 +76,8 @@ public class EventItemFrame implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onItemFrameDamage(EntityDamageEvent e) {
 		if(e.getEntity().getType()==EntityType.ITEM_FRAME) {
-			BetterFrame frame=WorldUtil.getFrame((ItemFrame) e.getEntity());
+			ItemFrame itemFrame = (ItemFrame) e.getEntity();
+			BetterFrame frame=WorldUtil.getFrame(itemFrame.getLocation(), itemFrame.getFacing());
 			if(frame!=null) {
 				e.setCancelled(true);
 			}

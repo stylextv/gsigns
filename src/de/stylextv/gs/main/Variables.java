@@ -11,7 +11,7 @@ public class Variables {
 	public static String COLOR2="§5";
 	
 	public static String PREFIX;
-	public static String PREFIX_CONSOLE="GSigns | ";
+	public static String PREFIX_CONSOLE=NAME+" | ";
 	
 	public static String AUTHOR;
 	public static String VERSION;

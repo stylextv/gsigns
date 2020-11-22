@@ -1,0 +1,234 @@
+trans.command.suggestion.create: (Code)
+trans.command.suggestion.list: [Page]
+trans.command.suggestion.remove: [UUID]
+trans.command.suggestion.uuid: (UUID)
+
+trans.command.use.gui: §7Use §c/gs gui
+trans.command.use.remove: §7Use §c/gs remove [UUID]
+trans.command.use.tp: §7Use §c/gs tp (UUID)
+trans.command.use.play: §7Use §c/gs play (UUID)
+trans.command.use.pause: §7Use §c/gs pause (UUID)
+trans.command.use.update: §7Use §c/gs update
+trans.command.use.create: §7Use §c/gs create (Code)
+trans.command.use.cancel: §7Use §c/gs cancel
+trans.command.use.listfiles: §7Use §c/gs listfiles [Page]
+trans.command.use.listsigns: §7Use §c/gs listsigns [Page]
+trans.command.use.help: §7Use §e/gs help§7 to get a list of commands.
+
+trans.command.error.noplayer: §rThis command is for §cplayers§r only.
+trans.command.error.noperm: §7You don't have the right §cpermission§7 to do that.
+trans.command.error.nosign: §7Could not find a sign with the UUID: §c%0%§7.
+trans.command.error.novaliduuid: §7Please enter a valid §cUUID§7.
+trans.command.error.nogif: §7This sign does not contain a §cGIF§7.
+trans.command.error.novalidpage: §7Please enter a valid §cpage number§7.
+
+trans.command.hover.next: §7Click here to view the §enext§7 page.
+trans.command.hover.previous: §7Click here to view the §eprevious§7 page.
+trans.command.hover.filecommand: §7Click here to get a §ecommand§7 for this file.
+trans.command.hover.teleport: §7Click here to §eteleport§7 to this sign.
+trans.command.hover.play: §7Click here to §eplay§7 this sign.
+trans.command.hover.pause: §7Click here to §epause§7 this sign.
+trans.command.hover.remove: §7Click here to §eremove§7 this sign.
+trans.command.hover.refresh: §7Click here to refresh the §ecurrent§7 page.
+
+trans.command.remove.success: §7The sign was §aremoved §7successfully.
+
+trans.command.tp.success: §7You have been §ateleported §7successfully.
+
+trans.command.play.success: §7The sign is §aplaying §7now.
+trans.command.play.error.alreadyplaying: §7The sign is already §cplaying§7.
+
+trans.command.pause.success: §7The sign has now §astopped §7playing.
+trans.command.pause.error.alreadypaused: §7The sign is already §cpaused§7.
+
+trans.command.listfiles.title:                        Files
+trans.command.listfiles.newlyadded: §e*§7: Newly added
+trans.command.listfiles.error.nofiles: Folder is empty =(
+
+trans.command.listsigns.title:                        Signs
+trans.command.listsigns.error.nosigns: No signs created yet =(
+
+trans.command.list.page: Page %0%
+trans.command.list.refresh: Refresh
+
+trans.command.create.error.novalidcode: §7The §ccode§7 you provided could not be parsed.
+trans.command.create.error.novalidvalue: §7The following value could not be parsed: §c%0%
+
+trans.command.info.title:                    Information
+trans.command.info.line1: §7§oYou are using the open source plugin
+trans.command.info.line2: §7§o §e%0%§7§o to put images and gifs into
+trans.command.info.line3: §7§o item frames!
+trans.command.info.line4: §8- §7Developed by §8> §b%0%
+trans.command.info.line5: §8- §7Installed version §8> §b%0%
+
+trans.command.help.needsperm: §e*§7: Needs extra permission to be executed
+trans.command.help.required: Required
+trans.command.help.optional: Optional
+trans.command.help.line1: /gs create (Code) §8> §7Create a sign§e*
+trans.command.help.line2: /gs remove [UUID] §8> §7Remove a sign§e*
+trans.command.help.line3: /gs cancel §8> §7Cancel placement§e*
+trans.command.help.line4: /gs listfiles [Page] §8> §7Lists your images§e*
+trans.command.help.line5: /gs listsigns [Page] §8> §7Lists your signs§e*
+trans.command.help.line6: /gs gui §8> §7Open gui§e*
+trans.command.help.line7: /gs tp (UUID) §8> §7Teleport to a sign§e*
+trans.command.help.line8: /gs play (UUID) §8> §7Play a sign§e*
+trans.command.help.line9: /gs pause (UUID) §8> §7Pause a sign§e*
+trans.command.help.line10: /gs update §8> §7Update plugin§e*
+trans.command.help.line11: /gs help §8> §7Show help
+trans.command.help.line12: /gs info §8> §7Show plugin information
+
+trans.config.name.distance: Viewing distance
+trans.config.name.transmissionrate: Map transmission rate
+trans.config.name.reservedmaps: Reserved vanilla maps
+trans.config.name.language: Language
+
+trans.config.desc.distance1: The maximum distance, in
+trans.config.desc.distance2: blocks, from which the
+trans.config.desc.distance3: signs are visible.
+trans.config.desc.transmissionrate1: The maximum number of maps
+trans.config.desc.transmissionrate2: sent to a single player per
+trans.config.desc.transmissionrate3: 3 ticks.
+trans.config.desc.reservedmaps1: The amount of map IDs (in
+trans.config.desc.reservedmaps2: thousands) that are kept
+trans.config.desc.reservedmaps3: for the vanilla gameplay
+trans.config.desc.reservedmaps4: and therefore are not used
+trans.config.desc.reservedmaps5: by this plugin.
+trans.config.desc.language1: The language in which the
+trans.config.desc.language2: plugin will display
+trans.config.desc.language3: messages and other texts.
+
+trans.config.range: range: %0% - %1%
+trans.config.options: options: %0%
+trans.config.type: type: %0%
+trans.config.currentvalue: Current value: §b%0%
+
+trans.create.firstcorner: Your sign was §acreated§7 successfully. Please click one of the §ecorners§7 of the frame.
+trans.create.secondcorner: The first corner has been §aset§7. Now please click on the §eopposite§7 corner.
+trans.create.cancel: The placement process has been §ccanceled§7.
+trans.create.success: Your sign has been §aplaced§7 successfully.
+trans.create.wait: Please §ewait§7 until the sign has been placed. This may take a bit...
+trans.create.error.noprocess: You are currently not in a placement §cprocess§7.
+trans.create.error.wrongversion: Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.
+trans.create.error.wrongworld: The two corners have to be in the same §cworld§7.
+trans.create.error.novalidpos: This is not a §cvalid§7 position for a sign.
+trans.create.error.itemframes: There are, already existing, §citem frames §7in the way.
+trans.create.error.nosolid: There must be §csolid §7blocks to hang a sign.
+
+trans.remove.use: §7Use §e/gs remove§7 to remove a sign.
+trans.remove.success: §7The sign has been §aremoved§7.
+trans.remove.punch: §aPunch§7 a sign to remove it or use §e/gs remove§7 again to cancel the process.
+trans.remove.cancel: The removal process has been §ccanceled§7.
+trans.remove.error.noperm: §7You no longer have the §cpermission§7 to remove signs.
+
+trans.console.load: Succesfully loaded §%0%§r signs in %1%s.
+trans.console.error.wrongversion1: The server-version you are running (§c%0%§r) is not supported by this plugin!
+trans.console.error.wrongversion2: You may run into some issues!
+trans.console.error.delete: Deleted old/corrupted file: §c%0%
+
+trans.autoupdate.begin: §7Checking for new updates...
+trans.autoupdate.result.noupdate: §7The plugin is up to date! You are running the §alatest§7 version of %0%.
+trans.autoupdate.result.found1: §7A new update has been §afound§7. Version: %0%
+trans.autoupdate.result.found2: §7The update is installed when the server is
+trans.autoupdate.result.found3: §eclosed §7or §erestarted§7.
+trans.autoupdate.error.noconnection: §7Couldn't connect to the server. Make sure you are connected to the §cinternet§7.
+trans.autoupdate.error.unknown: §7An §cexception§7 occurred while checking for new updates!
+trans.autoupdate.error.alreadyfound1: §7A new update has §ealready§7 been found. Version: %0%
+trans.autoupdate.error.alreadyfound2: §7The update is installed when the server is §eclosed §7or §erestarted§7.
+trans.autoupdate.error.alreadysearching: §eSomeone else§7 is already checking for an update.
+
+trans.autoupdate.console.found1: A new §aupdate§r has been found. Version: %0%
+trans.autoupdate.console.found2: Enter §e/gs update§r into your ingame chat to install the update.
+trans.autoupdate.console.installed1: A new update has been §ainstalled§r. Version: %0% -> %1%
+trans.autoupdate.console.installed2: The changelog can be found here:
+trans.autoupdate.console.error.unknown: An §cexception§r occurred while checking for new updates:
+
+trans.menu.sign.remove: §7The sign was §aremoved §7successfully.
+trans.menu.sign.uuid: §7UUID: §b%0%
+trans.menu.sign.world: §7World: §e%0%
+trans.menu.sign.size: §7Size: §e%0%
+trans.menu.sign.desc1: §7Click here to open the menu
+trans.menu.sign.desc2: §7for this sign.
+
+trans.menu.settings.removeall.success.one: §7Successfully removed §a%0%§7 sign.
+trans.menu.settings.removeall.success.multiple: §7Successfully removed §a%0%§7 signs.
+trans.menu.settings.removeall.error.nosigns: §7There are §cno signs§7 that can be removed.
+
+trans.item.plusminus.desc1: §b§oLeft§7 click: §e%0%1
+trans.item.plusminus.desc2: §b§oShift§7 + §b§oleft§7 click: §e%0%5
+trans.item.minus.name: §e§lMinus
+trans.item.minus.desc1: §7Click here to remove
+trans.item.minus.desc2: §7from the current value.
+trans.item.plus.name: §e§lPlus
+trans.item.plus.desc1: §7Click here to add
+trans.item.plus.desc2: §7to the current value.
+trans.item.optionleft.name: §e§lPrevious
+trans.item.optionleft.desc1: §7Click here to select
+trans.item.optionleft.desc2: §7the previous option.
+trans.item.optionright.name: §e§lNext
+trans.item.optionright.desc1: §7Click here to select
+trans.item.optionright.desc2: §7the next option.
+
+trans.item.play.name: §7State: §b§lPaused
+trans.item.play.desc1: §7Click here to play
+trans.item.play.desc2: §7this sign.
+
+trans.item.pause.name: §7State: §b§lPlaying
+trans.item.pause.desc1: §7Click here to pause
+trans.item.pause.desc2: §7this sign.
+
+trans.item.left.name: §e§lLeft
+trans.item.left.desc1: §7Click here to go 1 page
+trans.item.left.desc2: §7to the left.
+
+trans.item.right.name: §e§lRight
+trans.item.right.desc1: §7Click here to go 1 page
+trans.item.right.desc2: §7to the right.
+
+trans.item.back.name: §e§lBack
+trans.item.back.desc1: §7Click here to go to the
+trans.item.back.desc2: §7previous menu.
+
+trans.item.restoreconfig.name: §b§lRestore default
+trans.item.restoreconfig.desc1: §7Click here to restore the
+trans.item.restoreconfig.desc2: §7default config.
+
+trans.item.update.name: §b§lUpdate plugin
+trans.item.update.desc1: §7Click here to automatically
+trans.item.update.desc2: §7update the plugin to the
+trans.item.update.desc3: §7latest version without leaving
+trans.item.update.desc4: §7the in-game menu.
+
+trans.item.config.name: §5§lConfig
+trans.item.config.desc1: §7Click here to edit
+trans.item.config.desc2: §7the config ingame.
+
+trans.item.removeall.name: §c§lRemove all signs
+trans.item.removeall.desc1: §7Click here to remove
+trans.item.removeall.desc2: §e§nevery§7 sign.
+
+trans.item.remove.name: §c§lRemove
+trans.item.remove.desc1: §7Click here to remove
+trans.item.remove.desc2: §7this sign.
+
+trans.item.teleport.name: §e§lTeleport
+trans.item.teleport.desc1: §7Click here to teleport
+trans.item.teleport.desc2: §7to this sign.
+
+trans.item.settings.name: §c§lSettings
+trans.item.settings.desc1: §7Click here to open
+trans.item.settings.desc2: §7the settings.
+
+trans.item.sorting1.name: §7Sorted by: §b§lTypes
+trans.item.sorting1.desc1: §7The signs are sorted by their
+trans.item.sorting1.desc2: §7type (GIF/image).
+trans.item.sorting1.desc3: §7Click here to sort by worlds.
+
+trans.item.sorting2.name: §7Sorted by: §b§lWorlds
+trans.item.sorting2.desc1: §7The signs are sorted by their
+trans.item.sorting2.desc2: §7world (World type and name).
+trans.item.sorting2.desc3: §7Click here to sort by sizes.
+
+trans.item.sorting3.name: §7Sorted by: §b§lSizes
+trans.item.sorting3.desc1: §7The signs are sorted by their
+trans.item.sorting3.desc2: §7size (Largest -> Smallest).
+trans.item.sorting3.desc3: §7Click here to sort by types.

@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import de.stylextv.gs.lang.LanguageManager;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
 import de.stylextv.gs.util.ItemUtil;
@@ -31,14 +32,16 @@ public class SignMenu extends Menu {
 	@Override
 	public void fillConstants() {
 		for(int x=0; x<9; x++) {
-			if(x!=4) setItem(x, 0, ItemUtil.BLANK);
-			setItem(x, getLastY(), ItemUtil.BLANK);
+			if(x!=4) {
+				setItem(x, 0, ItemUtil.BLANK);
+				setItem(x, getLastY(), ItemUtil.BLANK);
+			}
 		}
 		
 		Material m;
 		if(WorldUtil.getMcVersion() < WorldUtil.MCVERSION_1_14) m=Material.valueOf("SIGN");
 		else m=Material.OAK_SIGN;
-		setItem(4, 0, ItemUtil.createItemStack(m, "§7UUID: §b"+sign.getUid().toString().substring(0,6)+"...", "§7World: §e"+sign.getWorld().getName(),"§7Size: §e"+sign.getSize()));
+		setItem(4, 0, ItemUtil.createItemStack(m, LanguageManager.parseMsg("trans.menu.sign.uuid", sign.getUid().toString().substring(0,6)+"..."), LanguageManager.parseMsg("trans.menu.sign.world", sign.getWorld().getName()),LanguageManager.parseMsg("trans.menu.sign.size", sign.getSize())));
 		setItem(4, getLastY(), ItemUtil.HEAD_BACK);
 		if(sign.isGif()) {
 			setItem(2, 2, ItemUtil.SIGN_TP);
@@ -93,7 +96,7 @@ public class SignMenu extends Menu {
 					p.closeInventory();
 					sign.teleport(p);
 					playClickSound(p, true);
-					p.sendMessage(Variables.PREFIX+"§7You have been §ateleported §7successfully.");
+					p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.command.tp.success"));
 				} else {
 					kickPlayerForNoPerm(p);
 				}
@@ -103,7 +106,7 @@ public class SignMenu extends Menu {
 					if(PermissionUtil.hasGuiPermission(p)) {
 						kickPlayerToMainMenu(p);
 					} else {
-						p.sendMessage(Variables.PREFIX+"§7The sign was §aremoved §7successfully.");
+						p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.menu.sign.remove"));
 						p.closeInventory();
 					}
 					WorldUtil.removeSign(sign);

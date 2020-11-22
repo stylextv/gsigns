@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.stylextv.gs.config.ConfigManager;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.packet.Reflections;
 import de.stylextv.gs.packet.Reflections.ConstructorInvoker;
@@ -30,8 +31,6 @@ import de.stylextv.gs.packet.TinyProtocol;
 import de.stylextv.gs.player.ConnectionManager;
 
 public class BetterFrame {
-	
-	private static final int VIEW_DISTANCE_SQ=30*30;
 	
     private static final Class<Object> packetClass = Reflections.getUntypedClass("{nms}.Packet");
     private static final Reflections.MethodInvoker sendPacket = Reflections.getMethod("{nms}.PlayerConnection", "sendPacket", packetClass);
@@ -138,6 +137,9 @@ public class BetterFrame {
 				}
 			} else currentItemIndex=0;
 			
+			int viewDistanceSq = ConfigManager.VALUE_VIEW_DISTANCE.getValue();
+			viewDistanceSq = viewDistanceSq*viewDistanceSq;
+			
 			if(currentItemIndex!=prevFrame && !paused) {
 				
 				for(Player all:Bukkit.getOnlinePlayers()) {
@@ -145,7 +147,7 @@ public class BetterFrame {
 						Location loc1=all.getLocation();
 						Location loc2=itemFrame.getLocation();
 						double dis=(loc1.getX()-loc2.getX())*(loc1.getX()-loc2.getX()) + (loc1.getZ()-loc2.getZ())*(loc1.getZ()-loc2.getZ());
-						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
+						if(dis<viewDistanceSq) {
 							sendContent(all);
 							showInFrame(all, currentItemIndex);
 						}
@@ -162,7 +164,7 @@ public class BetterFrame {
 						Location loc1=all.getLocation();
 						Location loc2=itemFrame.getLocation();
 						double dis=(loc1.getX()-loc2.getX())*(loc1.getX()-loc2.getX()) + (loc1.getZ()-loc2.getZ())*(loc1.getZ()-loc2.getZ());
-						if(dis<BetterFrame.VIEW_DISTANCE_SQ) {
+						if(dis<viewDistanceSq) {
 							sendContent(all);
 							if(!playersInRadius.contains(all)) {
 								playersInRadius.add(all);

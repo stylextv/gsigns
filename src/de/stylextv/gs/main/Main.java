@@ -14,6 +14,7 @@ import de.stylextv.gs.api.PublicGSignsAPI;
 import de.stylextv.gs.command.CommandHandler;
 import de.stylextv.gs.command.CommandListener;
 import de.stylextv.gs.command.MainTabCompleter;
+import de.stylextv.gs.config.ConfigManager;
 import de.stylextv.gs.event.EventGui;
 import de.stylextv.gs.event.EventItemFrame;
 import de.stylextv.gs.event.EventMap;
@@ -50,6 +51,8 @@ public class Main extends JavaPlugin {
 		Variables.AUTHOR=plugin.getDescription().getAuthors().get(0);
 		Variables.VERSION=plugin.getDescription().getVersion();
 		
+		ConfigManager.onEnable();
+		
 		MainTabCompleter tabCompleter=new MainTabCompleter();
 		getCommand("gs").setExecutor(new CommandListener("gs"));
 		getCommand("gs").setTabCompleter(tabCompleter);
@@ -69,7 +72,7 @@ public class Main extends JavaPlugin {
 		getServer().getServicesManager().register(GSignsAPI.class, new PublicGSignsAPI(), this, ServicePriority.Normal);
 	}
 	private void enableMetrics() {
-		Metrics metrics = new Metrics(this);
+		Metrics metrics = new Metrics(this, 9419);
 		metrics.addCustomChart(new Metrics.SingleLineChart("global_signs", new Callable<Integer>() {
 	        @Override
 	        public Integer call() throws Exception {

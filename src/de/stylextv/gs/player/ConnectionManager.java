@@ -5,9 +5,10 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import de.stylextv.gs.config.ConfigManager;
+
 public class ConnectionManager {
 	
-	private static int SENDS_PER_3TICKS=40;
 	private static int TICK_OSCILLATOR;
 	
 	private static HashMap<Player, Integer> sendCounts=new HashMap<Player, Integer>();
@@ -26,12 +27,12 @@ public class ConnectionManager {
 		
 		Integer i=sendCounts.get(p);
 		if(i==null) i=0;
-		if(i+amount<=SENDS_PER_3TICKS) {
+		if(i+amount<=ConfigManager.VALUE_MAP_SENDS_PER_3TICKS.getValue()) {
 			sendCounts.put(p, i+amount);
 			return amount;
 		} else {
-			sendCounts.put(p, SENDS_PER_3TICKS);
-			return SENDS_PER_3TICKS-i;
+			sendCounts.put(p, ConfigManager.VALUE_MAP_SENDS_PER_3TICKS.getValue());
+			return ConfigManager.VALUE_MAP_SENDS_PER_3TICKS.getValue()-i;
 		}
 	}
 	public static void removePlayer(Player p) {

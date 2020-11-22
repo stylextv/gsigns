@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import de.stylextv.gs.lang.LanguageManager;
 import de.stylextv.gs.permission.PermissionUtil;
 import de.stylextv.gs.world.BetterSign;
 import de.stylextv.gs.world.WorldUtil;
@@ -34,13 +35,27 @@ public class MainTabCompleter implements TabCompleter {
 		COMMAND_SUGGESTIONS.add("help");
 		COMMAND_SUGGESTIONS.add("info");
 		
-		CREATE_SUGGESTIONS.add("(Code)");
+		CREATE_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.create"));
 		
-		LIST_SUGGESTIONS.add("[Page]");
+		LIST_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.list"));
 		
-		REMOVE_SUGGESTIONS.add("[UUID]");
+		REMOVE_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.remove"));
 		
-		UUID_SUGGESTIONS.add("(UUID)");
+		UUID_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.uuid"));
+	}
+	public static void recreateFromLanguage() {
+		CREATE_SUGGESTIONS.clear();
+		LIST_SUGGESTIONS.clear();
+		REMOVE_SUGGESTIONS.clear();
+		UUID_SUGGESTIONS.clear();
+		
+		CREATE_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.create"));
+		
+		LIST_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.list"));
+		
+		REMOVE_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.remove"));
+		
+		UUID_SUGGESTIONS.add(LanguageManager.parseMsg("trans.command.suggestion.uuid"));
 	}
 	
 	@Override

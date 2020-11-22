@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import de.stylextv.gs.decode.BetterGifDecoder.GifImage;
 import de.stylextv.gs.gui.GuiManager;
 import de.stylextv.gs.image.ImageGenerator;
+import de.stylextv.gs.lang.LanguageManager;
 import de.stylextv.gs.main.Main;
 import de.stylextv.gs.main.Variables;
 import de.stylextv.gs.permission.PermissionUtil;
@@ -33,13 +34,13 @@ import de.stylextv.gs.world.WorldUtil;
 
 public class PlayerManager {
 	
-	private static Direction[] directions = new Direction[]{
-			new Direction(1,  0,  0),
-			new Direction(0,  0,  1),
-			new Direction(-1, 0,  0),
-			new Direction(0,  0, -1),
-			new Direction(0, -1,  0),
-			new Direction(0,  1,  0)
+	private static final Direction[] DIRECTIONS = new Direction[]{
+			new Direction(1,  0,  0, BlockFace.WEST),
+			new Direction(0,  0,  1, BlockFace.NORTH),
+			new Direction(-1, 0,  0, BlockFace.EAST),
+			new Direction(0,  0, -1, BlockFace.SOUTH),
+			new Direction(0, -1,  0, BlockFace.UP),
+			new Direction(0,  1,  0, BlockFace.DOWN)
 	};
 	
 	private static ConcurrentHashMap<Player, Order> playerTasks=new ConcurrentHashMap<Player, Order>();
@@ -47,19 +48,19 @@ public class PlayerManager {
 	
 	public static void startPlacingPhase(Player p, Order order) {
 		playerTasks.put(p, order);
-		p.sendMessage(Variables.PREFIX+"Your sign was §acreated§7 successfully. Please click one of the §ecorners§7 of the frame.");
+		p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.firstcorner"));
 	}
 	public static void cancelPlacingPhase(Player p) {
 		Order o=playerTasks.remove(p);
-		if(o!=null) p.sendMessage(Variables.PREFIX+"The placement process has been §ccanceled§7.");
-		else p.sendMessage(Variables.PREFIX+"You are currently not in a placement §cprocess§7.");
+		if(o!=null) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.cancel"));
+		else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.noprocess"));
 	}
 	public static void toggleRemovingPhase(Player p) {
 		if(playersInRemove.remove(p)) {
-			p.sendMessage(Variables.PREFIX+"The removal process has been §ccanceled§7.");
+			p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.remove.cancel"));
 		} else {
 			playersInRemove.add(p);
-			p.sendMessage(Variables.PREFIX+"§aPunch§7 a sign to remove it or use §e/gs remove§7 again to cancel the process.");
+			p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.remove.punch"));
 		}
 	}
 	
@@ -109,7 +110,7 @@ public class PlayerManager {
 					placeSign(order, first, second, p, e, false);
 				} else {
 					order.setFirstCorner(b.getRelative(e.getBlockFace()).getLocation());
-					p.sendMessage(Variables.PREFIX+"The first corner has been §aset§7. Now please click on the §eopposite§7 corner.");
+					p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.secondcorner"));
 					e.setCancelled(true);
 				}
 				
@@ -129,7 +130,7 @@ public class PlayerManager {
 			boolean placed=false;
 			boolean validFound=false;
 			boolean itemFramesDetected=false;
-			for(Direction dir:directions) {
+			for(Direction dir : DIRECTIONS) {
 				boolean valid=true;
 				if(dir.getX()!=0) {
 					valid=top.getBlockX()==bottom.getBlockX();
@@ -167,14 +168,9 @@ public class PlayerManager {
 						if(dir.getX()!=0) {
 							int minZ;
 							int maxZ;
-							BlockFace face;
+							BlockFace face = dir.getFace();
 							minZ=Math.min(top.getBlockZ(),bottom.getBlockZ());
 							maxZ=Math.max(top.getBlockZ(),bottom.getBlockZ());
-							if(dir.getX()==-1) {
-								face=BlockFace.EAST;
-							} else {
-								face=BlockFace.WEST;
-							}
 							int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 							int imgWidth=maxZ-minZ+1;
 							sign.setSize(imgWidth, imgHeight);
@@ -208,7 +204,7 @@ public class PlayerManager {
 										}
 										WorldUtil.registerSign(sign);
 										System.gc();
-										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
+										if(!isApi) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.success"));
 									}
 								}.runTaskAsynchronously(Main.getPlugin());
 							} else {
@@ -230,14 +226,9 @@ public class PlayerManager {
 						} else if(dir.getZ()!=0) {
 							int minX;
 							int maxX;
-							BlockFace face;
+							BlockFace face = dir.getFace();
 							maxX=Math.max(top.getBlockX(),bottom.getBlockX());
 							minX=Math.min(top.getBlockX(),bottom.getBlockX());
-							if(dir.getZ()==-1) {
-								face=BlockFace.SOUTH;
-							} else {
-								face=BlockFace.NORTH;
-							}
 							int imgHeight=top.getBlockY()-bottom.getBlockY()+1;
 							int imgWidth=maxX-minX+1;
 							sign.setSize(imgWidth, imgHeight);
@@ -271,7 +262,7 @@ public class PlayerManager {
 										}
 										WorldUtil.registerSign(sign);
 										System.gc();
-										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
+										if(!isApi) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.success"));
 									}
 								}.runTaskAsynchronously(Main.getPlugin());
 							} else {
@@ -292,9 +283,9 @@ public class PlayerManager {
 							}
 						} else {
 							if(WorldUtil.getMcVersion()<WorldUtil.MCVERSION_1_13) {
-								if(isApi) throw new InvalidParameterException("Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.");
+								if(isApi) throw new InvalidParameterException("Item frames can only be placed on the floor/ceiling when using minecraft version 1.13 or higher.");
 								placed=true;
-								p.sendMessage(Variables.PREFIX+"Item frames can only be placed on the §cfloor/ceiling§7 when using minecraft version §c1.13§7 or higher.");
+								p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.wrongversion"));
 								playerTasks.remove(p);
 								break;
 							}
@@ -303,16 +294,11 @@ public class PlayerManager {
 							int maxX;
 							int minZ;
 							int maxZ;
-							BlockFace face;
+							BlockFace face = dir.getFace();
 							maxX=Math.max(top.getBlockX(),bottom.getBlockX());
 							minX=Math.min(top.getBlockX(),bottom.getBlockX());
 							maxZ=Math.max(top.getBlockZ(),bottom.getBlockZ());
 							minZ=Math.min(top.getBlockZ(),bottom.getBlockZ());
-							if(dir.getY()==-1) {
-								face=BlockFace.UP;
-							} else {
-								face=BlockFace.DOWN;
-							}
 							int h=maxZ-minZ+1;
 							int w=maxX-minX+1;
 							float playerYaw=p.getLocation().getYaw()+45;
@@ -375,7 +361,7 @@ public class PlayerManager {
 										}
 										WorldUtil.registerSign(sign);
 										System.gc();
-										if(!isApi) p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
+										if(!isApi) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.success"));
 									}
 								}.runTaskAsynchronously(Main.getPlugin());
 							} else {
@@ -411,8 +397,8 @@ public class PlayerManager {
 						
 						placed=true;
 						if(!isApi) {
-							if(order.getBackgroundGif()!=null) p.sendMessage(Variables.PREFIX+"Please §ewait§7 until the sign has been placed. This may take a bit...");
-							else p.sendMessage(Variables.PREFIX+"Your sign has been §aplaced§7 successfully.");
+							if(order.getBackgroundGif()!=null) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.wait"));
+							else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.success"));
 							playerTasks.remove(p);
 						}
 						uid = sign.getUid();
@@ -423,15 +409,15 @@ public class PlayerManager {
 			if(!placed) {
 				if(isApi) throw new InvalidParameterException("No valid location found.");
 				
-				if(!validFound) p.sendMessage(Variables.PREFIX+"This is not a §cvalid§7 position for a sign.");
+				if(!validFound) p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.novalidpos"));
 				else if(itemFramesDetected) {
-					p.sendMessage(Variables.PREFIX+"There are, already existing, §citem frames §7in the way.");
-				} else p.sendMessage(Variables.PREFIX+"There must be §csolid §7blocks to hang a sign.");
+					p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.itemframes"));
+				} else p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.nosolid"));
 			}
 		} else {
 			if(isApi) throw new InvalidParameterException("The two corners have to be in the same world.");
 			
-			p.sendMessage(Variables.PREFIX+"The two corners have to be in the same §cworld§7.");
+			p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.create.error.wrongworld"));
 		}
 		return uid;
 	}
@@ -444,15 +430,15 @@ public class PlayerManager {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
 				WorldUtil.removeSign(frame.getSign());
-				p.sendMessage(Variables.PREFIX+"§7The sign has been §aremoved§7.");
+				p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.remove.success"));
 			} else {
-				p.sendMessage(Variables.PREFIX+"§7You no longer have the §cpermission§7 to remove signs.");
+				p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.remove.error.noperm"));
 			}
 			
 		} else {
 			
 			if(PermissionUtil.hasRemovePermission(p)) {
-				p.sendMessage(Variables.PREFIX+"§7Use §e/gs remove§7 to remove a sign.");
+				p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.remove.use"));
 				if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_8) p.playSound(p.getLocation(), "gui.button.press", 0.5f,0.75f);
 				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_10) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", 1,1);
 				else if(WorldUtil.getMcVersion()<=WorldUtil.MCVERSION_1_12) p.playSound(p.getLocation(), "minecraft:block.wood_button.click_off", SoundCategory.BLOCKS, 1,1);
