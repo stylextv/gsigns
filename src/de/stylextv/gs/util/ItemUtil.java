@@ -48,11 +48,14 @@ public class ItemUtil {
 		create();
 	}
 	public static void create() {
+		Material comparatorMaterial;
 		if(WorldUtil.getMcVersion() < WorldUtil.MCVERSION_1_13) {
+			comparatorMaterial = Material.valueOf("REDSTONE_COMPARATOR");
 			BLANK = createItemStack(Material.valueOf("STAINED_GLASS_PANE"), 15, "§r");
 			SIGN_PLAY = createItemStack(Material.valueOf("INK_SACK"), 8, LanguageManager.parseMsg("trans.item.play.name"), LanguageManager.parseMsg("trans.item.play.desc1"), LanguageManager.parseMsg("trans.item.play.desc2"));
 			SIGN_PAUSE = createItemStack(Material.valueOf("INK_SACK"), 10, LanguageManager.parseMsg("trans.item.pause.name"), LanguageManager.parseMsg("trans.item.pause.desc1"), LanguageManager.parseMsg("trans.item.pause.desc2"));
 		} else {
+			comparatorMaterial = Material.COMPARATOR;
 			BLANK = createItemStack(Material.BLACK_STAINED_GLASS_PANE, "§r");
 			SIGN_PLAY = createItemStack(Material.GRAY_DYE, LanguageManager.parseMsg("trans.item.play.name"), LanguageManager.parseMsg("trans.item.play.desc1"), LanguageManager.parseMsg("trans.item.play.desc2"));
 			SIGN_PAUSE = createItemStack(Material.LIME_DYE, LanguageManager.parseMsg("trans.item.pause.name"), LanguageManager.parseMsg("trans.item.pause.desc1"), LanguageManager.parseMsg("trans.item.pause.desc2"));
@@ -68,7 +71,7 @@ public class ItemUtil {
 			int j = i+1;
 			SORTED_BY[i] = createItemStack(Material.NETHER_STAR, LanguageManager.parseMsg("trans.item.sorting"+j+".name"), "",LanguageManager.parseMsg("trans.item.sorting"+j+".desc1"),LanguageManager.parseMsg("trans.item.sorting"+j+".desc2"),"",LanguageManager.parseMsg("trans.item.sorting"+j+".desc3"));
 		}
-		SETTINGS = createItemStack(Material.COMPARATOR, LanguageManager.parseMsg("trans.item.settings.name"), LanguageManager.parseMsg("trans.item.settings.desc1"), LanguageManager.parseMsg("trans.item.settings.desc2"));
+		SETTINGS = createItemStack(comparatorMaterial, LanguageManager.parseMsg("trans.item.settings.name"), LanguageManager.parseMsg("trans.item.settings.desc1"), LanguageManager.parseMsg("trans.item.settings.desc2"));
 		
 		SIGN_REMOVE = createItemStack(Material.BARRIER, LanguageManager.parseMsg("trans.item.remove.name"), LanguageManager.parseMsg("trans.item.remove.desc1"), LanguageManager.parseMsg("trans.item.remove.desc2"));
 		SIGN_TP = createItemStack(Material.ENDER_PEARL, LanguageManager.parseMsg("trans.item.teleport.name"), LanguageManager.parseMsg("trans.item.teleport.desc1"), LanguageManager.parseMsg("trans.item.teleport.desc2"));
