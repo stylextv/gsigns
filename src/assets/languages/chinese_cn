@@ -1,0 +1,234 @@
+trans.command.suggestion.create: (数据码)
+trans.command.suggestion.list: [页码]
+trans.command.suggestion.remove: [UUID]
+trans.command.suggestion.uuid: (UUID)
+
+trans.command.use.gui: §7请使用 §c/gs gui
+trans.command.use.remove: §7请使用 §c/gs remove [UUID]
+trans.command.use.tp: §7请使用 §c/gs tp (UUID)
+trans.command.use.play: §7请使用 §c/gs play (UUID)
+trans.command.use.pause: §7请使用 §c/gs pause (UUID)
+trans.command.use.update: §7请使用 §c/gs update
+trans.command.use.create: §7请使用 §c/gs create (数据码)
+trans.command.use.cancel: §7请使用 §c/gs cancel
+trans.command.use.listfiles: §7请使用 §c/gs listfiles [页码]
+trans.command.use.listsigns: §7Use §c/gs listsigns [页码]
+trans.command.use.help: §7请使用 §e/gs help§7 来获取命令清单。
+
+trans.command.error.noplayer: §r这个命令只能由 §c玩家§r 运行。 
+trans.command.error.noperm: §7您没有相应的 §c权限§7 来那么做。
+trans.command.error.nosign: §7无法找到相应 UUID 的显示板: §c%0%§7。
+trans.command.error.novaliduuid: §7请输入一个有效的 §cUUID§7。
+trans.command.error.nogif: §7这个显示板并未包含有 §cGIF§7。
+trans.command.error.novalidpage: §7请输入一个有效的 §c页码数§7。
+
+trans.command.hover.next: §7点击这里以查看 §e下§7 一页。
+trans.command.hover.previous: §7点击这里以查看 §e上§7 一页。
+trans.command.hover.filecommand: §7点击这里来获取这个文件的 §e命令§7 。
+trans.command.hover.teleport: §7点击这里来 §e传送§7 到这个显示板。
+trans.command.hover.play: §7点击这里以 §e播放§7 这个显示板。
+trans.command.hover.pause: §7点击这里以 §e暂停播放§7 这个显示板。
+trans.command.hover.remove: §7点击这里以 §e移除§7 这个显示板。
+trans.command.hover.refresh: §7点击这里以刷新 §e当前§7 页面。
+
+trans.command.remove.success: §7该显示板已被成功 §a移除 §7。
+
+trans.command.tp.success: §7您已被成功 §a传送 §7至该显示板处。
+
+trans.command.play.success: §7该显示板目前 §a正在播放 §7。
+trans.command.play.error.alreadyplaying: §7该显示板已经在 §c播放中 §7了。
+
+trans.command.pause.success: §7该显示板目前已 §a停止 §7播放。
+trans.command.pause.error.alreadypaused: §7该显示板已经被 §c暂停播放 §7过了。
+
+trans.command.listfiles.title:                        文件
+trans.command.listfiles.newlyadded: §e*§7: 最近新增
+trans.command.listfiles.error.nofiles: 文件夹是空的 =(
+
+trans.command.listsigns.title:                        显示板
+trans.command.listsigns.error.nosigns: 目前还没有被创建的显示板 =(
+
+trans.command.list.page: 第 %0% 页
+trans.command.list.refresh: 刷新
+
+trans.command.create.error.novalidcode: §7您输入的 §c数据码§7 无法被解析。
+trans.command.create.error.novalidvalue: §7下列数据值无法被解析: §c%0%
+
+trans.command.info.title:                    信息
+trans.command.info.line1: §7§o您目前正在使用一款开源的插件
+trans.command.info.line2: §7§o §e%0%§7§o 来放置 图片 和 gifs 至
+trans.command.info.line3: §7§o物品展示框中!
+trans.command.info.line4: §8- §7插件开发者 §8> §b%0%
+trans.command.info.line5: §8- §7目前使用的版本 §8> §b%0%
+
+trans.command.help.needsperm: §e*§7: 需要额外的权限来运行该命令
+trans.command.help.required: 必填项
+trans.command.help.optional: 选填项
+trans.command.help.line1: /gs create (数据码) §8> §7创建一个显示板§e*
+trans.command.help.line2: /gs remove [UUID] §8> §7移除一个显示板§e*
+trans.command.help.line3: /gs cancel §8> §7取消显示板的放置§e*
+trans.command.help.line4: /gs listfiles [页码] §8> §7列出您的图像§e*
+trans.command.help.line5: /gs listsigns [页码] §8> §7列出您的显示板§e*
+trans.command.help.line6: /gs gui §8> §7打开 gui 菜单§e*
+trans.command.help.line7: /gs tp (UUID) §8> §7传送至一个显示板§e*
+trans.command.help.line8: /gs play (UUID) §8> §7播放一个显示板§e*
+trans.command.help.line9: /gs pause (UUID) §8> §7暂停显示板的播放§e*
+trans.command.help.line10: /gs update §8> §7更新插件§e*
+trans.command.help.line11: /gs help §8> §7显示帮助
+trans.command.help.line12: /gs info §8> §7显示插件信息
+
+trans.config.name.distance: 可视距离
+trans.config.name.transmissionrate: 地图数据传输速率
+trans.config.name.reservedmaps: 储存原版地图数据
+trans.config.name.language: 语言
+
+trans.config.desc.distance1: 最大可视距离, 为
+trans.config.desc.distance2: 个方块距离, 处于此距离以内的
+trans.config.desc.distance3: 的显示板将会被观测到。
+trans.config.desc.transmissionrate1: 地图数据至多
+trans.config.desc.transmissionrate2: 发送至各个单体玩家的速率为
+trans.config.desc.transmissionrate3: 3 ticks。
+trans.config.desc.reservedmaps1: 地图 IDs 的数量 (为
+trans.config.desc.reservedmaps2: 千) 被保存
+trans.config.desc.reservedmaps3: 在原版游戏中
+trans.config.desc.reservedmaps4: 并因此未被
+trans.config.desc.reservedmaps5: 这个插件使用。
+trans.config.desc.language1: 语言文件为
+trans.config.desc.language2: 插件将从中展示
+trans.config.desc.language3: 信息和其它文本。
+
+trans.config.range: 范围: %0% - %1%
+trans.config.options: 配置: %0%
+trans.config.type: 类型: %0%
+trans.config.currentvalue: 当前值: §b%0%
+
+trans.create.firstcorner: 您的显示板成功 §a创建§7 。请点击物品展示框的一个 §e边角§7 。
+trans.create.secondcorner: 首个选择点已被 §a设置§7。现在请点击 §e对位§7 的边角。
+trans.create.cancel: 显示板放置进程已被 §c取消 §7。
+trans.create.success: 您的显示板已被成功 §a放置§7 。
+trans.create.wait: 请 §e等待§7 直至显示板被放置。这可能会花些时间...
+trans.create.error.noprocess: 您目前尚未处在显示板的 §c放置进程 §7中。
+trans.create.error.wrongversion: 当您使用minecraft版本为 §c1.13§7 及以上时，物品展示框只能被放置 §c地板/天花板§7 上。
+trans.create.error.wrongworld: 两对角的选择只能位于同一 §c世界§7 中。
+trans.create.error.novalidpos: 这对显示板不是一个 §c有效的§7 位置点。
+trans.create.error.itemframes: 选择路径中已经存在 §c物品展示框 §7。
+trans.create.error.nosolid: 选择路径中有 §c沙类 §7方块致使不能放置物品展示框。
+
+trans.remove.use: §7请使用 §e/gs remove§7 来移除一个显示板。
+trans.remove.success: §7该显示板已被成功 §a移除§7。
+trans.remove.punch: §a清除§7 一个显示板来移除或再次使用 §e/gs remove§7 来取消进程。
+trans.remove.cancel: 显示板移除进程已被 §c取消§7。
+trans.remove.error.noperm: §7您不再拥有 §c权限§7 来移除显示板。
+
+trans.console.load: 成功加载 §%0%§r 个显示板于 %1%秒中。
+trans.console.error.wrongversion1: 您正在运行的服务器版本 (§c%0%§r) 未被这个插件所支持!
+trans.console.error.wrongversion2: 您的运行环境使插件出现了偏差!
+trans.console.error.delete: 已删除 旧的/损坏的 文件: §c%0%
+
+trans.autoupdate.begin: §7正在检查插件更新...
+trans.autoupdate.result.noupdate: §7您的插件是最新版的! 您目前运行着 §a最近§7 版本为 %0%。
+trans.autoupdate.result.found1: §7一个新的更新已被 §a找到§7。新版版本为: %0%
+trans.autoupdate.result.found2: §7更新已被安装，当您的服务器
+trans.autoupdate.result.found3: §e关闭 §7或 §e重启后§7 将被应用。
+trans.autoupdate.error.noconnection: §7无法连接至更新服务器。请确保您已经连接至 §c互联网§7。
+trans.autoupdate.error.unknown: §7一个 §c意外§7 在检查更新时发生了!
+trans.autoupdate.error.alreadyfound1: §7一个新版本 §e已经被§7 找到过了。版本号为: %0%
+trans.autoupdate.error.alreadyfound2: §7更新已被安装于服务器 §e关闭 §7或 §e重启后§7。
+trans.autoupdate.error.alreadysearching: §e别的更新进程§7 已经在搜寻更新了。
+
+trans.autoupdate.console.found1: 一个新的 §a更新§r 已被找到。版本号: %0%
+trans.autoupdate.console.found2: 输入 §e/gs update§r 至您的游戏聊天以安装更新。
+trans.autoupdate.console.installed1: 一个新的更新已被 §a安装§r。版本号: %0% -> %1%
+trans.autoupdate.console.installed2: 更改日子可以在这被找到:
+trans.autoupdate.console.error.unknown: 一个 §c意外§r 在自动更新时发生了:
+
+trans.menu.sign.remove: §7显示板已被成功 §a移除 §7。
+trans.menu.sign.uuid: §7UUID: §b%0%
+trans.menu.sign.world: §7所处世界: §e%0%
+trans.menu.sign.size: §7尺寸大小: §e%0%
+trans.menu.sign.desc1: §7点击这里来打开
+trans.menu.sign.desc2: §7显示板的菜单。
+
+trans.menu.settings.removeall.success.one: §7成功移除 §a%0%§7 显示板。
+trans.menu.settings.removeall.success.multiple: §7成功移除共 §a%0%§7 个显示板。
+trans.menu.settings.removeall.error.nosigns: §7这里目前 §c无显示板§7 可供移除。
+
+trans.item.plusminus.desc1: §b§o左键§7 单击: §e%0%1
+trans.item.plusminus.desc2: §b§oShift§7 + §b§o左键§7 单击: §e%0%5
+trans.item.minus.name: §e§l减
+trans.item.minus.desc1: §7点击这里以降低
+trans.item.minus.desc2: §7当前数据值。
+trans.item.plus.name: §e§l加
+trans.item.plus.desc1: §7点击这里以增加
+trans.item.plus.desc2: §7当前数据值。
+trans.item.optionleft.name: §e§l前一页
+trans.item.optionleft.desc1: §7点击这里以跳转到
+trans.item.optionleft.desc2: §7前一个配置。
+trans.item.optionright.name: §e§l下一页
+trans.item.optionright.desc1: §7点击这里以跳转到
+trans.item.optionright.desc2: §7下一项配置。
+
+trans.item.play.name: §7状态: §b§l暂停中
+trans.item.play.desc1: §7点击这里播放
+trans.item.play.desc2: §7这个显示板。
+
+trans.item.pause.name: §7状态: §b§l播放中
+trans.item.pause.desc1: §7点击这里以暂停播放
+trans.item.pause.desc2: §7这个显示板。
+
+trans.item.left.name: §e§l左
+trans.item.left.desc1: §7点击这里向左
+trans.item.left.desc2: §7跳转 1 页。
+
+trans.item.right.name: §e§l右
+trans.item.right.desc1: §7点击这里向右
+trans.item.right.desc2: §7跳转 1 页。
+
+trans.item.back.name: §e§l返回
+trans.item.back.desc1: §7点击这里以返回
+trans.item.back.desc2: §7先前的菜单。
+
+trans.item.restoreconfig.name: §b§l恢复默认设置
+trans.item.restoreconfig.desc1: §7点击这里以恢复至
+trans.item.restoreconfig.desc2: §7默认设置。
+
+trans.item.update.name: §b§l更新插件
+trans.item.update.desc1: §7点击这里来自动
+trans.item.update.desc2: §7在不离开游戏内菜单的情况下
+trans.item.update.desc3: §7更新插件至
+trans.item.update.desc4: §7最新版
+
+trans.item.config.name: §5§l配置文件
+trans.item.config.desc1: §7点击这里以在游戏内
+trans.item.config.desc2: §7进行配置文件的编辑。
+
+trans.item.removeall.name: §c§l移除所有显示板
+trans.item.removeall.desc1: §7点击这里以移除
+trans.item.removeall.desc2: §e§n每一个§7 显示板。
+
+trans.item.remove.name: §c§l移除
+trans.item.remove.desc1: §7点击这里以
+trans.item.remove.desc2: §7移除该显示板。
+
+trans.item.teleport.name: §e§l传送
+trans.item.teleport.desc1: §7点击这里以
+trans.item.teleport.desc2: §7传送至该显示板。
+
+trans.item.settings.name: §c§l设置
+trans.item.settings.desc1: §7点击这里以
+trans.item.settings.desc2: §7打开设置菜单。
+
+trans.item.sorting1.name: §7排序方式: §b§l类型
+trans.item.sorting1.desc1: §7显示板以其
+trans.item.sorting1.desc2: §7类型 进行排序 (GIF/图片)。
+trans.item.sorting1.desc3: §7点击这里以切换到按 世界 排序。
+
+trans.item.sorting2.name: §7排序方法: §b§l世界
+trans.item.sorting2.desc1: §7显示板以其
+trans.item.sorting2.desc2: §7所处世界 进行排序 (世界类型和名称)。
+trans.item.sorting2.desc3: §7点击这里以切换至按 尺寸大小 排序。
+
+trans.item.sorting3.name: §7排序方法: §b§l尺寸大小
+trans.item.sorting3.desc1: §7显示板以其
+trans.item.sorting3.desc2: §7尺寸大小 进行排序 (最大 -> 最小)。
+trans.item.sorting3.desc3: §7点击这里以切换至按 类型 进行排序。
