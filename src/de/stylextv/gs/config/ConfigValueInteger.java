@@ -40,9 +40,9 @@ public class ConfigValueInteger extends ConfigValue<Integer> {
 	}
 	@Override
 	public void setValue(Integer value) {
-		if(value > max) value=max;
-		else if(value < min) value=min;
-		this.value = value;
+		if(value > max) this.value = max;
+		else if(value < min) this.value = min;
+		else this.value = value;
 	}
 	@Override
 	public void interpretValue(String s) {

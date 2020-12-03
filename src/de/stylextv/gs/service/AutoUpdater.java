@@ -100,7 +100,7 @@ public class AutoUpdater {
 						public void run() {
 							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.autoupdate.console.installed1", pastF, Variables.VERSION));
 							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+LanguageManager.parseMsg("trans.autoupdate.console.installed2"));
-							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"https://www.spigotmc.org/resources/g-signs-a-unique-map-signs-plugin-for-lobbies.85017/updates");
+							Bukkit.getConsoleSender().sendMessage(Variables.PREFIX_CONSOLE+"https://www.spigotmc.org/resources/85704/updates");
 						}
 					}.runTask(plugin);
 				}

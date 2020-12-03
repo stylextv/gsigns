@@ -7,7 +7,7 @@ import de.stylextv.gs.util.ItemUtil;
 
 public class LanguageManager {
 	
-	private static final Language[] LANGUAGES = new Language[3];
+	private static final Language[] LANGUAGES = new Language[4];
 	
 	private static boolean inPluginRefresh = false;
 	
