@@ -74,9 +74,14 @@ public class BetterSign {
 		return null;
 	}
 	public BetterFrame getFrame(Location loc, BlockFace facing) {
+		BetterFrame first = frames.get(0);
+		if(!(first.getFacing().equals(facing) && first.getLocation().getWorld().equals(loc.getWorld()))) {
+			return null;
+		}
+		
 		for(BetterFrame frame:frames) {
 			Location check=frame.getLocation();
-			if(frame.getFacing().equals(facing) && check.getWorld().equals(loc.getWorld()) && check.getBlockX()==loc.getBlockX() && check.getBlockY()==loc.getBlockY() && check.getBlockZ()==loc.getBlockZ()) {
+			if(check.getBlockX()==loc.getBlockX() && check.getBlockY()==loc.getBlockY() && check.getBlockZ()==loc.getBlockZ()) {
 				return frame;
 			}
 		}

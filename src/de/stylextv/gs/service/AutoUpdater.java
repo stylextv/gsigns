@@ -205,7 +205,7 @@ public class AutoUpdater {
 						} else if(noConnection) {
 							p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.autoupdate.error.noconnection"));
 						} else {
-							p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.autoupdate.result.noupdate", "§6"+Variables.NAME));
+							p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.autoupdate.result.noupdate", "§6"+Variables.NAME+"§7"));
 						}
 					} catch(Exception ex) {
 						p.sendMessage(Variables.PREFIX+LanguageManager.parseMsg("trans.autoupdate.error.unknown"));
