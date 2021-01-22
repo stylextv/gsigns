@@ -169,7 +169,7 @@ public class BetterFrame {
 							if(!playersInRadius.contains(all)) {
 								playersInRadius.add(all);
 								
-								showInFrame(all, currentItemIndex);
+								showInFrame(all, currentItemIndex, true);
 							} else if(stillRefreshTimer == 1) {
 								showInFrame(all, currentItemIndex);
 							}
@@ -285,15 +285,21 @@ public class BetterFrame {
 		}
 		return null;
 	}
-	@SuppressWarnings("deprecation")
+	
 	private void showInFrame(Player p, int imageIndex) {
+		showInFrame(p, imageIndex, false);
+	}
+	@SuppressWarnings("deprecation")
+	private void showInFrame(Player p, int imageIndex, boolean withDelay) {
 		Integer got=playersSentProgress.get(p);
 		if(got==null) got=0;
+		
 		CopyOnWriteArrayList<Short> playerIdList = playerMapIds.get(p.getUniqueId());
 		
 		Object craftItemStack;
 		if(playerIdList != null && playerIdList.size() > imageIndex && got > imageIndex) {
 			short mapId = playerIdList.get(imageIndex);
+			
 			if(WorldUtil.getMcVersion() >= WorldUtil.MCVERSION_1_13) {
 				ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
 				craftItemStack = asNMSCopy.invoke(craftItemStackClass, itemStack);
@@ -315,7 +321,6 @@ public class BetterFrame {
 		packetPlayOutEntityMetadataFieldA.set(metaDataPacket, entityId);
 		
 		ArrayList<Object> list = new ArrayList<>();
-		
 		
 		if(WorldUtil.getMcVersion() <= WorldUtil.MCVERSION_1_8) {
 			if(watchableObjectConstructor == null) {
@@ -360,8 +365,16 @@ public class BetterFrame {
 		
 		packetPlayOutEntityMetadataFieldB.set(metaDataPacket, list);
 		
-		
-		sendPacket.invoke(connection, metaDataPacket);
+		if(withDelay) {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					sendPacket.invoke(connection, metaDataPacket);
+				}
+			}.runTaskLaterAsynchronously(Main.getPlugin(), 1);
+		} else {
+			sendPacket.invoke(connection, metaDataPacket);
+		}
 	}
 	
 	public boolean isDead() {
